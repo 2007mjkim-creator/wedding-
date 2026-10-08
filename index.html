@@ -252,10 +252,6 @@
           </a>
           <a href="#calculator" class="whitespace-nowrap shrink-0 hover:text-wedding-gold transition relative py-1 after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[2px] after:bg-wedding-gold hover:after:w-full after:transition-all">스마트 견적기</a>
           <a href="#checklist" class="whitespace-nowrap shrink-0 hover:text-wedding-gold transition relative py-1 after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[2px] after:bg-wedding-gold hover:after:w-full after:transition-all">D-180 체크리스트</a>
-          <a href="#dining-curation" class="whitespace-nowrap shrink-0 hover:text-wedding-gold transition relative py-1 font-semibold flex items-center gap-1 after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[2px] after:bg-wedding-gold hover:after:w-full after:transition-all">
-            <span class="text-wedding-gold">🍽️</span>
-            <span>식당 대접 추천</span>
-          </a>
           <a href="#reviews" class="whitespace-nowrap shrink-0 hover:text-wedding-gold transition relative py-1 after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[2px] after:bg-wedding-gold hover:after:w-full after:transition-all">본식 후기</a>
           <a href="#magazine" class="whitespace-nowrap shrink-0 hover:text-wedding-gold transition relative py-1 after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[2px] after:bg-wedding-gold hover:after:w-full after:transition-all">매거진</a>
         </nav>
@@ -2081,15 +2077,21 @@
           </p>
         </div>
 
-        <!-- Overall Checklist Progress Indicator -->
-        <div class="mt-6 md:mt-0 bg-white px-5 py-3 rounded-2xl border border-wedding-border shadow-sm flex items-center gap-4">
-          <div>
-            <div class="text-xs text-wedding-muted font-medium">나의 웨딩 준비 달성률</div>
-            <div class="text-lg font-bold text-wedding-gold"><span id="checklistPercentage">40</span>% 완료</div>
+        <!-- Overall Checklist Progress Indicator & Quick Dining Reference -->
+        <div class="mt-6 md:mt-0 flex items-center gap-3">
+          <div class="bg-white px-5 py-3 rounded-2xl border border-wedding-border shadow-sm flex items-center gap-4">
+            <div>
+              <div class="text-xs text-wedding-muted font-medium">나의 웨딩 준비 달성률</div>
+              <div class="text-lg font-bold text-wedding-gold"><span id="checklistPercentage">40</span>% 완료</div>
+            </div>
+            <div class="w-24 bg-wedding-sand h-3 rounded-full overflow-hidden">
+              <div id="checklistProgressBar" class="bg-wedding-gold h-full rounded-full transition-all duration-500" style="width: 40%"></div>
+            </div>
           </div>
-          <div class="w-24 bg-wedding-sand h-3 rounded-full overflow-hidden">
-            <div id="checklistProgressBar" class="bg-wedding-gold h-full rounded-full transition-all duration-500" style="width: 40%"></div>
-          </div>
+          <button onclick="openDiningQuickModal('parents')" class="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-3 rounded-2xl bg-white hover:bg-wedding-ivory border border-wedding-border shadow-sm text-xs font-semibold text-wedding-charcoal hover:text-wedding-gold transition shrink-0" title="상견례/청첩장모임 대접 식당 추천 팁">
+            <span>🍽️</span>
+            <span>대접 식당 팁</span>
+          </button>
         </div>
       </div>
 
@@ -2134,12 +2136,23 @@
           </div>
           <div class="sm:col-span-2">
             <label class="block text-xs font-semibold text-wedding-muted mb-1">체크 항목 제목 <span class="text-wedding-rose font-bold">*</span></label>
-            <input type="text" id="customItemTitle" placeholder="예: 시부모님 상견례 선물(도라지정과/혼주넥타이) 예약" class="w-full bg-wedding-ivory border border-wedding-border rounded-xl px-3.5 py-2 text-xs font-medium text-wedding-charcoal focus:outline-none focus:ring-2 focus:ring-wedding-gold/50">
+            <input type="text" id="customItemTitle" placeholder="예: 시부모님 상견례 식당 예약 또는 선물 준비" class="w-full bg-wedding-ivory border border-wedding-border rounded-xl px-3.5 py-2 text-xs font-medium text-wedding-charcoal focus:outline-none focus:ring-2 focus:ring-wedding-gold/50">
           </div>
         </div>
-        <div class="mb-4">
+        <div class="mb-3">
           <label class="block text-xs font-semibold text-wedding-muted mb-1">상세 메모 / 메모 사항 (선택)</label>
-          <input type="text" id="customItemDesc" placeholder="예: 압구정 갤러리아 픽업 예정, 보자기 포장 여부 확인" class="w-full bg-wedding-ivory border border-wedding-border rounded-xl px-3.5 py-2 text-xs text-wedding-charcoal font-light focus:outline-none focus:ring-2 focus:ring-wedding-gold/50">
+          <input type="text" id="customItemDesc" placeholder="예: 조용한 프라이빗 룸 여부 확인, 주차 및 발렛 가능 여부" class="w-full bg-wedding-ivory border border-wedding-border rounded-xl px-3.5 py-2 text-xs text-wedding-charcoal font-light focus:outline-none focus:ring-2 focus:ring-wedding-gold/50">
+        </div>
+        <!-- In-form Lightweight Reference helper -->
+        <div class="mb-4 bg-wedding-ivory/80 rounded-xl p-2.5 sm:p-3 border border-wedding-border/60 flex items-center justify-between text-xs">
+          <div class="flex items-center gap-1.5 text-wedding-charcoal">
+            <span class="text-wedding-gold font-bold">💡</span>
+            <span class="text-[11px] sm:text-xs">상견례 / 청첩장 모임 식당 고민 중이신가요?</span>
+          </div>
+          <button type="button" onclick="openDiningQuickModal('parents')" class="text-wedding-gold hover:text-wedding-darkgold font-bold text-[11px] underline flex items-center gap-1">
+            <span>대접 식당 추천 팁 보기</span>
+            <span>&rarr;</span>
+          </button>
         </div>
         <div class="flex items-center justify-between pt-1">
           <span class="text-[11px] text-wedding-muted">작성한 항목은 브라우저에 안전하게 저장됩니다.</span>
@@ -2196,98 +2209,66 @@
 
 
   <!-- ====================================================
-       7-1. WEDDING DINING & HOSTING CURATION (식당 대접 큐레이션)
-       "다른 분들은 이런 식당에서 대접했어요!"
+       7-1. LIGHTWEIGHT DINING & HOSTING QUICK MODAL
+       "체크리스트에서 가볍게 확인하는 선배 부부들의 대접 식당 추천"
        ==================================================== -->
-  <section id="dining-curation" class="py-20 bg-gradient-to-b from-wedding-ivory via-wedding-cream/30 to-wedding-ivory border-t border-b border-wedding-border/60">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+  <div id="diningQuickModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-wedding-border p-6 sm:p-8 animate-fadeIn relative">
       
-      <!-- Section Header -->
-      <div class="flex flex-col md:flex-row md:items-end justify-between mb-12">
-        <div>
-          <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-wedding-gold/15 border border-wedding-gold/30 text-xs font-bold text-wedding-darkgold mb-3">
-            <i data-lucide="utensils" class="w-3.5 h-3.5 text-wedding-gold"></i>
-            <span>GUEST &amp; PARENTS DINING CURATION</span>
-          </div>
-          <h2 class="font-serif text-2xl sm:text-3xl lg:text-4xl font-normal text-wedding-dark leading-tight">
-            <span class="inline-block whitespace-nowrap">식당 대접 고민 끝!</span>
-            <span class="inline-block whitespace-nowrap"><span class="gold-text italic font-serif">다른 분들은 이런 식당에서</span> 대접했어요</span>
-          </h2>
-          <p class="text-xs sm:text-sm text-wedding-muted mt-2 max-w-2xl leading-relaxed" style="word-break: keep-all;">
-            결혼 준비 중 가장 신경 쓰이는 <strong class="text-wedding-dark font-medium">양가 상견례, 친구·동료 청첩장 모임, 본식 도우미 감사 뒷풀이</strong>까지—<br class="hidden sm:inline">
-            선배 신랑신부 12,000쌍의 실제 결제 영수증 리뷰와 추천 만족도 98% 이상의 프라이빗 룸 맛집 큐레이션입니다.
-          </p>
-        </div>
+      <!-- Close Button -->
+      <button onclick="closeDiningQuickModal()" class="absolute top-5 right-5 w-8 h-8 rounded-full bg-wedding-ivory hover:bg-wedding-sand text-wedding-muted hover:text-wedding-dark flex items-center justify-center transition" aria-label="닫기">
+        <i data-lucide="x" class="w-4 h-4"></i>
+      </button>
 
-        <!-- Quick Host Tip Badge -->
-        <div class="mt-6 md:mt-0 bg-white p-4 rounded-2xl border border-wedding-border shadow-sm flex items-center gap-3 shrink-0">
-          <div class="w-10 h-10 rounded-xl bg-wedding-gold/20 flex items-center justify-center text-wedding-gold shrink-0">
-            <i data-lucide="award" class="w-5 h-5"></i>
-          </div>
-          <div>
-            <div class="text-[11px] font-bold text-wedding-gold uppercase tracking-wider">MARRYST VERIFIED</div>
-            <div class="text-xs font-semibold text-wedding-dark">실제 선배 부부 평점 4.9+ 보증 식당</div>
-          </div>
+      <!-- Modal Header -->
+      <div class="pr-8 mb-5">
+        <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-wedding-gold/15 text-wedding-darkgold text-[11px] font-bold mb-2">
+          <span>🍽️ 실 결제 영수증 리뷰 4.9+ 보증</span>
         </div>
+        <h3 class="font-serif text-xl sm:text-2xl font-bold text-wedding-dark">
+          <span class="gold-text italic font-serif">다른 분들은 이런 식당에서</span> 대접했어요!
+        </h3>
+        <p class="text-xs text-wedding-muted mt-1 leading-relaxed">
+          체크리스트 일정에 맞춰 프라이빗 룸과 분위기, 격식이 검증된 인기 추천 식당 리스트입니다.
+        </p>
       </div>
 
-      <!-- Dining Occasion Filter Tabs -->
-      <div class="flex items-center gap-2 sm:gap-3 overflow-x-auto pb-4 mb-8 border-b border-wedding-border" id="diningTabs">
-        <button onclick="switchDiningTab('parents', this)" class="dining-tab-btn active-dining whitespace-nowrap px-4 sm:px-6 py-2.5 sm:py-3 rounded-2xl font-bold bg-wedding-dark text-white text-xs sm:text-sm transition-all flex items-center gap-2 shadow-sm">
+      <!-- Occasion Switcher Tabs -->
+      <div class="flex items-center gap-2 overflow-x-auto pb-2 mb-5 border-b border-wedding-border text-xs" id="diningModalTabs">
+        <button onclick="switchDiningModalTab('parents', this)" class="dining-modal-tab active px-3.5 py-2 rounded-xl font-bold bg-wedding-dark text-white flex items-center gap-1.5 shrink-0 transition shadow-sm">
           <span>👑</span>
-          <span>양가 상견례 (조용한 프라이빗 룸 한정식/일식)</span>
+          <span>양가 상견례 (프라이빗 룸 한정식/일식)</span>
         </button>
-        <button onclick="switchDiningTab('invitation', this)" class="dining-tab-btn whitespace-nowrap px-4 sm:px-6 py-2.5 sm:py-3 rounded-2xl font-medium bg-white text-wedding-charcoal hover:bg-wedding-cream text-xs sm:text-sm border border-wedding-border transition-all flex items-center gap-2">
+        <button onclick="switchDiningModalTab('invitation', this)" class="dining-modal-tab px-3.5 py-2 rounded-xl font-medium bg-wedding-ivory text-wedding-charcoal hover:bg-wedding-cream flex items-center gap-1.5 shrink-0 transition border border-wedding-border">
           <span>🥂</span>
-          <span>청첩장 모임 (감성 테라스 &amp; 와인 다이닝)</span>
+          <span>청첩장 모임 (테라스/와인)</span>
         </button>
-        <button onclick="switchDiningTab('afterparty', this)" class="dining-tab-btn whitespace-nowrap px-4 sm:px-6 py-2.5 sm:py-3 rounded-2xl font-medium bg-white text-wedding-charcoal hover:bg-wedding-cream text-xs sm:text-sm border border-wedding-border transition-all flex items-center gap-2">
+        <button onclick="switchDiningModalTab('afterparty', this)" class="dining-modal-tab px-3.5 py-2 rounded-xl font-medium bg-wedding-ivory text-wedding-charcoal hover:bg-wedding-cream flex items-center gap-1.5 shrink-0 transition border border-wedding-border">
           <span>🥩</span>
-          <span>도우미/축가 감사 뒷풀이 (고급 한우 &amp; 룸 구이)</span>
+          <span>감사 뒷풀이 (고급 룸 구이)</span>
         </button>
       </div>
 
-      <!-- Dining Cards Grid (Rendered Dynamically by JS) -->
-      <div id="diningCardsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-        <!-- Rendered via renderDiningCards() -->
+      <!-- Quick Etiquette Tip Box -->
+      <div id="diningModalTipBox" class="p-3.5 rounded-2xl bg-wedding-ivory border border-wedding-border/70 text-xs text-wedding-charcoal leading-relaxed mb-5">
+        <!-- Rendered dynamically by JS -->
       </div>
 
-      <!-- Wedding Host Etiquette Guide Box -->
-      <div class="bg-white rounded-3xl border border-wedding-border p-6 sm:p-8 shadow-sm">
-        <div class="flex items-center gap-2.5 text-wedding-gold font-bold text-sm sm:text-base mb-4">
-          <i data-lucide="sparkles" class="w-5 h-5 text-wedding-gold"></i>
-          <span>선배 부부들이 전하는 식당 대접 3대 실전 꿀팁</span>
-        </div>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-xs sm:text-sm text-wedding-charcoal/85">
-          <div class="p-4 rounded-2xl bg-wedding-ivory/60 border border-wedding-border/60">
-            <span class="font-bold text-wedding-dark block text-sm mb-1.5 flex items-center gap-1.5">
-              <span class="text-wedding-gold font-serif">01.</span> 상견례는 무조건 1인 개별 코스
-            </span>
-            <p class="text-wedding-muted leading-relaxed font-light">
-              찌개나 전골 등 함께 덜어먹는 메뉴는 어색한 자리에 불편할 수 있습니다. 1인 1접시로 정갈하게 나오는 코스 요리를 선택하면 대화의 흐름이 끊기지 않고 자연스럽습니다.
-            </p>
-          </div>
-          <div class="p-4 rounded-2xl bg-wedding-ivory/60 border border-wedding-border/60">
-            <span class="font-bold text-wedding-dark block text-sm mb-1.5 flex items-center gap-1.5">
-              <span class="text-wedding-gold font-serif">02.</span> 청첩장은 식사 시작 직후 전달
-            </span>
-            <p class="text-wedding-muted leading-relaxed font-light">
-              헤어질 때 주면 깜빡 잊기 쉽습니다. 자리에 앉아 주문 후 가벼운 담소를 나눌 때 정중히 봉투를 건네고, 계산은 식사 마칠 무렵 화장실 다녀오는 척 선결제하는 것이 센스입니다.
-            </p>
-          </div>
-          <div class="p-4 rounded-2xl bg-wedding-ivory/60 border border-wedding-border/60">
-            <span class="font-bold text-wedding-dark block text-sm mb-1.5 flex items-center gap-1.5">
-              <span class="text-wedding-gold font-serif">03.</span> 인원수 변동 유연한 식당 선택
-            </span>
-            <p class="text-wedding-muted leading-relaxed font-light">
-              청첩장 모임은 당일 1~2명 불참이나 추가가 발생하기 쉽습니다. 노쇼 위약금이 유연하고 단독 룸 테이블 확장이 가능한 매장을 고르면 스트레스 없이 대접할 수 있습니다.
-            </p>
-          </div>
-        </div>
+      <!-- Dining Cards List in Modal -->
+      <div id="diningModalCardsContainer" class="space-y-3.5 mb-6">
+        <!-- Rendered dynamically by renderDiningModalCards() -->
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="flex items-center justify-between pt-3 border-t border-wedding-border/60">
+        <span class="text-[11px] text-wedding-muted">체크 항목과 함께 편하게 참고하세요.</span>
+        <button onclick="closeDiningQuickModal()" class="px-5 py-2.5 rounded-xl bg-wedding-dark text-white hover:bg-wedding-gold font-semibold text-xs transition">
+          확인 완료 (체크리스트로 돌아가기)
+        </button>
       </div>
 
     </div>
-  </section>
+  </div>
 
 
   <!-- ====================================================
@@ -3069,10 +3050,14 @@
     document.addEventListener("DOMContentLoaded", () => {
       lucide.createIcons();
       initChecklist();
-      initDiningCuration();
       initWishlist();
       updateBudgetCalculator();
       initDDay();
+
+      // ESC 키로 대접 식당 팝업 닫기 지원
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") closeDiningQuickModal();
+      });
 
       // URL 해시 기반 자동 큐레이션 라우팅
       if (window.location.hash === '#sdm-section') {
@@ -3666,25 +3651,70 @@
         const isCustom = item.isCustom;
 
         // Interactive link for dining occasion on specific checklist cards
+        // Interactive lightweight dining guide for checklist items
         let diningLinkHtml = "";
         if (item.id === "c1") {
           diningLinkHtml = `
-            <div class="mt-3 pt-2.5 border-t border-wedding-border/60">
-              <button onclick="scrollToDiningCuration('parents')" class="inline-flex items-center gap-1.5 text-[11px] font-bold text-wedding-gold hover:text-wedding-darkgold bg-wedding-gold/10 hover:bg-wedding-gold/20 px-3 py-1.5 rounded-lg border border-wedding-gold/30 transition">
-                <i data-lucide="utensils" class="w-3.5 h-3.5"></i>
-                <span>다른 분들은 이런 상견례 식당에서 대접했어요! &rarr;</span>
+            <div class="mt-2.5 pt-2 border-t border-wedding-border/50">
+              <button type="button" onclick="openDiningQuickModal('parents')" class="inline-flex items-center gap-1.5 text-[11px] font-semibold text-wedding-darkgold hover:text-wedding-gold bg-wedding-cream/60 hover:bg-wedding-cream px-2.5 py-1 rounded-lg border border-wedding-gold/30 transition shadow-sm">
+                <span>🍽️</span>
+                <span>다른 분들은 이런 상견례 식당에서 대접했어요 (가볍게 보기)</span>
               </button>
             </div>
           `;
         } else if (item.id === "c13") {
           diningLinkHtml = `
-            <div class="mt-3 pt-2.5 border-t border-wedding-border/60">
-              <button onclick="scrollToDiningCuration('invitation')" class="inline-flex items-center gap-1.5 text-[11px] font-bold text-wedding-gold hover:text-wedding-darkgold bg-wedding-gold/10 hover:bg-wedding-gold/20 px-3 py-1.5 rounded-lg border border-wedding-gold/30 transition">
-                <i data-lucide="utensils" class="w-3.5 h-3.5"></i>
-                <span>다른 분들은 이런 청첩장 모임 식당에서 대접했어요! &rarr;</span>
+            <div class="mt-2.5 pt-2 border-t border-wedding-border/50">
+              <button type="button" onclick="openDiningQuickModal('invitation')" class="inline-flex items-center gap-1.5 text-[11px] font-semibold text-wedding-darkgold hover:text-wedding-gold bg-wedding-cream/60 hover:bg-wedding-cream px-2.5 py-1 rounded-lg border border-wedding-gold/30 transition shadow-sm">
+                <span>🥂</span>
+                <span>다른 분들은 이런 청첩장 모임 식당에서 대접했어요 (가볍게 보기)</span>
               </button>
             </div>
           `;
+        } else if (item.id === "c19") {
+          diningLinkHtml = `
+            <div class="mt-2.5 pt-2 border-t border-wedding-border/50">
+              <button type="button" onclick="openDiningQuickModal('afterparty')" class="inline-flex items-center gap-1.5 text-[11px] font-semibold text-wedding-darkgold hover:text-wedding-gold bg-wedding-cream/60 hover:bg-wedding-cream px-2.5 py-1 rounded-lg border border-wedding-gold/30 transition shadow-sm">
+                <span>🥩</span>
+                <span>선배 부부들의 감사 뒷풀이 추천 식당 보기</span>
+              </button>
+            </div>
+          `;
+        } else if (isCustom) {
+          // 사용자가 직접 작성한 항목에서 대접/식당 관련 키워드 스마트 인식
+          const text = (item.title + " " + item.desc).toLowerCase();
+          let detectedTab = null;
+          let label = "다른 사람들은 이런 대접 식당 선택했어요 (참고하기)";
+          let icon = "🍽️";
+
+          if (text.includes("상견례") || text.includes("부모님")) {
+            detectedTab = "parents";
+            label = "선배 부부들의 상견례 추천 식당 참고하기";
+            icon = "👑";
+          } else if (text.includes("청첩장") || text.includes("친구") || text.includes("동료") || text.includes("모임")) {
+            detectedTab = "invitation";
+            label = "다른 사람들은 이런 청첩장 모임 식당에서 대접했어요";
+            icon = "🥂";
+          } else if (text.includes("뒤풀이") || text.includes("뒷풀이") || text.includes("회식") || text.includes("도우미") || text.includes("사례")) {
+            detectedTab = "afterparty";
+            label = "선배 부부들의 감사 뒷풀이 추천 식당 보기";
+            icon = "🥩";
+          } else if (text.includes("식당") || text.includes("대접") || text.includes("식사") || text.includes("예약") || text.includes("룸") || text.includes("밥")) {
+            detectedTab = "parents";
+            label = "선배 부부들의 대접 식당 추천 팁 참고하기";
+            icon = "🍽️";
+          }
+
+          if (detectedTab) {
+            diningLinkHtml = `
+              <div class="mt-2.5 pt-2 border-t border-wedding-border/50">
+                <button type="button" onclick="openDiningQuickModal('${detectedTab}')" class="inline-flex items-center gap-1.5 text-[11px] font-semibold text-wedding-darkgold hover:text-wedding-gold bg-wedding-cream/70 hover:bg-wedding-cream px-2.5 py-1 rounded-lg border border-wedding-gold/30 transition shadow-sm">
+                  <span>${icon}</span>
+                  <span>${label}</span>
+                </button>
+              </div>
+            `;
+          }
         }
 
         const badgeHtml = isCustom 
@@ -3922,100 +3952,114 @@
       ]
     };
 
-    let activeDiningTabKey = 'parents';
+    // --------------------------------------------------------------------
+    // LIGHTWEIGHT DINING QUICK MODAL INTERACTIVITY
+    // --------------------------------------------------------------------
+    let activeDiningModalTabKey = 'parents';
 
-    function initDiningCuration() {
-      renderDiningCards();
-    }
-
-    function switchDiningTab(key, btn) {
-      activeDiningTabKey = key;
-      document.querySelectorAll(".dining-tab-btn").forEach(b => {
-        b.classList.remove("bg-wedding-dark", "text-white", "active-dining");
-        b.classList.add("bg-white", "text-wedding-charcoal");
+    function openDiningQuickModal(tabKey) {
+      if (tabKey) activeDiningModalTabKey = tabKey;
+      
+      // 탭 스타일 활성화
+      document.querySelectorAll(".dining-modal-tab").forEach(btn => {
+        btn.classList.remove("bg-wedding-dark", "text-white", "shadow-sm", "font-bold");
+        btn.classList.add("bg-wedding-ivory", "text-wedding-charcoal", "border", "border-wedding-border", "font-medium");
       });
-      btn.classList.add("bg-wedding-dark", "text-white", "active-dining");
-      btn.classList.remove("bg-white", "text-wedding-charcoal");
-      renderDiningCards();
+      const targetBtn = document.querySelector(`.dining-modal-tab[onclick*="${activeDiningModalTabKey}"]`);
+      if (targetBtn) {
+        targetBtn.classList.add("bg-wedding-dark", "text-white", "shadow-sm", "font-bold");
+        targetBtn.classList.remove("bg-wedding-ivory", "text-wedding-charcoal", "border");
+      }
+
+      renderDiningModalCards();
+
+      const modal = document.getElementById("diningQuickModal");
+      if (modal) {
+        modal.classList.remove("hidden");
+        modal.classList.add("flex");
+        if (window.lucide) lucide.createIcons();
+      }
     }
 
-    function renderDiningCards() {
-      const container = document.getElementById("diningCardsGrid");
+    function closeDiningQuickModal() {
+      const modal = document.getElementById("diningQuickModal");
+      if (modal) {
+        modal.classList.add("hidden");
+        modal.classList.remove("flex");
+      }
+    }
+
+    function switchDiningModalTab(key, btn) {
+      activeDiningModalTabKey = key;
+      document.querySelectorAll(".dining-modal-tab").forEach(b => {
+        b.classList.remove("bg-wedding-dark", "text-white", "shadow-sm", "font-bold");
+        b.classList.add("bg-wedding-ivory", "text-wedding-charcoal", "border", "border-wedding-border", "font-medium");
+      });
+      if (btn) {
+        btn.classList.add("bg-wedding-dark", "text-white", "shadow-sm", "font-bold");
+        btn.classList.remove("bg-wedding-ivory", "text-wedding-charcoal", "border");
+      }
+      renderDiningModalCards();
+    }
+
+    function renderDiningModalCards() {
+      const container = document.getElementById("diningModalCardsContainer");
+      const tipBox = document.getElementById("diningModalTipBox");
       if (!container) return;
-      const list = diningData[activeDiningTabKey] || [];
+
+      const list = diningData[activeDiningModalTabKey] || [];
+
+      // 상황별 실전 팁 요약
+      const tipMessages = {
+        parents: "💡 <strong>상견례 꿀팁:</strong> 어색함을 덜기 위해 덜어먹는 요리보다 1인 1코스로 정갈하게 나오는 프라이빗 룸을 선택하고, 식사 종료 15분 전 화장실 다녀오는 척 선결제하는 것이 센스입니다.",
+        invitation: "💡 <strong>청첩장 모임 팁:</strong> 청첩장은 식사 시작 직후 가벼운 담소와 함께 정중히 건네세요. 인원 변동이 잦으므로 당일 인원 추가나 룸 변경이 유연한 캐주얼 다이닝이 좋습니다.",
+        afterparty: "💡 <strong>감사 뒷풀이 팁:</strong> 식 당일 고생한 사회자, 축가, 부케순이 등 헬퍼분들을 모시는 자리는 조용히 회포를 풀 수 있는 룸 구이 식당에서 부담 없이 넉넉하게 대접하세요."
+      };
+      if (tipBox) {
+        tipBox.innerHTML = tipMessages[activeDiningModalTabKey] || tipMessages.parents;
+      }
 
       container.innerHTML = list.map(item => {
         const tagsHtml = item.tags.map(t => 
-          `<span class="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-wedding-ivory border border-wedding-border text-wedding-muted">${t}</span>`
+          `<span class="text-[10px] px-2 py-0.5 rounded-full bg-wedding-cream text-wedding-darkgold font-medium border border-wedding-gold/20">${t}</span>`
         ).join("");
 
         return `
-          <div class="bg-white rounded-3xl border border-wedding-border overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col group">
-            <!-- Card Image -->
-            <div class="relative aspect-[4/3] overflow-hidden img-zoom-wrapper bg-wedding-sand">
-              <img src="${item.img}" alt="${item.name}" class="w-full h-full object-cover">
-              <div class="absolute top-3 left-3 bg-wedding-dark/85 backdrop-blur-md text-white text-[10px] font-bold px-2.5 py-1 rounded-full">
-                ${item.price}
+          <div class="bg-white rounded-2xl border border-wedding-border p-3.5 sm:p-4 hover:border-wedding-gold/60 transition shadow-sm flex flex-col sm:flex-row gap-3.5 items-start sm:items-center justify-between">
+            <div class="flex items-center gap-3.5 min-w-0 flex-1">
+              <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-xl overflow-hidden shrink-0 bg-wedding-sand">
+                <img src="${item.img}" alt="${item.name}" class="w-full h-full object-cover">
               </div>
-            </div>
-
-            <!-- Card Body -->
-            <div class="p-5 flex-1 flex flex-col justify-between">
-              <div>
-                <span class="text-[11px] font-medium text-wedding-gold block mb-1">${item.category}</span>
-                <h3 class="font-serif text-lg font-bold text-wedding-dark mb-1 group-hover:text-wedding-gold transition-colors">
-                  ${item.name}
-                </h3>
-                <p class="text-xs text-wedding-muted flex items-center gap-1 mb-3">
-                  <i data-lucide="map-pin" class="w-3.5 h-3.5 text-wedding-gold shrink-0"></i>
-                  <span class="truncate">${item.location}</span>
-                </p>
-
-                <!-- Tags -->
-                <div class="flex flex-wrap gap-1.5 mb-3.5">
+              <div class="min-w-0 flex-1">
+                <div class="flex items-center gap-2 flex-wrap">
+                  <span class="text-[10px] font-bold text-wedding-gold uppercase">${item.category.split('•')[0]}</span>
+                  <span class="text-[11px] font-bold text-wedding-dark truncate">${item.name}</span>
+                </div>
+                <div class="flex items-center gap-1.5 text-xs text-wedding-muted mt-0.5">
+                  <i data-lucide="map-pin" class="w-3 h-3 text-wedding-gold shrink-0"></i>
+                  <span class="truncate text-[11px]">${item.location}</span>
+                  <span class="text-wedding-border">|</span>
+                  <span class="font-bold text-wedding-dark text-[11px]">${item.price}</span>
+                </div>
+                <div class="flex flex-wrap gap-1 mt-1.5">
                   ${tagsHtml}
                 </div>
-
-                <!-- Real Couple Quote -->
-                <div class="bg-wedding-ivory/80 p-3 rounded-2xl border border-wedding-border/60 text-xs mb-4">
-                  <p class="text-wedding-charcoal/90 leading-relaxed italic line-clamp-3">
-                    ${item.quote}
-                  </p>
-                  <span class="text-[10px] text-wedding-muted block mt-1.5 text-right font-medium not-italic">
-                    — ${item.author}
-                  </span>
-                </div>
               </div>
-
-              <!-- Action Buttons -->
-              <div class="pt-3 border-t border-wedding-border/60 flex items-center gap-2">
-                <button onclick="openDiningDetail('${item.id}')" class="flex-1 py-2 rounded-xl bg-wedding-ivory hover:bg-wedding-cream text-wedding-dark text-xs font-semibold border border-wedding-border transition flex items-center justify-center gap-1">
-                  <span>상세 정보</span>
-                  <i data-lucide="chevron-right" class="w-3 h-3 text-wedding-gold"></i>
-                </button>
-                <button onclick="reserveDiningVenue('${item.name}')" class="flex-1 py-2 rounded-xl bg-wedding-gold hover:bg-wedding-darkgold text-white text-xs font-bold transition flex items-center justify-center gap-1 shadow-sm">
-                  <span>예약 / 지도</span>
-                  <i data-lucide="external-link" class="w-3 h-3"></i>
-                </button>
-              </div>
+            </div>
+            <div class="flex items-center gap-2 w-full sm:w-auto shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-wedding-border/60">
+              <button type="button" onclick="openDiningDetail('${item.id}')" class="flex-1 sm:flex-none px-3 py-1.5 rounded-lg bg-wedding-ivory hover:bg-wedding-cream text-wedding-dark text-xs font-semibold border border-wedding-border transition">
+                상세 정보
+              </button>
+              <button type="button" onclick="reserveDiningVenue('${item.name}')" class="flex-1 sm:flex-none px-3.5 py-1.5 rounded-lg bg-wedding-gold hover:bg-wedding-darkgold text-white text-xs font-bold transition flex items-center justify-center gap-1 shadow-sm">
+                <span>네이버/캐치테이블</span>
+                <i data-lucide="external-link" class="w-3 h-3"></i>
+              </button>
             </div>
           </div>
         `;
       }).join("");
-      lucide.createIcons();
-    }
 
-    function scrollToDiningCuration(tabKey) {
-      const section = document.getElementById("dining-curation");
-      if (tabKey) {
-        const targetBtn = document.querySelector(`.dining-tab-btn[onclick*="${tabKey}"]`);
-        if (targetBtn) {
-          switchDiningTab(tabKey, targetBtn);
-        }
-      }
-      if (section) {
-        section.scrollIntoView({ behavior: 'smooth' });
-      }
+      if (window.lucide) lucide.createIcons();
     }
 
     function reserveDiningVenue(name) {
