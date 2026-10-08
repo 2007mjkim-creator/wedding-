@@ -124,6 +124,21 @@
       transform: scale(1.06);
     }
 
+    /* Smooth Fade-in animation for load more items */
+    @keyframes fadeInCard {
+      from {
+        opacity: 0;
+        transform: translateY(16px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    .animate-fadeIn {
+      animation: fadeInCard 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
     /* ====================================================
        KOREAN TYPOGRAPHY & WORD WRAPPING OPTIMIZATION
        (모든 해상도 및 창모드에서 한글 줄바꿈/줄맞춤 완벽 최적화)
@@ -229,8 +244,8 @@
 
         <!-- Desktop Navigation Links -->
         <nav class="hidden lg:flex items-center gap-3.5 xl:gap-5 2xl:gap-7 text-[13px] xl:text-[14px] 2xl:text-[15px] font-medium text-wedding-charcoal/90 shrink-0">
-          <a href="#wedding-hall" class="whitespace-nowrap shrink-0 hover:text-wedding-gold transition relative py-1 after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[2px] after:bg-wedding-gold hover:after:w-full after:transition-all">웨딩홀 큐레이션</a>
-          <a href="#sdm-section" class="whitespace-nowrap shrink-0 hover:text-wedding-gold transition relative py-1 after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[2px] after:bg-wedding-gold hover:after:w-full after:transition-all">스·드·메</a>
+          <a href="#wedding-hall" onclick="navigateToCuration('hall', event)" class="whitespace-nowrap shrink-0 hover:text-wedding-gold transition relative py-1 after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[2px] after:bg-wedding-gold hover:after:w-full after:transition-all">웨딩홀 큐레이션</a>
+          <a href="#sdm-section" onclick="navigateToCuration('sdm', event)" class="whitespace-nowrap shrink-0 hover:text-wedding-gold transition relative py-1 after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[2px] after:bg-wedding-gold hover:after:w-full after:transition-all">스·드·메</a>
           <a href="#invitation-studio" class="whitespace-nowrap shrink-0 hover:text-wedding-gold transition relative py-1 font-semibold flex items-center gap-1.5 after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[2px] after:bg-wedding-gold hover:after:w-full after:transition-all">
             <span class="px-1.5 py-0.5 rounded bg-wedding-gold/15 text-wedding-gold text-[10px] font-bold shrink-0">NEW</span>
             <span class="whitespace-nowrap">청첩장 스튜디오</span>
@@ -275,12 +290,12 @@
     <!-- Mobile Drawer / Dropdown Menu -->
     <div id="mobileMenu" class="hidden lg:hidden border-t border-wedding-border bg-wedding-ivory/95 px-6 py-6 space-y-4 shadow-xl">
       <div class="flex flex-col space-y-3 font-medium text-base">
-        <a href="#wedding-hall" onclick="toggleMobileMenu()" class="py-2 hover:text-wedding-gold border-b border-wedding-border/40 flex items-center justify-between">
+        <a href="#wedding-hall" onclick="navigateToCuration('hall', event); toggleMobileMenu();" class="py-2 hover:text-wedding-gold border-b border-wedding-border/40 flex items-center justify-between">
           <span>웨딩홀 큐레이션</span>
           <i data-lucide="chevron-right" class="w-4 h-4 text-wedding-muted"></i>
         </a>
-        <a href="#sdm-section" onclick="toggleMobileMenu()" class="py-2 hover:text-wedding-gold border-b border-wedding-border/40 flex items-center justify-between">
-          <span>스튜디오·드레스·메이크업</span>
+        <a href="#sdm-section" onclick="navigateToCuration('sdm', event); toggleMobileMenu();" class="py-2 hover:text-wedding-gold border-b border-wedding-border/40 flex items-center justify-between">
+          <span>스튜디오·드레스·메이크업 (스·드·메)</span>
           <i data-lucide="chevron-right" class="w-4 h-4 text-wedding-muted"></i>
         </a>
         <a href="#invitation-studio" onclick="toggleMobileMenu()" class="py-2 hover:text-wedding-gold border-b border-wedding-border/40 flex items-center justify-between">
@@ -471,7 +486,10 @@
   <!-- ====================================================
        5. INTERACTIVE WEDDING DIRECTORY (WEDDING HALL & SDM)
        ==================================================== -->
-  <section id="wedding-hall" class="py-20 bg-wedding-ivory">
+  <section id="wedding-hall" class="py-20 bg-wedding-ivory relative">
+    <!-- Anchor for SDM Navigation with scroll offset -->
+    <div id="sdm-section" class="absolute -top-20 left-0 pointer-events-none"></div>
+
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       
       <!-- Section Header -->
@@ -479,29 +497,33 @@
         <div>
           <span class="text-xs tracking-[0.2em] font-semibold text-wedding-gold uppercase">CURATED COLLECTION</span>
           <h2 class="font-serif text-2xl sm:text-3xl lg:text-4xl font-normal text-wedding-dark mt-1">
-            <span class="inline-block whitespace-nowrap">프리미엄 웨딩</span> <span class="inline-block whitespace-nowrap">큐레이션 아카이브</span>
+            <span class="inline-block whitespace-nowrap">프리미엄 웨딩 &amp; 스드메</span> <span class="inline-block whitespace-nowrap">큐레이션 아카이브</span>
           </h2>
           <p class="text-sm text-wedding-muted mt-2">엄격한 검증을 통과한 전국 탑티어 웨딩홀과 감성 스드메 브랜드를 만나보세요.</p>
         </div>
 
         <!-- Filter Tabs -->
         <div class="mt-6 md:mt-0 flex flex-wrap gap-2" id="categoryFilterTabs">
-          <button onclick="filterCategory('all', this)" class="px-4 py-2 rounded-full text-xs sm:text-sm font-semibold transition-all bg-wedding-dark text-white shadow-sm active-filter">
+          <button data-cat="all" onclick="filterCategory('all', this)" class="px-4 py-2 rounded-full text-xs sm:text-sm font-semibold transition-all bg-wedding-dark text-white shadow-sm active-filter">
             전체 보기
           </button>
-          <button onclick="filterCategory('hall', this)" class="px-4 py-2 rounded-full text-xs sm:text-sm font-semibold transition-all bg-white text-wedding-charcoal border border-wedding-border hover:border-wedding-gold">
+          <button data-cat="hall" onclick="filterCategory('hall', this)" class="px-4 py-2 rounded-full text-xs sm:text-sm font-semibold transition-all bg-white text-wedding-charcoal border border-wedding-border hover:border-wedding-gold">
             웨딩홀
           </button>
-          <button onclick="filterCategory('dress', this)" class="px-4 py-2 rounded-full text-xs sm:text-sm font-semibold transition-all bg-white text-wedding-charcoal border border-wedding-border hover:border-wedding-gold">
-            드레스
+          <button data-cat="sdm" onclick="filterCategory('sdm', this)" class="px-4 py-2 rounded-full text-xs sm:text-sm font-semibold transition-all bg-white text-wedding-charcoal border border-wedding-border hover:border-wedding-gold flex items-center gap-1.5">
+            <span class="text-wedding-gold font-bold">✨</span>
+            <span>스·드·메 종합</span>
           </button>
-          <button onclick="filterCategory('studio', this)" class="px-4 py-2 rounded-full text-xs sm:text-sm font-semibold transition-all bg-white text-wedding-charcoal border border-wedding-border hover:border-wedding-gold">
+          <button data-cat="studio" onclick="filterCategory('studio', this)" class="px-4 py-2 rounded-full text-xs sm:text-sm font-semibold transition-all bg-white text-wedding-charcoal border border-wedding-border hover:border-wedding-gold">
             스튜디오
           </button>
-          <button onclick="filterCategory('makeup', this)" class="px-4 py-2 rounded-full text-xs sm:text-sm font-semibold transition-all bg-white text-wedding-charcoal border border-wedding-border hover:border-wedding-gold">
+          <button data-cat="dress" onclick="filterCategory('dress', this)" class="px-4 py-2 rounded-full text-xs sm:text-sm font-semibold transition-all bg-white text-wedding-charcoal border border-wedding-border hover:border-wedding-gold">
+            드레스
+          </button>
+          <button data-cat="makeup" onclick="filterCategory('makeup', this)" class="px-4 py-2 rounded-full text-xs sm:text-sm font-semibold transition-all bg-white text-wedding-charcoal border border-wedding-border hover:border-wedding-gold">
             메이크업·헤어
           </button>
-          <button onclick="filterCategory('jewelry', this)" class="px-4 py-2 rounded-full text-xs sm:text-sm font-semibold transition-all bg-white text-wedding-charcoal border border-wedding-border hover:border-wedding-gold">
+          <button data-cat="jewelry" onclick="filterCategory('jewelry', this)" class="px-4 py-2 rounded-full text-xs sm:text-sm font-semibold transition-all bg-white text-wedding-charcoal border border-wedding-border hover:border-wedding-gold">
             예물·예복
           </button>
         </div>
@@ -816,13 +838,476 @@
           </div>
         </div>
 
+        <!-- ==============================================
+             ADDITIONAL ARCHIVE CARDS (LOAD MORE ITEMS)
+             ============================================== -->
+
+        <!-- Card 7: The Raum Majestic Ballroom (Wedding Hall) -->
+        <div class="card-item extra-archive-card hidden group bg-white rounded-2xl overflow-hidden border border-wedding-border/80 shadow-sm hover:shadow-card-hover transition-all duration-300 flex flex-col" data-category="hall" data-region="gangnam" data-style="chapel">
+          <div class="relative h-64 overflow-hidden img-zoom-wrapper">
+            <img 
+              src="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1000&q=80" 
+              alt="더 라움 마제스틱 볼룸" 
+              class="w-full h-full object-cover"
+              loading="lazy"
+            >
+            <span class="absolute top-4 left-4 bg-wedding-dark/80 backdrop-blur-md text-wedding-gold text-xs font-semibold px-3 py-1 rounded-full border border-wedding-gold/30">
+              럭셔리 캐슬 &amp; 채플
+            </span>
+            <button onclick="toggleWishlist(7, '더 라움 마제스틱 볼룸', '웨딩홀', 'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=400&q=80', event)" class="wish-btn absolute top-4 right-4 w-9 h-9 rounded-full bg-white/80 backdrop-blur-md flex items-center justify-center text-wedding-charcoal hover:text-wedding-rose hover:bg-white transition">
+              <i data-lucide="heart" class="w-4 h-4"></i>
+            </button>
+            <div class="absolute bottom-3 left-4 text-white text-xs font-medium bg-black/40 backdrop-blur-sm px-2.5 py-0.5 rounded">
+              서울 강남구 역삼동
+            </div>
+          </div>
+          <div class="p-6 flex-1 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between text-xs text-wedding-muted mb-2">
+                <span class="flex items-center gap-1 font-semibold text-wedding-dark">
+                  <i data-lucide="star" class="w-3.5 h-3.5 text-amber-500 fill-amber-500"></i> 4.97 (후기 380건)
+                </span>
+                <span>보증인원 200~600명</span>
+              </div>
+              <h3 class="font-serif text-xl font-bold text-wedding-dark group-hover:text-wedding-gold transition-colors">
+                더 라움 마제스틱 볼룸 (The Raum)
+              </h3>
+              <p class="text-xs text-wedding-muted mt-2 line-clamp-2 leading-relaxed">
+                유럽 르네상스 대저택을 연상시키는 웅장한 캐슬 아키텍처. 12m 초고층 돔 천고와 성스러운 파이프오르간 세레머니.
+              </p>
+              <div class="flex flex-wrap gap-1.5 mt-3">
+                <span class="text-[11px] px-2 py-0.5 rounded bg-wedding-cream text-wedding-darkgold font-medium">단독 대저택</span>
+                <span class="text-[11px] px-2 py-0.5 rounded bg-wedding-cream text-wedding-darkgold font-medium">12m 돔 천고</span>
+                <span class="text-[11px] px-2 py-0.5 rounded bg-wedding-cream text-wedding-darkgold font-medium">야외 가든 리셉션</span>
+              </div>
+            </div>
+            <div class="mt-6 pt-4 border-t border-wedding-border flex items-center justify-between">
+              <div>
+                <span class="text-[11px] text-wedding-muted block">예상 식대 &amp; 대관</span>
+                <span class="text-sm font-bold text-wedding-dark">식대 13만원~ / 대관 1,800만원~</span>
+              </div>
+              <button onclick="openDetailModal('hall-theraum')" class="px-3.5 py-1.5 rounded-lg bg-wedding-ivory border border-wedding-gold/60 text-wedding-gold text-xs font-semibold hover:bg-wedding-gold hover:text-white transition">
+                상세 견적보기
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 8: Banyan Tree Namsan Terrace (Wedding Hall) -->
+        <div class="card-item extra-archive-card hidden group bg-white rounded-2xl overflow-hidden border border-wedding-border/80 shadow-sm hover:shadow-card-hover transition-all duration-300 flex flex-col" data-category="hall" data-region="jongno" data-style="outdoor">
+          <div class="relative h-64 overflow-hidden img-zoom-wrapper">
+            <img 
+              src="https://images.unsplash.com/photo-1469371670807-013ccf25f16a?auto=format&fit=crop&w=1000&q=80" 
+              alt="반얀트리 클럽 앤 스파 서울 남산 테라스" 
+              class="w-full h-full object-cover"
+              loading="lazy"
+            >
+            <span class="absolute top-4 left-4 bg-wedding-dark/80 backdrop-blur-md text-wedding-gold text-xs font-semibold px-3 py-1 rounded-full border border-wedding-gold/30">
+              야외 가든 &amp; 호텔
+            </span>
+            <button onclick="toggleWishlist(8, '반얀트리 남산 테라스', '웨딩홀', 'https://images.unsplash.com/photo-1469371670807-013ccf25f16a?auto=format&fit=crop&w=400&q=80', event)" class="wish-btn absolute top-4 right-4 w-9 h-9 rounded-full bg-white/80 backdrop-blur-md flex items-center justify-center text-wedding-charcoal hover:text-wedding-rose hover:bg-white transition">
+              <i data-lucide="heart" class="w-4 h-4"></i>
+            </button>
+            <div class="absolute bottom-3 left-4 text-white text-xs font-medium bg-black/40 backdrop-blur-sm px-2.5 py-0.5 rounded">
+              서울 중구 장충동
+            </div>
+          </div>
+          <div class="p-6 flex-1 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between text-xs text-wedding-muted mb-2">
+                <span class="flex items-center gap-1 font-semibold text-wedding-dark">
+                  <i data-lucide="star" class="w-3.5 h-3.5 text-amber-500 fill-amber-500"></i> 4.94 (후기 195건)
+                </span>
+                <span>보증인원 100~300명</span>
+              </div>
+              <h3 class="font-serif text-xl font-bold text-wedding-dark group-hover:text-wedding-gold transition-colors">
+                반얀트리 클럽 앤 스파 서울 남산 테라스
+              </h3>
+              <p class="text-xs text-wedding-muted mt-2 line-clamp-2 leading-relaxed">
+                남산의 숲과 프라이빗 오아시스 풀사이드가 어우러진 최고급 야외 가든 웨딩. 해외 리조트 같은 프라이빗 파티.
+              </p>
+              <div class="flex flex-wrap gap-1.5 mt-3">
+                <span class="text-[11px] px-2 py-0.5 rounded bg-wedding-cream text-wedding-darkgold font-medium">남산 포레스트뷰</span>
+                <span class="text-[11px] px-2 py-0.5 rounded bg-wedding-cream text-wedding-darkgold font-medium">풀사이드 가든</span>
+                <span class="text-[11px] px-2 py-0.5 rounded bg-wedding-cream text-wedding-darkgold font-medium">1일 1팀 프라이빗</span>
+              </div>
+            </div>
+            <div class="mt-6 pt-4 border-t border-wedding-border flex items-center justify-between">
+              <div>
+                <span class="text-[11px] text-wedding-muted block">예상 식대 &amp; 대관</span>
+                <span class="text-sm font-bold text-wedding-dark">식대 18만원~ / 대관 2,200만원~</span>
+              </div>
+              <button onclick="openDetailModal('hall-banyantree')" class="px-3.5 py-1.5 rounded-lg bg-wedding-ivory border border-wedding-gold/60 text-wedding-gold text-xs font-semibold hover:bg-wedding-gold hover:text-white transition">
+                상세 견적보기
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 9: EL Tower Grace Hall (Wedding Hall) -->
+        <div class="card-item extra-archive-card hidden group bg-white rounded-2xl overflow-hidden border border-wedding-border/80 shadow-sm hover:shadow-card-hover transition-all duration-300 flex flex-col" data-category="hall" data-region="gangnam" data-style="convention">
+          <div class="relative h-64 overflow-hidden img-zoom-wrapper">
+            <img 
+              src="https://images.unsplash.com/photo-1545232979-fbf68fe9b1af?auto=format&fit=crop&w=1000&q=80" 
+              alt="엘타워 그레이스홀" 
+              class="w-full h-full object-cover"
+              loading="lazy"
+            >
+            <span class="absolute top-4 left-4 bg-wedding-dark/80 backdrop-blur-md text-wedding-gold text-xs font-semibold px-3 py-1 rounded-full border border-wedding-gold/30">
+              호텔형 럭셔리 컨벤션
+            </span>
+            <button onclick="toggleWishlist(9, '엘타워 그레이스홀', '웨딩홀', 'https://images.unsplash.com/photo-1545232979-fbf68fe9b1af?auto=format&fit=crop&w=400&q=80', event)" class="wish-btn absolute top-4 right-4 w-9 h-9 rounded-full bg-white/80 backdrop-blur-md flex items-center justify-center text-wedding-charcoal hover:text-wedding-rose hover:bg-white transition">
+              <i data-lucide="heart" class="w-4 h-4"></i>
+            </button>
+            <div class="absolute bottom-3 left-4 text-white text-xs font-medium bg-black/40 backdrop-blur-sm px-2.5 py-0.5 rounded">
+              서울 서초구 양재동
+            </div>
+          </div>
+          <div class="p-6 flex-1 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between text-xs text-wedding-muted mb-2">
+                <span class="flex items-center gap-1 font-semibold text-wedding-dark">
+                  <i data-lucide="star" class="w-3.5 h-3.5 text-amber-500 fill-amber-500"></i> 4.91 (후기 410건)
+                </span>
+                <span>보증인원 250~500명</span>
+              </div>
+              <h3 class="font-serif text-xl font-bold text-wedding-dark group-hover:text-wedding-gold transition-colors">
+                엘타워 그레이스홀 (EL TOWER)
+              </h3>
+              <p class="text-xs text-wedding-muted mt-2 line-clamp-2 leading-relaxed">
+                독일 명품 파이프오르간의 장엄한 울림과 10m 초고층 돔 천고. 양재역 도보 1분의 완벽한 교통과 특급 연회 서비스.
+              </p>
+              <div class="flex flex-wrap gap-1.5 mt-3">
+                <span class="text-[11px] px-2 py-0.5 rounded bg-wedding-cream text-wedding-darkgold font-medium">독일 파이프오르간</span>
+                <span class="text-[11px] px-2 py-0.5 rounded bg-wedding-cream text-wedding-darkgold font-medium">10m 돔 천고</span>
+                <span class="text-[11px] px-2 py-0.5 rounded bg-wedding-cream text-wedding-darkgold font-medium">양재역 도보 1분</span>
+              </div>
+            </div>
+            <div class="mt-6 pt-4 border-t border-wedding-border flex items-center justify-between">
+              <div>
+                <span class="text-[11px] text-wedding-muted block">예상 식대 &amp; 대관</span>
+                <span class="text-sm font-bold text-wedding-dark">식대 9.5만원~ / 대관 900만원~</span>
+              </div>
+              <button onclick="openDetailModal('hall-eltower')" class="px-3.5 py-1.5 rounded-lg bg-wedding-ivory border border-wedding-gold/60 text-wedding-gold text-xs font-semibold hover:bg-wedding-gold hover:text-white transition">
+                상세 견적보기
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 10: MUI Studio (Studio) -->
+        <div class="card-item extra-archive-card hidden group bg-white rounded-2xl overflow-hidden border border-wedding-border/80 shadow-sm hover:shadow-card-hover transition-all duration-300 flex flex-col" data-category="studio" data-region="gangnam">
+          <div class="relative h-64 overflow-hidden img-zoom-wrapper">
+            <img 
+              src="https://images.unsplash.com/photo-1532712938310-34cb3982ef74?auto=format&fit=crop&w=1000&q=80" 
+              alt="무이 스튜디오 청담" 
+              class="w-full h-full object-cover"
+              loading="lazy"
+            >
+            <span class="absolute top-4 left-4 bg-wedding-dark/80 backdrop-blur-md text-wedding-gold text-xs font-semibold px-3 py-1 rounded-full border border-wedding-gold/30">
+              하이엔드 감성 스튜디오
+            </span>
+            <button onclick="toggleWishlist(10, '무이 스튜디오 청담', '스튜디오', 'https://images.unsplash.com/photo-1532712938310-34cb3982ef74?auto=format&fit=crop&w=400&q=80', event)" class="wish-btn absolute top-4 right-4 w-9 h-9 rounded-full bg-white/80 backdrop-blur-md flex items-center justify-center text-wedding-charcoal hover:text-wedding-rose hover:bg-white transition">
+              <i data-lucide="heart" class="w-4 h-4"></i>
+            </button>
+            <div class="absolute bottom-3 left-4 text-white text-xs font-medium bg-black/40 backdrop-blur-sm px-2.5 py-0.5 rounded">
+              서울 강남구 청담동
+            </div>
+          </div>
+          <div class="p-6 flex-1 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between text-xs text-wedding-muted mb-2">
+                <span class="flex items-center gap-1 font-semibold text-wedding-dark">
+                  <i data-lucide="star" class="w-3.5 h-3.5 text-amber-500 fill-amber-500"></i> 4.98 (후기 520건)
+                </span>
+                <span>하루 2팀 단독 프라이빗 촬영</span>
+              </div>
+              <h3 class="font-serif text-xl font-bold text-wedding-dark group-hover:text-wedding-gold transition-colors">
+                무이 스튜디오 청담 (MUI Studio)
+              </h3>
+              <p class="text-xs text-wedding-muted mt-2 line-clamp-2 leading-relaxed">
+                셀럽과 트렌드세터들이 가장 사랑하는 인물 포트레이트. 정원 테라스 야간 로드씬과 영화 같은 독보적 색감.
+              </p>
+              <div class="flex flex-wrap gap-1.5 mt-3">
+                <span class="text-[11px] px-2 py-0.5 rounded bg-wedding-cream text-wedding-darkgold font-medium">인물 중심</span>
+                <span class="text-[11px] px-2 py-0.5 rounded bg-wedding-cream text-wedding-darkgold font-medium">가든 야간씬</span>
+                <span class="text-[11px] px-2 py-0.5 rounded bg-wedding-cream text-wedding-darkgold font-medium">프라이빗 커스텀</span>
+              </div>
+            </div>
+            <div class="mt-6 pt-4 border-t border-wedding-border flex items-center justify-between">
+              <div>
+                <span class="text-[11px] text-wedding-muted block">촬영 패키지 견적</span>
+                <span class="text-sm font-bold text-wedding-dark">180만원 ~ 320만원</span>
+              </div>
+              <button onclick="openDetailModal('studio-mui')" class="px-3.5 py-1.5 rounded-lg bg-wedding-ivory border border-wedding-gold/60 text-wedding-gold text-xs font-semibold hover:bg-wedding-gold hover:text-white transition">
+                포트폴리오 보기
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 11: Celeb Bridal (Dress) -->
+        <div class="card-item extra-archive-card hidden group bg-white rounded-2xl overflow-hidden border border-wedding-border/80 shadow-sm hover:shadow-card-hover transition-all duration-300 flex flex-col" data-category="dress" data-region="gangnam">
+          <div class="relative h-64 overflow-hidden img-zoom-wrapper">
+            <img 
+              src="https://images.unsplash.com/photo-1546804784-896d0dca3805?auto=format&fit=crop&w=1000&q=80" 
+              alt="셀레브 브라이덜" 
+              class="w-full h-full object-cover"
+              loading="lazy"
+            >
+            <span class="absolute top-4 left-4 bg-wedding-dark/80 backdrop-blur-md text-wedding-gold text-xs font-semibold px-3 py-1 rounded-full border border-wedding-gold/30">
+              유니크 꾸뛰르 드레스
+            </span>
+            <button onclick="toggleWishlist(11, '셀레브 브라이덜', '드레스', 'https://images.unsplash.com/photo-1546804784-896d0dca3805?auto=format&fit=crop&w=400&q=80', event)" class="wish-btn absolute top-4 right-4 w-9 h-9 rounded-full bg-white/80 backdrop-blur-md flex items-center justify-center text-wedding-charcoal hover:text-wedding-rose hover:bg-white transition">
+              <i data-lucide="heart" class="w-4 h-4"></i>
+            </button>
+            <div class="absolute bottom-3 left-4 text-white text-xs font-medium bg-black/40 backdrop-blur-sm px-2.5 py-0.5 rounded">
+              서울 강남구 청담동
+            </div>
+          </div>
+          <div class="p-6 flex-1 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between text-xs text-wedding-muted mb-2">
+                <span class="flex items-center gap-1 font-semibold text-wedding-dark">
+                  <i data-lucide="star" class="w-3.5 h-3.5 text-amber-500 fill-amber-500"></i> 4.93 (후기 310건)
+                </span>
+                <span>100% 프라이빗 피팅룸</span>
+              </div>
+              <h3 class="font-serif text-xl font-bold text-wedding-dark group-hover:text-wedding-gold transition-colors">
+                셀레브 브라이덜 (Celeb Bridal)
+              </h3>
+              <p class="text-xs text-wedding-muted mt-2 line-clamp-2 leading-relaxed">
+                감각적인 비딩 레이스와 입체적인 실루엣으로 신부 본연의 아우라를 살리는 꾸뛰르 숍. 뉴욕/밀라노 최신 라인업.
+              </p>
+              <div class="flex flex-wrap gap-1.5 mt-3">
+                <span class="text-[11px] px-2 py-0.5 rounded bg-wedding-cream text-wedding-darkgold font-medium">맑은 비즈감</span>
+                <span class="text-[11px] px-2 py-0.5 rounded bg-wedding-cream text-wedding-darkgold font-medium">퍼스널 큐레이션</span>
+                <span class="text-[11px] px-2 py-0.5 rounded bg-wedding-cream text-wedding-darkgold font-medium">뉴욕/밀라노 직수입</span>
+              </div>
+            </div>
+            <div class="mt-6 pt-4 border-t border-wedding-border flex items-center justify-between">
+              <div>
+                <span class="text-[11px] text-wedding-muted block">패키지 / 대여가</span>
+                <span class="text-sm font-bold text-wedding-dark">200만원 ~ 380만원</span>
+              </div>
+              <button onclick="openDetailModal('dress-celeb')" class="px-3.5 py-1.5 rounded-lg bg-wedding-ivory border border-wedding-gold/60 text-wedding-gold text-xs font-semibold hover:bg-wedding-gold hover:text-white transition">
+                컬렉션 화보보기
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 12: Jung Saem Mool Inspiration (Makeup) -->
+        <div class="card-item extra-archive-card hidden group bg-white rounded-2xl overflow-hidden border border-wedding-border/80 shadow-sm hover:shadow-card-hover transition-all duration-300 flex flex-col" data-category="makeup" data-region="gangnam">
+          <div class="relative h-64 overflow-hidden img-zoom-wrapper">
+            <img 
+              src="https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?auto=format&fit=crop&w=1000&q=80" 
+              alt="정샘물 인스피레이션 웨스트" 
+              class="w-full h-full object-cover"
+              loading="lazy"
+            >
+            <span class="absolute top-4 left-4 bg-wedding-dark/80 backdrop-blur-md text-wedding-gold text-xs font-semibold px-3 py-1 rounded-full border border-wedding-gold/30">
+              K-웨딩 대표 뷰티
+            </span>
+            <button onclick="toggleWishlist(12, '정샘물 인스피레이션 웨스트', '메이크업', 'https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?auto=format&fit=crop&w=400&q=80', event)" class="wish-btn absolute top-4 right-4 w-9 h-9 rounded-full bg-white/80 backdrop-blur-md flex items-center justify-center text-wedding-charcoal hover:text-wedding-rose hover:bg-white transition">
+              <i data-lucide="heart" class="w-4 h-4"></i>
+            </button>
+            <div class="absolute bottom-3 left-4 text-white text-xs font-medium bg-black/40 backdrop-blur-sm px-2.5 py-0.5 rounded">
+              서울 강남구 청담동
+            </div>
+          </div>
+          <div class="p-6 flex-1 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between text-xs text-wedding-muted mb-2">
+                <span class="flex items-center gap-1 font-semibold text-wedding-dark">
+                  <i data-lucide="star" class="w-3.5 h-3.5 text-amber-500 fill-amber-500"></i> 4.97 (후기 630건)
+                </span>
+                <span>원장/부원장 1:1 퍼스널 매칭</span>
+              </div>
+              <h3 class="font-serif text-xl font-bold text-wedding-dark group-hover:text-wedding-gold transition-colors">
+                정샘물 인스피레이션 웨스트 (JUNG SAEM MOOL)
+              </h3>
+              <p class="text-xs text-wedding-muted mt-2 line-clamp-2 leading-relaxed">
+                신부 본연의 피부결을 가장 맑고 투명하게 살리는 투명 메이크업의 정석. 본식 조명 아래서 가장 오래 유지되는 지속력.
+              </p>
+              <div class="flex flex-wrap gap-1.5 mt-3">
+                <span class="text-[11px] px-2 py-0.5 rounded bg-wedding-cream text-wedding-darkgold font-medium">맑은 윤광 베이스</span>
+                <span class="text-[11px] px-2 py-0.5 rounded bg-wedding-cream text-wedding-darkgold font-medium">퍼스널 컬러 진단</span>
+                <span class="text-[11px] px-2 py-0.5 rounded bg-wedding-cream text-wedding-darkgold font-medium">신랑 피부케어 포함</span>
+              </div>
+            </div>
+            <div class="mt-6 pt-4 border-t border-wedding-border flex items-center justify-between">
+              <div>
+                <span class="text-[11px] text-wedding-muted block">패키지 견적 (신랑+신부)</span>
+                <span class="text-sm font-bold text-wedding-dark">90만원 ~ 180만원</span>
+              </div>
+              <button onclick="openDetailModal('makeup-jsm')" class="px-3.5 py-1.5 rounded-lg bg-wedding-ivory border border-wedding-gold/60 text-wedding-gold text-xs font-semibold hover:bg-wedding-gold hover:text-white transition">
+                스타일링 화보보기
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 13: Étoffe Couture (Dress) -->
+        <div class="card-item extra-archive-card hidden group bg-white rounded-2xl overflow-hidden border border-wedding-border/80 shadow-sm hover:shadow-card-hover transition-all duration-300 flex flex-col" data-category="dress" data-region="gangnam">
+          <div class="relative h-64 overflow-hidden img-zoom-wrapper">
+            <img 
+              src="https://images.unsplash.com/photo-1519657973307-e022513f1e94?auto=format&fit=crop&w=1000&q=80" 
+              alt="에토프 꾸뛰르" 
+              class="w-full h-full object-cover"
+              loading="lazy"
+            >
+            <span class="absolute top-4 left-4 bg-wedding-dark/80 backdrop-blur-md text-wedding-gold text-xs font-semibold px-3 py-1 rounded-full border border-wedding-gold/30">
+              최상급 실크 &amp; 절제미
+            </span>
+            <button onclick="toggleWishlist(13, '에토프 꾸뛰르', '드레스', 'https://images.unsplash.com/photo-1519657973307-e022513f1e94?auto=format&fit=crop&w=400&q=80', event)" class="wish-btn absolute top-4 right-4 w-9 h-9 rounded-full bg-white/80 backdrop-blur-md flex items-center justify-center text-wedding-charcoal hover:text-wedding-rose hover:bg-white transition">
+              <i data-lucide="heart" class="w-4 h-4"></i>
+            </button>
+            <div class="absolute bottom-3 left-4 text-white text-xs font-medium bg-black/40 backdrop-blur-sm px-2.5 py-0.5 rounded">
+              서울 강남구 논현동
+            </div>
+          </div>
+          <div class="p-6 flex-1 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between text-xs text-wedding-muted mb-2">
+                <span class="flex items-center gap-1 font-semibold text-wedding-dark">
+                  <i data-lucide="star" class="w-3.5 h-3.5 text-amber-500 fill-amber-500"></i> 4.95 (후기 240건)
+                </span>
+                <span>하이엔드 오뜨꾸뛰르</span>
+              </div>
+              <h3 class="font-serif text-xl font-bold text-wedding-dark group-hover:text-wedding-gold transition-colors">
+                에토프 꾸뛰르 (Étoffe Couture)
+              </h3>
+              <p class="text-xs text-wedding-muted mt-2 line-clamp-2 leading-relaxed">
+                군더더기 없는 도비실크와 프랑스 수입 레이스가 완성하는 정제된 하이엔드 무드. 격조 높은 호텔 예식 신부들의 원픽.
+              </p>
+              <div class="flex flex-wrap gap-1.5 mt-3">
+                <span class="text-[11px] px-2 py-0.5 rounded bg-wedding-cream text-wedding-darkgold font-medium">도비실크</span>
+                <span class="text-[11px] px-2 py-0.5 rounded bg-wedding-cream text-wedding-darkgold font-medium">프랑스 수입레이스</span>
+                <span class="text-[11px] px-2 py-0.5 rounded bg-wedding-cream text-wedding-darkgold font-medium">가봉스냅 특화</span>
+              </div>
+            </div>
+            <div class="mt-6 pt-4 border-t border-wedding-border flex items-center justify-between">
+              <div>
+                <span class="text-[11px] text-wedding-muted block">패키지 / 대여가</span>
+                <span class="text-sm font-bold text-wedding-dark">220만원 ~ 420만원</span>
+              </div>
+              <button onclick="openDetailModal('dress-etoffe')" class="px-3.5 py-1.5 rounded-lg bg-wedding-ivory border border-wedding-gold/60 text-wedding-gold text-xs font-semibold hover:bg-wedding-gold hover:text-white transition">
+                컬렉션 화보보기
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 14: HAYES Studio (Studio) -->
+        <div class="card-item extra-archive-card hidden group bg-white rounded-2xl overflow-hidden border border-wedding-border/80 shadow-sm hover:shadow-card-hover transition-all duration-300 flex flex-col" data-category="studio" data-region="gangnam">
+          <div class="relative h-64 overflow-hidden img-zoom-wrapper">
+            <img 
+              src="https://images.unsplash.com/photo-1520854221256-17451cc331bf?auto=format&fit=crop&w=1000&q=80" 
+              alt="헤이스 스튜디오" 
+              class="w-full h-full object-cover"
+              loading="lazy"
+            >
+            <span class="absolute top-4 left-4 bg-wedding-dark/80 backdrop-blur-md text-wedding-gold text-xs font-semibold px-3 py-1 rounded-full border border-wedding-gold/30">
+              숲속 자연광 가든 화보
+            </span>
+            <button onclick="toggleWishlist(14, '헤이스 스튜디오', '스튜디오', 'https://images.unsplash.com/photo-1520854221256-17451cc331bf?auto=format&fit=crop&w=400&q=80', event)" class="wish-btn absolute top-4 right-4 w-9 h-9 rounded-full bg-white/80 backdrop-blur-md flex items-center justify-center text-wedding-charcoal hover:text-wedding-rose hover:bg-white transition">
+              <i data-lucide="heart" class="w-4 h-4"></i>
+            </button>
+            <div class="absolute bottom-3 left-4 text-white text-xs font-medium bg-black/40 backdrop-blur-sm px-2.5 py-0.5 rounded">
+              서울 서초구 내곡동
+            </div>
+          </div>
+          <div class="p-6 flex-1 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between text-xs text-wedding-muted mb-2">
+                <span class="flex items-center gap-1 font-semibold text-wedding-dark">
+                  <i data-lucide="star" class="w-3.5 h-3.5 text-amber-500 fill-amber-500"></i> 4.96 (후기 380건)
+                </span>
+                <span>프라이빗 정원 단독 대관</span>
+              </div>
+              <h3 class="font-serif text-xl font-bold text-wedding-dark group-hover:text-wedding-gold transition-colors">
+                헤이스 스튜디오 (HAYES Studio)
+              </h3>
+              <p class="text-xs text-wedding-muted mt-2 line-clamp-2 leading-relaxed">
+                비밀의 숲속 정원에서 펼쳐지는 한 편의 로맨틱 영화 같은 야외 가든 스냅. 자연광이 빚어내는 독보적인 온기와 감성.
+              </p>
+              <div class="flex flex-wrap gap-1.5 mt-3">
+                <span class="text-[11px] px-2 py-0.5 rounded bg-wedding-cream text-wedding-darkgold font-medium">단독 대저택 정원</span>
+                <span class="text-[11px] px-2 py-0.5 rounded bg-wedding-cream text-wedding-darkgold font-medium">자연광 로맨틱</span>
+                <span class="text-[11px] px-2 py-0.5 rounded bg-wedding-cream text-wedding-darkgold font-medium">사계절 야외스냅</span>
+              </div>
+            </div>
+            <div class="mt-6 pt-4 border-t border-wedding-border flex items-center justify-between">
+              <div>
+                <span class="text-[11px] text-wedding-muted block">촬영 패키지 견적</span>
+                <span class="text-sm font-bold text-wedding-dark">190만원 ~ 340만원</span>
+              </div>
+              <button onclick="openDetailModal('studio-hayes')" class="px-3.5 py-1.5 rounded-lg bg-wedding-ivory border border-wedding-gold/60 text-wedding-gold text-xs font-semibold hover:bg-wedding-gold hover:text-white transition">
+                포트폴리오 보기
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 15: Kim Chung Kyung Hair Face (Makeup) -->
+        <div class="card-item extra-archive-card hidden group bg-white rounded-2xl overflow-hidden border border-wedding-border/80 shadow-sm hover:shadow-card-hover transition-all duration-300 flex flex-col" data-category="makeup" data-region="gangnam">
+          <div class="relative h-64 overflow-hidden img-zoom-wrapper">
+            <img 
+              src="https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&w=1000&q=80" 
+              alt="김청경 헤어페이스" 
+              class="w-full h-full object-cover"
+              loading="lazy"
+            >
+            <span class="absolute top-4 left-4 bg-wedding-dark/80 backdrop-blur-md text-wedding-gold text-xs font-semibold px-3 py-1 rounded-full border border-wedding-gold/30">
+              30년 전통 뷰티 살롱
+            </span>
+            <button onclick="toggleWishlist(15, '김청경 헤어페이스', '메이크업', 'https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&w=400&q=80', event)" class="wish-btn absolute top-4 right-4 w-9 h-9 rounded-full bg-white/80 backdrop-blur-md flex items-center justify-center text-wedding-charcoal hover:text-wedding-rose hover:bg-white transition">
+              <i data-lucide="heart" class="w-4 h-4"></i>
+            </button>
+            <div class="absolute bottom-3 left-4 text-white text-xs font-medium bg-black/40 backdrop-blur-sm px-2.5 py-0.5 rounded">
+              서울 강남구 신사동
+            </div>
+          </div>
+          <div class="p-6 flex-1 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between text-xs text-wedding-muted mb-2">
+                <span class="flex items-center gap-1 font-semibold text-wedding-dark">
+                  <i data-lucide="star" class="w-3.5 h-3.5 text-amber-500 fill-amber-500"></i> 4.94 (후기 450건)
+                </span>
+                <span>VIP 전용 단독 피팅룸</span>
+              </div>
+              <h3 class="font-serif text-xl font-bold text-wedding-dark group-hover:text-wedding-gold transition-colors">
+                김청경 헤어페이스 (KIM CHUNG KYUNG)
+              </h3>
+              <p class="text-xs text-wedding-muted mt-2 line-clamp-2 leading-relaxed">
+                시간이 지나도 변함없이 우아한 대한민국 대표 정통 웨딩 뷰티. 독보적인 윤광 피부 표현과 클래식 헤어 업스타일.
+              </p>
+              <div class="flex flex-wrap gap-1.5 mt-3">
+                <span class="text-[11px] px-2 py-0.5 rounded bg-wedding-cream text-wedding-darkgold font-medium">윤광 베이스</span>
+                <span class="text-[11px] px-2 py-0.5 rounded bg-wedding-cream text-wedding-darkgold font-medium">클래식 헤어</span>
+                <span class="text-[11px] px-2 py-0.5 rounded bg-wedding-cream text-wedding-darkgold font-medium">30년 웨딩 명가</span>
+              </div>
+            </div>
+            <div class="mt-6 pt-4 border-t border-wedding-border flex items-center justify-between">
+              <div>
+                <span class="text-[11px] text-wedding-muted block">패키지 견적 (신랑+신부)</span>
+                <span class="text-sm font-bold text-wedding-dark">85만원 ~ 160만원</span>
+              </div>
+              <button onclick="openDetailModal('makeup-kimchungkyung')" class="px-3.5 py-1.5 rounded-lg bg-wedding-ivory border border-wedding-gold/60 text-wedding-gold text-xs font-semibold hover:bg-wedding-gold hover:text-white transition">
+                스타일링 화보보기
+              </button>
+            </div>
+          </div>
+        </div>
+
       </div>
 
       <!-- Bottom Load / Action -->
       <div class="mt-14 text-center">
-        <button onclick="showToast('전국 1,200개 이상의 웨딩홀 & 제휴사 실시간 견적 조회가 가능합니다.')" class="inline-flex items-center gap-2 px-8 py-3.5 rounded-full border border-wedding-dark text-wedding-dark hover:bg-wedding-dark hover:text-white font-semibold text-sm transition-all shadow-sm">
-          <span>더 많은 제휴 웨딩홀 & 스드메 아카이브 보기</span>
-          <i data-lucide="arrow-right" class="w-4 h-4"></i>
+        <button id="btnLoadMoreArchive" onclick="loadMoreArchive()" class="inline-flex items-center gap-2 px-8 py-3.5 rounded-full border border-wedding-dark text-wedding-dark hover:bg-wedding-dark hover:text-white font-semibold text-sm transition-all shadow-sm group">
+          <span>더 많은 제휴 웨딩홀 &amp; 스드메 아카이브 보기 (9개 더보기)</span>
+          <i data-lucide="arrow-down" class="w-4 h-4 group-hover:translate-y-0.5 transition-transform"></i>
         </button>
       </div>
 
@@ -2178,8 +2663,8 @@
         <div>
           <h4 class="font-serif text-sm font-bold text-white mb-4">웨딩 서비스 바로가기</h4>
           <ul class="space-y-2.5 text-xs text-wedding-sand/80">
-            <li><a href="#wedding-hall" class="hover:text-wedding-gold transition">인기 웨딩홀 실시간 잔여타임</a></li>
-            <li><a href="#sdm-section" class="hover:text-wedding-gold transition">스드메 브랜드 화보 & 견적</a></li>
+            <li><a href="#wedding-hall" onclick="navigateToCuration('hall', event)" class="hover:text-wedding-gold transition">인기 웨딩홀 실시간 잔여타임</a></li>
+            <li><a href="#sdm-section" onclick="navigateToCuration('sdm', event)" class="hover:text-wedding-gold transition">스드메 브랜드 화보 & 견적</a></li>
             <li><a href="#calculator" class="hover:text-wedding-gold transition">스마트 결혼 예산 계산기</a></li>
             <li><a href="#checklist" class="hover:text-wedding-gold transition">D-180 웨딩 체크리스트</a></li>
             <li><button onclick="openFairModal()" class="hover:text-wedding-gold transition text-left">2026 웨딩박람회 무료초대권</button></li>
@@ -2588,6 +3073,13 @@
       initWishlist();
       updateBudgetCalculator();
       initDDay();
+
+      // URL 해시 기반 자동 큐레이션 라우팅
+      if (window.location.hash === '#sdm-section') {
+        setTimeout(() => navigateToCuration('sdm'), 200);
+      } else if (window.location.hash === '#wedding-hall') {
+        setTimeout(() => navigateToCuration('hall'), 200);
+      }
     });
 
     // --------------------------------------------------------------------
@@ -2683,6 +3175,9 @@
       const region = document.getElementById("searchRegion").value;
       const style = document.getElementById("searchStyle").value;
       
+      // 검색 시에는 전체 아카이브를 개방하여 매칭된 결과를 충분히 탐색할 수 있도록 함
+      isArchiveExpanded = true;
+
       const cards = document.querySelectorAll(".card-item");
       let matchedCount = 0;
 
@@ -2702,36 +3197,166 @@
         }
       });
 
+      // 더보기 버튼 상태 업데이트
+      const btn = document.getElementById("btnLoadMoreArchive");
+      if (btn) {
+        btn.innerHTML = `<i data-lucide="check-circle" class="w-4 h-4 text-wedding-gold"></i><span>검색 매칭 아카이브(${matchedCount}개) 확인 · 1:1 맞춤 견적 매칭 신청</span>`;
+        if (window.lucide) lucide.createIcons();
+      }
+
       // Scroll to directory grid
       document.getElementById("wedding-hall").scrollIntoView({ behavior: 'smooth' });
       showToast(`검색 조건에 맞는 ${matchedCount}개의 웨딩 큐레이션을 찾았습니다.`);
     }
 
     function quickFilterKeyword(keyword) {
-      showToast(`'${keyword}' 관련 웨딩홀 및 스드메 컬렉션을 필터링합니다.`);
+      isArchiveExpanded = true;
+      const cards = document.querySelectorAll(".card-item");
+      let matchedCount = 0;
+
+      cards.forEach(card => {
+        const text = card.textContent.toLowerCase();
+        if (text.includes(keyword.toLowerCase())) {
+          card.classList.remove("hidden");
+          matchedCount++;
+        } else {
+          card.classList.add("hidden");
+        }
+      });
+
+      const btn = document.getElementById("btnLoadMoreArchive");
+      if (btn) {
+        btn.innerHTML = `<i data-lucide="check-circle" class="w-4 h-4 text-wedding-gold"></i><span>'${keyword}' 관련 컬렉션(${matchedCount}개) · 1:1 상담 예약</span>`;
+        if (window.lucide) lucide.createIcons();
+      }
+
       document.getElementById("wedding-hall").scrollIntoView({ behavior: 'smooth' });
+      showToast(`'${keyword}' 관련 ${matchedCount}개의 웨딩홀 및 스드메 컬렉션을 찾았습니다.`);
+    }
+
+    // --------------------------------------------------------------------
+    // CURATION ARCHIVE FILTER & NAVIGATION (WEDDING HALL & SDM)
+    // --------------------------------------------------------------------
+    let currentArchiveCategory = 'all';
+    let isArchiveExpanded = false;
+
+    function navigateToCuration(type, e) {
+      if (e) e.preventDefault();
+
+      const targetElem = document.getElementById("wedding-hall");
+      if (targetElem) {
+        targetElem.scrollIntoView({ behavior: 'smooth' });
+      }
+
+      // 탭 버튼 검색 및 필터 활성화
+      let tabBtn = null;
+      if (type === 'sdm') {
+        tabBtn = document.querySelector("#categoryFilterTabs button[data-cat='sdm']");
+        filterCategory('sdm', tabBtn);
+        showToast("✨ 감성 스·드·메(스튜디오·드레스·메이크업) 큐레이션 아카이브입니다.");
+      } else if (type === 'hall') {
+        tabBtn = document.querySelector("#categoryFilterTabs button[data-cat='hall']");
+        filterCategory('hall', tabBtn);
+        showToast("🏰 전국 프리미엄 웨딩홀 큐레이션 아카이브입니다.");
+      } else {
+        tabBtn = document.querySelector("#categoryFilterTabs button[data-cat='all']");
+        filterCategory('all', tabBtn);
+      }
     }
 
     function filterCategory(category, btn) {
-      // Update active tab buttons
+      currentArchiveCategory = category;
+
+      // 탭 버튼 스타일 갱신
       const buttons = document.querySelectorAll("#categoryFilterTabs button");
       buttons.forEach(b => {
         b.classList.remove("bg-wedding-dark", "text-white", "active-filter");
         b.classList.add("bg-white", "text-wedding-charcoal", "border", "border-wedding-border");
       });
-      btn.classList.add("bg-wedding-dark", "text-white", "active-filter");
-      btn.classList.remove("bg-white", "text-wedding-charcoal", "border");
 
-      // Filter cards
+      // 만약 btn이 넘어오지 않았다면 data-cat 속성으로 탐색
+      const targetBtn = btn || document.querySelector(`#categoryFilterTabs button[data-cat='${category}']`);
+      if (targetBtn) {
+        targetBtn.classList.add("bg-wedding-dark", "text-white", "active-filter");
+        targetBtn.classList.remove("bg-white", "text-wedding-charcoal", "border");
+      }
+
+      // 카드 필터링
       const cards = document.querySelectorAll(".card-item");
+      let visibleCount = 0;
+
       cards.forEach(card => {
+        const isExtra = card.classList.contains("extra-archive-card");
         const itemCat = card.getAttribute("data-category");
-        if (category === "all" || itemCat === category) {
+
+        // 더보기를 아직 누르지 않은 상태라면 추가 카드는 숨김 유지
+        if (isExtra && !isArchiveExpanded) {
+          card.classList.add("hidden");
+          return;
+        }
+
+        let isMatch = false;
+        if (category === "all") {
+          isMatch = true;
+        } else if (category === "sdm") {
+          // 스드메 종합 카테고리: 스튜디오, 드레스, 메이크업 모두 포함
+          isMatch = (itemCat === "studio" || itemCat === "dress" || itemCat === "makeup");
+        } else {
+          isMatch = (itemCat === category);
+        }
+
+        if (isMatch) {
           card.classList.remove("hidden");
+          visibleCount++;
         } else {
           card.classList.add("hidden");
         }
       });
+    }
+
+    function loadMoreArchive() {
+      const btn = document.getElementById("btnLoadMoreArchive");
+      if (!btn) return;
+
+      if (isArchiveExpanded) {
+        // 이미 15개 전체가 펼쳐진 상태에서는 1:1 견적 상담 모달 오픈
+        openConsultingModal();
+        return;
+      }
+
+      // 로딩 UI 피드백
+      btn.disabled = true;
+      btn.innerHTML = `
+        <span class="inline-block animate-spin mr-2">⏳</span>
+        <span>웨딩홀 및 스드메 아카이브 불러오는 중...</span>
+      `;
+
+      setTimeout(() => {
+        isArchiveExpanded = true;
+
+        // 현재 선택된 필터에 맞추어 카드 재정렬 및 표시
+        filterCategory(currentArchiveCategory);
+
+        // 아이콘 리렌더링
+        if (window.lucide) {
+          lucide.createIcons();
+        }
+
+        // 버튼 상태 및 텍스트 갱신
+        btn.disabled = false;
+        btn.className = "inline-flex items-center gap-2 px-8 py-3.5 rounded-full bg-wedding-dark text-white hover:bg-wedding-gold font-semibold text-sm transition-all shadow-md hover:shadow-lg group";
+        btn.innerHTML = `
+          <i data-lucide="check-circle" class="w-4 h-4 text-wedding-gold"></i>
+          <span>전체 아카이브(총 15개) 확인 완료 · 1:1 무료 견적 매칭 신청</span>
+          <i data-lucide="arrow-right" class="w-4 h-4 group-hover:translate-x-1 transition-transform"></i>
+        `;
+
+        if (window.lucide) {
+          lucide.createIcons();
+        }
+
+        showToast("✨ 탑티어 웨딩홀 3곳과 감성 스드메 6곳의 아카이브가 성공적으로 추가되었습니다!");
+      }, 400);
     }
 
     // --------------------------------------------------------------------
@@ -3528,6 +4153,96 @@
         mealPrice: '커플링 2인 세트 기준',
         hallRental: '180만원 ~ 390만원',
         desc: '장인의 정교한 세공으로 완성되는 평생의 약속. 손가락 굴곡에 꼭 맞는 인체공학적 착용감과 시대를 초월하는 모던한 디자인.'
+      },
+      'hall-theraum': {
+        title: '더 라움 마제스틱 볼룸 (The Raum)',
+        category: '럭셔리 캐슬 & 채플 웨딩',
+        img: 'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1200&q=80',
+        location: '서울 강남구 언주로 564',
+        capacity: '최소 200명 ~ 최대 600명',
+        mealPrice: '양식 코스 요리 1인 130,000원 ~ 180,000원',
+        hallRental: '대관료 및 커스텀 플라워 1,800만원 ~',
+        desc: '유럽 대저택을 연상시키는 웅장한 캐슬 아키텍처. 12m 초고층 돔 천고와 성스러운 파이프오르간 사운드가 완성하는 귀족적 프라이빗 웨딩.'
+      },
+      'hall-banyantree': {
+        title: '반얀트리 클럽 앤 스파 서울 남산 테라스',
+        category: '야외 가든 & 호텔 웨딩',
+        img: 'https://images.unsplash.com/photo-1469371670807-013ccf25f16a?auto=format&fit=crop&w=1200&q=80',
+        location: '서울 중구 장충단로 60',
+        capacity: '최소 100명 ~ 최대 300명',
+        mealPrice: '프리미엄 바비큐 & 코스 180,000원 ~ 260,000원',
+        hallRental: '가든 대관 및 연출 2,200만원 ~',
+        desc: '남산의 푸른 숲과 프라이빗 오아시스 풀사이드가 어우러진 최고급 야외 가든 웨딩. 해외 리조트 휴양지에 온 듯한 여유롭고 낭만적인 파티 세레머니.'
+      },
+      'hall-eltower': {
+        title: '엘타워 그레이스홀 (EL TOWER)',
+        category: '호텔형 럭셔리 컨벤션',
+        img: 'https://images.unsplash.com/photo-1545232979-fbf68fe9b1af?auto=format&fit=crop&w=1200&q=80',
+        location: '서울 서초구 강남대로 213',
+        capacity: '최소 250명 ~ 최대 500명',
+        mealPrice: '특급 호텔 조리장 양식 코스 95,000원 ~ 140,000원',
+        hallRental: '대관료 및 연출료 900만원 ~',
+        desc: '독일 명품 파이프오르간의 웅장한 연주와 10m 천고의 웅장함. 양재역 9번 출구 바로 앞의 편리한 교통과 수준 높은 특급 연회 서비스.'
+      },
+      'studio-mui': {
+        title: '무이 스튜디오 청담 (MUI Studio)',
+        category: '하이엔드 인물 & 야간씬 스튜디오',
+        img: 'https://images.unsplash.com/photo-1532712938310-34cb3982ef74?auto=format&fit=crop&w=1200&q=80',
+        location: '서울 강남구 압구정로 79길',
+        capacity: '하루 2팀 단독 촬영 (오전 / 오후 풀타임)',
+        mealPrice: '원본+수정본 20P 앨범 1권, 고급 대형 액자 1개',
+        hallRental: '180만원 ~ 320만원',
+        desc: '인기 연예인 및 인플루언서들이 가장 사랑하는 웨딩 스튜디오. 자연스러운 표정과 시선을 담아내며 청담 가든 야간 전구씬으로 독보적 아우라를 완성합니다.'
+      },
+      'dress-celeb': {
+        title: '셀레브 브라이덜 (Celeb Bridal)',
+        category: '감각적 비딩 & 유니크 꾸뛰르 드레스',
+        img: 'https://images.unsplash.com/photo-1546804784-896d0dca3805?auto=format&fit=crop&w=1200&q=80',
+        location: '서울 강남구 도산대로 55길',
+        capacity: '하루 4팀 한정 프라이빗 피팅룸',
+        mealPrice: '본식 1벌 + 촬영 3벌 세트 대여',
+        hallRental: '200만원 ~ 380만원',
+        desc: '감각적인 비딩 레이스와 세련된 패턴으로 신부 본연의 매력을 극대화하는 꾸뛰르 라벨. 뉴욕 및 밀라노 직수입 컬렉션 독점 보유.'
+      },
+      'makeup-jsm': {
+        title: '정샘물 인스피레이션 웨스트 (JUNG SAEM MOOL)',
+        category: 'K-웨딩 뷰티 & 맑은 투명 메이크업',
+        img: 'https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?auto=format&fit=crop&w=1200&q=80',
+        location: '서울 강남구 압구정로 60길',
+        capacity: '원장/부원장 전담 1:1 상담 예약제',
+        mealPrice: '신랑+신부 촬영 1회 & 본식 1회 풀패키지',
+        hallRental: '90만원 ~ 180만원',
+        desc: '신부 본연의 피부 톤과 결을 맑고 깨끗하게 표현하는 투명 메이크업의 대명사. 예식 당일 조명 아래서 가장 눈부신 투명 광채를 선사합니다.'
+      },
+      'dress-etoffe': {
+        title: '에토프 꾸뛰르 (Étoffe Couture)',
+        category: '최상급 도비실크 & 절제미 드레스',
+        img: 'https://images.unsplash.com/photo-1519657973307-e022513f1e94?auto=format&fit=crop&w=1200&q=80',
+        location: '서울 강남구 논현로 152길',
+        capacity: '100% 프라이빗 사전 예약제',
+        mealPrice: '본식 1벌 + 가봉 스냅 드레스 패키지',
+        hallRental: '220만원 ~ 420만원',
+        desc: '군더더기 없는 완벽한 테일러링과 은은한 광택의 실크 소재로 극상의 우아함을 자아내는 하이엔드 드레스 숍. 클래식한 호텔 예식에 최적.'
+      },
+      'studio-hayes': {
+        title: '헤이스 스튜디오 (HAYES Studio)',
+        category: '숲속 프라이빗 가든 & 내추럴 무드',
+        img: 'https://images.unsplash.com/photo-1520854221256-17451cc331bf?auto=format&fit=crop&w=1200&q=80',
+        location: '서울 서초구 헌릉로 210길',
+        capacity: '하루 1팀 단독 대관 촬영 가능',
+        mealPrice: '자연광 화보 30P 앨범 + 프리미엄 액자',
+        hallRental: '190만원 ~ 340만원',
+        desc: '숲속 비밀의 화원에서 두 사람만의 따뜻한 이야기를 담아내는 자연광 중심 감성 스튜디오. 사계절 자연의 색감을 그대로 녹여냅니다.'
+      },
+      'makeup-kimchungkyung': {
+        title: '김청경 헤어페이스 (KIM CHUNG KYUNG)',
+        category: '30년 전통 클래식 뷰티 & 윤광 메이크업',
+        img: 'https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&w=1200&q=80',
+        location: '서울 강남구 도산대로 81길',
+        capacity: 'VIP 전용 프라이빗 룸 완비',
+        mealPrice: '본식 헤어/메이크업 + 신랑 풀케어',
+        hallRental: '85만원 ~ 160만원',
+        desc: '시간이 흘러도 변함없이 단아하고 우아한 대한민국 정통 웨딩 뷰티 살롱. 빛나는 윤광 피부와 흐트러짐 없는 클래식 업스타일의 정석.'
       }
     };
 
