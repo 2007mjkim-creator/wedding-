@@ -9,6 +9,14 @@
   <!-- Favicon placeholder icon -->
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23C5A059'><path d='M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z'/></svg>">
 
+  <!-- PWA Manifest & Theme Color -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="메리스트">
+  <link rel="apple-touch-icon" href="/icons/icon-192x192.png">
+
   <!-- Google Fonts (Playfair Display & Cormorant & Pretendard/Noto Sans KR) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -4063,9 +4071,32 @@
     }
 
     function reserveDiningVenue(name) {
-      const searchUrl = `https://map.naver.com/p/search/${encodeURIComponent(name)}`;
+      // 1. 식당별 최적화된 검색 키워드 매핑 (오타 방지 및 네이버 지도 검색 정확도 향상)
+      const diningSearchKeywordMap = {
+        '석파랑': '석파랑',
+        '경복궁 프리미엄 한정식': '경복궁 한정식',
+        '긴자 청담점': '긴자 청담점',
+        '도원 스타일': '도원 스타일',
+        '울프강 스테이크하우스': '울프강 스테이크하우스 청담',
+        '보테가로': '보테가로 한남',
+        '테이스팅룸 & 치즈룸': '치즈룸',
+        '정식당': '정식당 청담',
+        '창고43': '창고43',
+        '우텐더': '우텐더 압구정',
+        '몽탄': '몽탄 삼각지',
+        '민스키친': '민스키친'
+      };
+
+      // 2. 괄호 및 괄호 내부 내용 (예: (종로 부암동), (강남/서초/전국) 등) 정규식으로 완전 제거
+      const cleanBaseName = (name || '').replace(/\s*\([^)]*\)/g, '').trim();
+
+      // 3. 매핑 키워드가 있으면 우선 적용, 없으면 괄호가 제거된 상호명 사용
+      const searchKeyword = diningSearchKeywordMap[cleanBaseName] || cleanBaseName || name;
+
+      // 4. 네이버 지도 검색 URL 생성 및 열기
+      const searchUrl = `https://map.naver.com/p/search/${encodeURIComponent(searchKeyword)}`;
       window.open(searchUrl, '_blank');
-      showToast(`'${name}' 지도 및 예약 페이지로 이동합니다.`);
+      showToast(`'${searchKeyword}' 네이버 지도 검색 페이지로 이동합니다.`);
     }
 
     function openDiningDetail(id) {
@@ -4722,6 +4753,21 @@
       const name = document.getElementById("sampleName").value;
       showToast(`${name}님, 실물 청첩장 샘플 10종 무료 키트 신청이 완료되었습니다! (배송비 무료 발송)`);
       e.target.reset();
+    }
+  </script>
+
+  <!-- PWA Service Worker Registration -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./service-worker.js')
+          .then((registration) => {
+            console.log('메리스트 PWA ServiceWorker 등록 성공:', registration.scope);
+          })
+          .catch((error) => {
+            console.error('메리스트 PWA ServiceWorker 등록 실패:', error);
+          });
+      });
     }
   </script>
 </body>
