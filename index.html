@@ -515,6 +515,16 @@
     }
     .vf-action:hover { border-color: #B8924C; color: var(--gold-text); }
 
+    /* 모바일 예산 계산기 상단 고정 요약 */
+    .calc-mini { transition: opacity 0.25s, transform 0.25s; }
+    .calc-mini.is-hidden { opacity: 0; transform: translateY(-10px); pointer-events: none; }
+    .calc-mini.is-bump #miniTotal { animation: calcBump 0.35s ease-out; display: inline-block; }
+    @keyframes calcBump {
+      0% { transform: scale(1); }
+      40% { transform: scale(1.08); }
+      100% { transform: scale(1); }
+    }
+
     /* 전국 웨딩 업체 디렉터리 카드 */
     .dir-card {
       display: flex; flex-direction: column;
@@ -2590,6 +2600,32 @@
         </p>
       </div>
 
+      <!-- 모바일 전용: 게이지를 조절하는 동안 상단에 고정되는 요약 견적 (PC는 오른쪽 리포트가 고정되므로 숨김) -->
+      <div id="calcMini" class="calc-mini lg:hidden sticky top-20 z-30 -mx-4 sm:mx-0 mb-5 px-4 sm:px-5 py-3 bg-wedding-dark/95 text-white backdrop-blur-md shadow-xl sm:rounded-2xl border-y sm:border border-wedding-darkgold/40" aria-live="polite">
+        <div class="flex items-end justify-between gap-3">
+          <div class="min-w-0">
+            <span class="block text-[11px] text-wedding-sand/80">총 예상 예산</span>
+            <span class="block font-serif text-[26px] leading-tight font-bold"><span id="miniTotal" class="gold-text">4,125</span><span class="text-sm font-sans text-white ml-1">만원</span></span>
+          </div>
+          <div class="text-right shrink-0">
+            <span class="block text-[11px] text-wedding-sand/80">축의금 상쇄 후 실부담</span>
+            <span id="miniNet" class="block text-[15px] font-bold text-wedding-gold">약 1,625만원</span>
+          </div>
+        </div>
+        <div class="mt-2.5 w-full h-2.5 rounded-full bg-white/10 overflow-hidden flex">
+          <div id="miniBarMeal" class="bg-amber-400 h-full transition-all duration-300" style="width:51%"></div>
+          <div id="miniBarHall" class="bg-rose-400 h-full transition-all duration-300" style="width:9%"></div>
+          <div id="miniBarSdm" class="bg-blue-400 h-full transition-all duration-300" style="width:10%"></div>
+          <div id="miniBarEtc" class="bg-emerald-400 h-full transition-all duration-300" style="width:30%"></div>
+        </div>
+        <div class="mt-2 grid grid-cols-4 gap-1 text-[11px] text-wedding-sand/90">
+          <span class="flex items-center gap-1 min-w-0"><span class="w-2 h-2 rounded-full bg-amber-400 shrink-0"></span><span class="truncate">식대 <b id="miniMeal" class="text-white font-semibold">2,125</b></span></span>
+          <span class="flex items-center gap-1 min-w-0"><span class="w-2 h-2 rounded-full bg-rose-400 shrink-0"></span><span class="truncate">홀 <b id="miniHall" class="text-white font-semibold">350</b></span></span>
+          <span class="flex items-center gap-1 min-w-0"><span class="w-2 h-2 rounded-full bg-blue-400 shrink-0"></span><span class="truncate">스드메 <b id="miniSdm" class="text-white font-semibold">420</b></span></span>
+          <span class="flex items-center gap-1 min-w-0"><span class="w-2 h-2 rounded-full bg-emerald-400 shrink-0"></span><span class="truncate">기타 <b id="miniEtc" class="text-white font-semibold">1,230</b></span></span>
+        </div>
+      </div>
+
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
         
         <!-- Controls Panel (Left, 7 cols) -->
@@ -4303,7 +4339,43 @@
       document.getElementById("barHall").style.width = `${pHall}%`;
       document.getElementById("barSdm").style.width = `${pSdm}%`;
       document.getElementById("barEtc").style.width = `${pEtc}%`;
+
+      syncCalcMini({ grandTotalMan, netCostMan, mealTotalMan, etcTotalMan, pMeal, pHall, pSdm, pEtc });
     }
+
+    // 모바일 상단 고정 요약 견적 동기화
+    let calcMiniLastTotal = null;
+    function syncCalcMini(v) {
+      const set = (id, text) => { const el = document.getElementById(id); if (el) el.textContent = text; };
+      set("miniTotal", v.grandTotalMan.toLocaleString());
+      set("miniNet", `약 ${v.netCostMan.toLocaleString()}만원`);
+      set("miniMeal", v.mealTotalMan.toLocaleString());
+      set("miniHall", currentHallFee.toLocaleString());
+      set("miniSdm", currentSdmFee.toLocaleString());
+      set("miniEtc", v.etcTotalMan.toLocaleString());
+      [["miniBarMeal", v.pMeal], ["miniBarHall", v.pHall], ["miniBarSdm", v.pSdm], ["miniBarEtc", v.pEtc]].forEach(([id, p]) => {
+        const el = document.getElementById(id);
+        if (el) el.style.width = `${p}%`;
+      });
+      // 값이 바뀌면 총액을 살짝 강조해 변화를 알려줌
+      const mini = document.getElementById("calcMini");
+      if (mini && calcMiniLastTotal !== null && calcMiniLastTotal !== v.grandTotalMan) {
+        mini.classList.remove("is-bump");
+        void mini.offsetWidth;
+        mini.classList.add("is-bump");
+      }
+      calcMiniLastTotal = v.grandTotalMan;
+    }
+
+    // 아래쪽 전체 리포트가 화면에 보이면 요약 바는 숨김 (중복 표시 방지)
+    (function watchCalcReport() {
+      const report = document.querySelector('#calculator .lg\\:col-span-5');
+      const mini = document.getElementById('calcMini');
+      if (!report || !mini || !('IntersectionObserver' in window)) return;
+      new IntersectionObserver((entries) => {
+        entries.forEach(entry => mini.classList.toggle('is-hidden', entry.isIntersecting && entry.intersectionRatio > 0.25));
+      }, { threshold: [0, 0.25, 0.5] }).observe(report);
+    })();
 
     function downloadEstimateModal() {
       showToast("입력하신 웨딩 견적 리포트 요약본이 안전하게 생성되었습니다.");
