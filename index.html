@@ -299,6 +299,81 @@
     .dash-icon { background: var(--accent-soft); color: var(--accent); }
     .dash-accent { color: var(--accent); }
 
+    /* ====================================================
+       모바일 전용 (640px 미만): 큐레이션 카드를 가로형 리스트로 축소
+       - PC/태블릿(sm 이상)은 기존 세로형 카드 그대로 유지
+       ==================================================== */
+    @media (max-width: 639px) {
+      /* 필터 탭: 여러 줄 → 한 줄 가로 스크롤 */
+      #categoryFilterTabs {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        margin-left: -1rem; margin-right: -1rem;
+        padding: 0 1rem 4px;
+        scrollbar-width: none;
+      }
+      #categoryFilterTabs::-webkit-scrollbar { display: none; }
+      #categoryFilterTabs button { flex-shrink: 0; white-space: nowrap; }
+
+      /* 플로팅 계산기·찜 버튼은 하단 탭/헤더와 중복되어 카드를 가리므로 숨김 (상담 버튼만 유지) */
+      .float-extra { display: none !important; }
+
+      #directoryGrid { gap: 0.875rem; }
+      #directoryGrid .card-item { flex-direction: row; border-radius: 1.25rem; }
+      #directoryGrid .card-item:not(.hidden) { display: flex; }
+
+      /* 왼쪽 썸네일 */
+      #directoryGrid .card-item > .img-zoom-wrapper {
+        width: 34%; max-width: 132px; min-width: 112px;
+        height: auto;
+        flex-shrink: 0;
+      }
+      #directoryGrid .card-item > .img-zoom-wrapper img { position: absolute; inset: 0; }
+      #directoryGrid .card-item > .img-zoom-wrapper > span {
+        top: 0.5rem; left: 0.5rem;
+        max-width: calc(100% - 1rem);
+        padding: 0.15rem 0.45rem;
+        font-size: 9px;
+        white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      }
+      #directoryGrid .card-item .wish-btn {
+        top: auto; bottom: 0.5rem; right: 0.5rem;
+        width: 1.85rem; height: 1.85rem;
+      }
+      #directoryGrid .card-item .wish-btn i { width: 0.85rem; height: 0.85rem; }
+      #directoryGrid .card-item > .img-zoom-wrapper > div {
+        left: 0.5rem; bottom: 0.5rem;
+        max-width: calc(100% - 3rem);
+        padding: 0.1rem 0.4rem;
+        font-size: 9.5px;
+        white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      }
+
+      /* 오른쪽 정보 영역 */
+      #directoryGrid .card-item > .img-zoom-wrapper + div {
+        padding: 0.85rem 0.95rem;
+        min-width: 0;
+      }
+      #directoryGrid .card-item .justify-between.mb-2 {
+        flex-wrap: wrap; gap: 0.1rem 0.5rem;
+        margin-bottom: 0.3rem;
+        font-size: 10.5px;
+      }
+      #directoryGrid .card-item h3 { font-size: 1.02rem; line-height: 1.3; }
+      #directoryGrid .card-item h3 + p { margin-top: 0.3rem; font-size: 11px; }
+      #directoryGrid .card-item .flex-wrap.mt-3 { display: none; }
+      #directoryGrid .card-item .mt-6 {
+        margin-top: 0.6rem; padding-top: 0.55rem;
+        flex-wrap: wrap; gap: 0.4rem;
+      }
+      #directoryGrid .card-item .mt-6 .text-sm { font-size: 12px; }
+      #directoryGrid .card-item .mt-6 button {
+        margin-left: auto;
+        padding: 0.3rem 0.65rem;
+        font-size: 10.5px;
+      }
+    }
+
     /* 모바일 하단 탭바 */
     #bottomTabBar a.is-active { color: var(--accent); }
     #bottomTabBar a.is-active .tab-dot { opacity: 1; background: var(--accent); }
@@ -2975,12 +3050,12 @@
        ==================================================== -->
   <div class="fixed bottom-24 lg:bottom-6 right-4 sm:right-6 z-50 flex flex-col items-end gap-3">
     <!-- Quick D-Day / Calculator jump -->
-    <a href="#calculator" title="예산 계산기" class="w-12 h-12 rounded-full bg-white border border-wedding-gold text-wedding-gold shadow-lg flex items-center justify-center hover:scale-105 transition-all">
+    <a href="#calculator" title="예산 계산기" class="float-extra w-12 h-12 rounded-full bg-white border border-wedding-gold text-wedding-gold shadow-lg flex items-center justify-center hover:scale-105 transition-all">
       <i data-lucide="calculator" class="w-5 h-5"></i>
     </a>
 
     <!-- Wishlist Floating Counter -->
-    <button onclick="openWishlistDrawer()" title="찜한 웨딩 목록" class="relative w-12 h-12 rounded-full bg-wedding-dark text-wedding-gold shadow-lg flex items-center justify-center hover:scale-105 transition-all border border-wedding-gold/40">
+    <button onclick="openWishlistDrawer()" title="찜한 웨딩 목록" class="float-extra relative w-12 h-12 rounded-full bg-wedding-dark text-wedding-gold shadow-lg flex items-center justify-center hover:scale-105 transition-all border border-wedding-gold/40">
       <i data-lucide="bookmark" class="w-5 h-5"></i>
       <span id="floatingWishCount" class="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-wedding-rose text-white text-[10px] font-bold flex items-center justify-center">2</span>
     </button>
