@@ -1,4 +1,14 @@
-const CACHE_NAME = 'marryst-cache-v3';
+const CACHE_NAME = 'marryst-cache-v4';
+
+// 오프라인 캐싱을 허용하는 외부 정적 자원 호스트 (그 외 외부 요청은 항상 네트워크 직접 사용)
+const CACHEABLE_HOSTS = [
+  'fonts.googleapis.com',
+  'fonts.gstatic.com',
+  'cdn.tailwindcss.com',
+  'unpkg.com',
+  'cdn.jsdelivr.net',
+  'images.unsplash.com'
+];
 
 // 오프라인 사전 캐싱 자산 목록
 const PRECACHE_ASSETS = [
@@ -58,6 +68,12 @@ self.addEventListener('fetch', (event) => {
   if (!event.request.url.startsWith('http')) return;
 
   const request = event.request;
+  const url = new URL(request.url);
+
+  // 우리 사이트 파일 + 정적 CDN(폰트·스타일·아이콘·이미지)만 캐싱.
+  // 카카오맵 SDK·지도 타일·장소 검색 등 그 외 외부 요청은 서비스워커가 관여하지 않음
+  // (실패 응답이 캐시에 고정되는 문제 방지 + 카카오 로컬 API 결과 저장 금지 정책 준수)
+  if (url.origin !== self.location.origin && !CACHEABLE_HOSTS.includes(url.hostname)) return;
 
   // HTML 탐색(Navigation) 요청: 네트워크 우선 -> 실패 시 오프라인 캐시 반환
   if (request.mode === 'navigate') {

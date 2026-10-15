@@ -5669,7 +5669,8 @@
       if (vf.sdk) return vf.sdk;
       vf.sdk = new Promise((resolve, reject) => {
         const s = document.createElement('script');
-        s.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${KAKAO_JS_KEY}&libraries=services&autoload=false`;
+        // v 파라미터: 이전 서비스워커가 캐시해 둔 실패 응답(도메인 등록 전 401)을 우회
+        s.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${KAKAO_JS_KEY}&libraries=services&autoload=false&v=20261016`;
         s.onload = () => (window.kakao && kakao.maps) ? kakao.maps.load(resolve) : reject(new Error('kakao sdk unavailable'));
         s.onerror = () => reject(new Error('kakao sdk blocked'));
         document.head.appendChild(s);
