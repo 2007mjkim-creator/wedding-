@@ -315,6 +315,49 @@
       #categoryFilterTabs::-webkit-scrollbar { display: none; }
       #categoryFilterTabs button { flex-shrink: 0; white-space: nowrap; }
 
+      /* 홈 검색창: 지역·홀 스타일·보증 인원을 한 줄 가로 배치, 검색 버튼은 아래 전체 폭 */
+      #search-box { padding: 0.875rem; }
+      /* 가로 스크롤 줄이 히어로 폭을 밀어내지 않도록 부모 폭 고정 */
+      div:has(> #search-box) { width: 100%; min-width: 0; }
+      #search-box > div.mt-4 > div { min-width: 0; }
+      #heroSearchForm {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 0.4rem;
+      }
+      #heroSearchForm > div:last-child { grid-column: 1 / -1; margin-top: 0.25rem; }
+      #heroSearchForm label {
+        font-size: 10px;
+        margin-bottom: 0.3rem;
+        gap: 0.2rem;
+        white-space: nowrap;
+      }
+      #heroSearchForm label i { width: 0.7rem; height: 0.7rem; }
+      #heroSearchForm select {
+        -webkit-appearance: none; appearance: none;
+        padding: 0.6rem 1.35rem 0.6rem 0.55rem;
+        font-size: 11.5px;
+        border-radius: 0.7rem;
+        white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%239A783A' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 0.4rem center;
+        background-size: 0.75rem;
+      }
+      #heroSearchForm button[type="submit"] { padding-top: 0.7rem; padding-bottom: 0.7rem; }
+
+      /* 인기 검색어: 여러 줄 → 한 줄 가로 스크롤 */
+      #search-box > div.mt-4 { margin-top: 0.75rem; padding-top: 0.6rem; }
+      #search-box > div.mt-4 > div {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        width: 100%;
+        white-space: nowrap;
+        scrollbar-width: none;
+        padding-bottom: 2px;
+      }
+      #search-box > div.mt-4 > div::-webkit-scrollbar { display: none; }
+      #search-box > div.mt-4 > div > * { flex-shrink: 0; }
+
       /* 플로팅 계산기·찜 버튼은 하단 탭/헤더와 중복되어 카드를 가리므로 숨김 (상담 버튼만 유지) */
       .float-extra { display: none !important; }
 
