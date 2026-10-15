@@ -561,7 +561,7 @@
       will-change: transform;
     }
     .hero-slide.is-active,
-    .hero-slide.is-leaving { transition: transform 1.4s cubic-bezier(0.65, 0, 0.35, 1); }
+    .hero-slide.is-leaving { transition: transform 3.2s cubic-bezier(0.37, 0, 0.63, 1); }
     .hero-slide.is-active { transform: translateX(0); }
     .hero-slide.is-leaving { transform: translateX(-100%); }
 
@@ -4554,13 +4554,13 @@
       calcMiniLastTotal = v.grandTotalMan;
     }
 
-    // 홈 메인 배경 슬라이드: 사진마다 약 3초 보여준 뒤 1.4초 동안 옆으로 밀며 다음 사진으로 전환
+    // 홈 메인 배경 슬라이드: 사진마다 약 3초 보여준 뒤 3.2초 동안 느리게 옆으로 밀며 다음 사진으로 전환
     (function heroSlideshow() {
       const slides = [...document.querySelectorAll('#heroSlides .hero-slide')];
       if (slides.length < 2) return;
       if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
-      const HOLD_MS = 3000, SLIDE_MS = 1400;
+      const HOLD_MS = 3000, SLIDE_MS = 3200;
       let index = 0;
 
       // 첫 화면 속도를 위해 나머지 사진은 페이지 로드가 끝난 뒤 불러옴
