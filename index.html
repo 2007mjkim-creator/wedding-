@@ -441,9 +441,8 @@
       }
       #homeServices .dash-icon { width: 2.5rem; height: 2.5rem; border-radius: 0.8rem; }
       #homeServices .dash-icon svg { width: 1.25rem; height: 1.25rem; }
-      #homeServices .dash-card > span:nth-child(2) > span:nth-child(2) { font-size: 14.5px; line-height: 1.35; }
-      #homeServices .dash-card > span:nth-child(2) > span:nth-child(3) { display: none; }   /* 긴 설명 */
-      #homeServices .dash-card > svg:last-child { position: absolute; top: 0.9rem; right: 0.8rem; }
+      #homeServices .dash-card > span:nth-child(2) > span:nth-child(1) { font-size: 14.5px; line-height: 1.35; }
+      #homeServices .dash-card > span:nth-child(2) > span:nth-child(2) { display: none; }   /* 긴 설명 */
 
       /* 전국 업체 대표 카드: 설명 2줄로 줄이고 버튼을 아이콘 옆으로 */
       #homeFeatured { position: relative; padding: 1rem; gap: 0.6rem; }
@@ -1032,7 +1031,7 @@
         <a id="homeFeatured" href="#directory" data-view="directory" class="dash-card group flex flex-col sm:flex-row sm:items-center gap-4 bg-white rounded-2xl p-5 sm:p-6 border border-wedding-border shadow-sm mb-4">
           <span class="dash-icon w-14 h-14 rounded-2xl flex items-center justify-center shrink-0"><i data-lucide="store" class="w-7 h-7"></i></span>
           <span class="flex-1 min-w-0">
-            <span class="dash-accent block font-serif text-xs font-bold">03 · NEW</span>
+            <span class="dash-accent block text-xs font-bold">NEW</span>
             <span class="block text-lg font-bold text-wedding-dark">전국 웨딩 업체 찾기 <span class="dash-accent">2,702곳</span></span>
             <span class="block text-sm text-wedding-muted mt-1 leading-relaxed">웨딩홀 698 · 스튜디오·스냅 639 · 한복 513 · 드레스 328 · 플래너 257 · 메이크업 152 · 예물 115 — 시·도와 시·군·구별로 한 번에 찾아보세요.</span>
           </span>
@@ -1045,56 +1044,44 @@
           <a href="#wedding-hall" data-view="curation" class="dash-card group flex items-start gap-4 bg-white rounded-2xl p-5 border border-wedding-border shadow-sm">
             <span class="dash-icon w-12 h-12 rounded-2xl flex items-center justify-center shrink-0"><i data-lucide="landmark" class="w-6 h-6"></i></span>
             <span class="flex-1 min-w-0">
-              <span class="dash-accent block font-serif text-xs font-bold">02</span>
               <span class="block font-bold text-wedding-dark">웨딩홀 · 스드메 큐레이션</span>
               <span class="block text-xs text-wedding-muted mt-1 leading-relaxed">검증된 웨딩홀, 스튜디오·드레스·메이크업, 예물까지 15곳 아카이브</span>
             </span>
-            <i data-lucide="arrow-up-right" class="w-4 h-4 text-wedding-muted group-hover:text-wedding-dark transition shrink-0"></i>
           </a>
           <a href="#invitation-studio" data-view="invitation" class="dash-card group flex items-start gap-4 bg-white rounded-2xl p-5 border border-wedding-border shadow-sm">
             <span class="dash-icon w-12 h-12 rounded-2xl flex items-center justify-center shrink-0"><i data-lucide="mail-open" class="w-6 h-6"></i></span>
             <span class="flex-1 min-w-0">
-              <span class="dash-accent block font-serif text-xs font-bold">04</span>
               <span class="block font-bold text-wedding-dark">청첩장 스튜디오</span>
               <span class="block text-xs text-wedding-muted mt-1 leading-relaxed">AI 프롬프트 DIY 디자인, 실물 인쇄, 제휴 브랜드 주문 & 무료 샘플</span>
             </span>
-            <i data-lucide="arrow-up-right" class="w-4 h-4 text-wedding-muted group-hover:text-wedding-dark transition shrink-0"></i>
           </a>
           <a href="#calculator" data-view="budget" class="dash-card group flex items-start gap-4 bg-white rounded-2xl p-5 border border-wedding-border shadow-sm">
             <span class="dash-icon w-12 h-12 rounded-2xl flex items-center justify-center shrink-0"><i data-lucide="calculator" class="w-6 h-6"></i></span>
             <span class="flex-1 min-w-0">
-              <span class="dash-accent block font-serif text-xs font-bold">05</span>
               <span class="block font-bold text-wedding-dark">스마트 견적 계산기</span>
               <span class="block text-xs text-wedding-muted mt-1 leading-relaxed">하객 수·식대·홀·스드메 등급으로 총 예산과 실 부담액 즉시 산출</span>
             </span>
-            <i data-lucide="arrow-up-right" class="w-4 h-4 text-wedding-muted group-hover:text-wedding-dark transition shrink-0"></i>
           </a>
           <a href="#checklist" data-view="checklist" class="dash-card group flex items-start gap-4 bg-white rounded-2xl p-5 border border-wedding-border shadow-sm">
             <span class="dash-icon w-12 h-12 rounded-2xl flex items-center justify-center shrink-0"><i data-lucide="list-checks" class="w-6 h-6"></i></span>
             <span class="flex-1 min-w-0">
-              <span class="dash-accent block font-serif text-xs font-bold">06</span>
               <span class="block font-bold text-wedding-dark">D-180 체크리스트</span>
               <span class="block text-xs text-wedding-muted mt-1 leading-relaxed">시기별 필수 항목, 나만의 항목 추가, 상견례·모임 식당 팁</span>
             </span>
-            <i data-lucide="arrow-up-right" class="w-4 h-4 text-wedding-muted group-hover:text-wedding-dark transition shrink-0"></i>
           </a>
           <a href="#reviews" data-view="stories" class="dash-card group flex items-start gap-4 bg-white rounded-2xl p-5 border border-wedding-border shadow-sm">
             <span class="dash-icon w-12 h-12 rounded-2xl flex items-center justify-center shrink-0"><i data-lucide="book-open" class="w-6 h-6"></i></span>
             <span class="flex-1 min-w-0">
-              <span class="dash-accent block font-serif text-xs font-bold">07</span>
               <span class="block font-bold text-wedding-dark">본식 후기 · 매거진</span>
               <span class="block text-xs text-wedding-muted mt-1 leading-relaxed">실계약 인증 리얼 후기와 2026 웨딩 트렌드 가이드</span>
             </span>
-            <i data-lucide="arrow-up-right" class="w-4 h-4 text-wedding-muted group-hover:text-wedding-dark transition shrink-0"></i>
           </a>
           <a href="#benefits" data-view="benefits" class="dash-card group flex items-start gap-4 bg-white rounded-2xl p-5 border border-wedding-border shadow-sm">
             <span class="dash-icon w-12 h-12 rounded-2xl flex items-center justify-center shrink-0"><i data-lucide="gift" class="w-6 h-6"></i></span>
             <span class="flex-1 min-w-0">
-              <span class="dash-accent block font-serif text-xs font-bold">08</span>
               <span class="block font-bold text-wedding-dark">VIP 박람회 혜택 · FAQ</span>
               <span class="block text-xs text-wedding-muted mt-1 leading-relaxed">무료 초대권 신청, 대관료 지원 혜택, 자주 묻는 질문</span>
             </span>
-            <i data-lucide="arrow-up-right" class="w-4 h-4 text-wedding-muted group-hover:text-wedding-dark transition shrink-0"></i>
           </a>
         </div>
       </div>
