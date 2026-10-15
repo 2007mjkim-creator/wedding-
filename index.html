@@ -515,6 +515,48 @@
     }
     .vf-action:hover { border-color: #B8924C; color: var(--gold-text); }
 
+    /* 예산 계산기: 숫자 직접 입력 칸 · 선택 버튼 · 추가 항목 */
+    .calc-num-wrap { display: inline-flex; align-items: center; gap: 0.35rem; font-size: 13px; color: #5F5953; font-weight: 600; }
+    .calc-num, .calc-text {
+      padding: 0.45rem 0.6rem;
+      border: 1px solid #DDD3C4; border-radius: 0.7rem;
+      background: #FDFBF7; color: #22201E;
+      font-size: 15px; font-weight: 700;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .calc-num { width: 5.5rem; text-align: right; font-variant-numeric: tabular-nums; }
+    .calc-num-wide { width: 7.5rem; }
+    .calc-text { width: 100%; font-weight: 500; }
+    .calc-num:focus, .calc-text:focus { outline: none; border-color: #8F6A2B; box-shadow: 0 0 0 3px rgba(143, 106, 43, 0.18); }
+    .calc-tier {
+      display: flex; flex-direction: column; align-items: center; gap: 0.1rem;
+      padding: 0.6rem 0.4rem; border-radius: 0.8rem;
+      border: 1px solid #DDD3C4; background: #fff; text-align: center;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .calc-tier:hover { border-color: #B8924C; }
+    .calc-tier.active-tier { border-color: #8F6A2B; background: #F7F0E1; box-shadow: inset 0 0 0 1px #8F6A2B; }
+    .calc-tier-name { font-size: 13px; font-weight: 700; color: #22201E; }
+    .calc-tier-fee { font-size: 12px; color: #5F5953; }
+    .calc-extra {
+      display: flex; align-items: center; gap: 0.5rem;
+      padding: 0.4rem 0.45rem 0.4rem 0.7rem; border-radius: 0.8rem;
+      border: 1px solid #DDD3C4; background: #fff;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .calc-extra.is-on { background: #F7F0E1; border-color: #B8924C; }
+    .calc-extra label { flex: 1; min-width: 0; display: flex; align-items: center; gap: 0.5rem; font-size: 13px; font-weight: 600; color: #22201E; cursor: pointer; }
+    .calc-extra input[type="checkbox"] { width: 1.05rem; height: 1.05rem; accent-color: #8F6A2B; flex-shrink: 0; }
+    .calc-extra .calc-num { width: 4.8rem; padding: 0.35rem 0.5rem; font-size: 14px; }
+    .calc-extra:not(.is-on) .calc-num { opacity: 0.55; }
+    .calc-custom-dot { width: 0.55rem; height: 0.55rem; border-radius: 9999px; background: #8F6A2B; flex-shrink: 0; }
+    .calc-remove { width: 1.7rem; height: 1.7rem; border-radius: 9999px; color: #5F5953; font-size: 18px; line-height: 1; flex-shrink: 0; }
+    .calc-remove:hover { background: #EFE8DC; color: #22201E; }
+    /* iOS에서 입력 시 화면이 확대되지 않도록 모바일은 16px */
+    @media (max-width: 639px) {
+      .calc-num, .calc-text, .calc-extra .calc-num { font-size: 16px; }
+    }
+
     /* 모바일 예산 계산기 상단 고정 요약 */
     .calc-mini { transition: opacity 0.25s, transform 0.25s; }
     .calc-mini.is-hidden { opacity: 0; transform: translateY(-10px); pointer-events: none; }
@@ -2612,119 +2654,156 @@
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
         
         <!-- Controls Panel (Left, 7 cols) -->
-        <div class="lg:col-span-7 bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-wedding-border space-y-7">
-          
-          <!-- Control 1: 하객 수 슬라이더 -->
+        <div class="lg:col-span-7 bg-white rounded-3xl p-5 sm:p-8 shadow-sm border border-wedding-border space-y-8">
+
+          <!-- Control 1: 하객 수 (슬라이더 + 직접 입력) -->
           <div>
-            <div class="flex justify-between items-center mb-2">
-              <label class="text-sm font-bold text-wedding-dark flex items-center gap-2">
+            <div class="flex flex-wrap justify-between items-center gap-2 mb-2">
+              <label for="calcGuestInput" class="text-sm font-bold text-wedding-dark flex items-center gap-2">
                 <i data-lucide="users" class="w-4 h-4 text-wedding-gold"></i> 예상 보증 인원 (하객 수)
               </label>
-              <span class="font-serif text-lg font-bold text-wedding-gold" id="calcGuestValue">250명</span>
+              <div class="calc-num-wrap">
+                <input type="number" id="calcGuestInput" class="calc-num" inputmode="numeric" min="1" max="3000" step="1" value="250" oninput="syncCalcPair('calcGuestRange', 'calcGuestInput', 'input')">
+                <span>명</span>
+              </div>
             </div>
-            <input 
-              type="range" 
-              id="calcGuestRange" 
-              min="50" 
-              max="600" 
-              step="10" 
-              value="250" 
-              oninput="updateBudgetCalculator()" 
-              class="w-full h-2 bg-wedding-sand rounded-lg appearance-none cursor-pointer"
-            >
+            <input type="range" id="calcGuestRange" min="50" max="600" step="10" value="250" oninput="syncCalcPair('calcGuestRange', 'calcGuestInput', 'range')" class="w-full h-2 bg-wedding-sand rounded-lg appearance-none cursor-pointer">
             <div class="flex justify-between text-[11px] text-wedding-muted mt-1">
               <span>스몰웨딩 (50명)</span>
               <span>평균 (250명)</span>
               <span>대규모 (600명)</span>
             </div>
+            <span id="calcGuestValue" class="sr-only">250명</span>
           </div>
 
-          <!-- Control 2: 1인 식대 선택 -->
+          <!-- Control 2: 1인 식대 (슬라이더 + 직접 입력) -->
           <div>
-            <div class="flex justify-between items-center mb-2">
-              <label class="text-sm font-bold text-wedding-dark flex items-center gap-2">
-                <i data-lucide="utensils" class="w-4 h-4 text-wedding-gold"></i> 1인 예상 식대 (뷔페 / 코스)
+            <div class="flex flex-wrap justify-between items-center gap-2 mb-2">
+              <label for="calcMealInput" class="text-sm font-bold text-wedding-dark flex items-center gap-2">
+                <i data-lucide="utensils" class="w-4 h-4 text-wedding-gold"></i> 1인 식대 (뷔페 / 코스)
               </label>
-              <span class="font-serif text-lg font-bold text-wedding-gold" id="calcMealValue">85,000원</span>
+              <div class="calc-num-wrap">
+                <span id="calcMealValue" class="text-xs font-semibold text-wedding-gold">(8.5만원)</span>
+                <input type="number" id="calcMealInput" class="calc-num calc-num-wide" inputmode="numeric" min="0" max="1000000" step="1000" value="85000" oninput="syncCalcPair('calcMealRange', 'calcMealInput', 'input')">
+                <span>원</span>
+              </div>
             </div>
-            <input 
-              type="range" 
-              id="calcMealRange" 
-              min="55000" 
-              max="200000" 
-              step="5000" 
-              value="85000" 
-              oninput="updateBudgetCalculator()" 
-              class="w-full h-2 bg-wedding-sand rounded-lg appearance-none cursor-pointer"
-            >
+            <input type="range" id="calcMealRange" min="30000" max="250000" step="1000" value="85000" oninput="syncCalcPair('calcMealRange', 'calcMealInput', 'range')" class="w-full h-2 bg-wedding-sand rounded-lg appearance-none cursor-pointer">
             <div class="flex justify-between text-[11px] text-wedding-muted mt-1">
-              <span>실속형 뷔페 (5.5만)</span>
-              <span>인기 호텔/컨벤션 (8.5만)</span>
-              <span>특급호텔 코스 (20만)</span>
+              <span>실속 뷔페 (3만)</span>
+              <span>인기 호텔·컨벤션 (8.5만)</span>
+              <span>특급호텔 코스 (25만)</span>
             </div>
+
           </div>
 
-          <!-- Control 3: 웨딩홀 대관료 & 연출료 등급 -->
+          <!-- Control 3: 웨딩홀 대관료·연출료 (선택 또는 직접 입력) -->
           <div>
-            <label class="text-sm font-bold text-wedding-dark block mb-2 flex items-center gap-2">
-              <i data-lucide="building-2" class="w-4 h-4 text-wedding-gold"></i> 웨딩홀 대관료 & 생화 연출료
-            </label>
-            <div class="grid grid-cols-3 gap-2.5">
-              <button type="button" onclick="setHallTier(350, this)" class="hall-tier-btn p-3 rounded-xl border border-wedding-border text-center hover:border-wedding-gold transition active-tier bg-wedding-ivory border-wedding-gold">
-                <div class="text-xs font-bold text-wedding-dark">실속형 컨벤션</div>
-                <div class="text-[11px] text-wedding-muted mt-0.5">약 350만원</div>
-              </button>
-              <button type="button" onclick="setHallTier(800, this)" class="hall-tier-btn p-3 rounded-xl border border-wedding-border text-center hover:border-wedding-gold transition">
-                <div class="text-xs font-bold text-wedding-dark">인기 하우스/호텔</div>
-                <div class="text-[11px] text-wedding-muted mt-0.5">약 800만원</div>
-              </button>
-              <button type="button" onclick="setHallTier(2000, this)" class="hall-tier-btn p-3 rounded-xl border border-wedding-border text-center hover:border-wedding-gold transition">
-                <div class="text-xs font-bold text-wedding-dark">하이엔드 럭셔리</div>
-                <div class="text-[11px] text-wedding-muted mt-0.5">약 2,000만원</div>
-              </button>
+            <div class="flex flex-wrap justify-between items-center gap-2 mb-2">
+              <label for="calcHallInput" class="text-sm font-bold text-wedding-dark flex items-center gap-2">
+                <i data-lucide="building-2" class="w-4 h-4 text-wedding-gold"></i> 웨딩홀 대관료·꽃장식 연출료
+              </label>
+              <div class="calc-num-wrap">
+                <input type="number" id="calcHallInput" class="calc-num" inputmode="numeric" min="0" max="100000" step="10" value="350" oninput="setCalcCustomFee('hall', this.value)">
+                <span>만원</span>
+              </div>
             </div>
-          </div>
-
-          <!-- Control 4: 스드메(스튜디오/드레스/메이크업) 패키지 선택 -->
-          <div>
-            <label class="text-sm font-bold text-wedding-dark block mb-2 flex items-center gap-2">
-              <i data-lucide="camera" class="w-4 h-4 text-wedding-gold"></i> 스·드·메 토탈 패키지 등급
-            </label>
-            <div class="grid grid-cols-3 gap-2.5">
-              <button type="button" onclick="setSdmTier(280, this)" class="sdm-tier-btn p-3 rounded-xl border border-wedding-border text-center hover:border-wedding-gold transition">
-                <div class="text-xs font-bold text-wedding-dark">스탠다드 실속</div>
-                <div class="text-[11px] text-wedding-muted mt-0.5">약 280만원</div>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+              <button type="button" onclick="setHallTier(0, this)" class="hall-tier-btn calc-tier" data-fee="0">
+                <span class="calc-tier-name">대관료 없음</span><span class="calc-tier-fee">식대에 포함된 홀</span>
               </button>
-              <button type="button" onclick="setSdmTier(420, this)" class="sdm-tier-btn p-3 rounded-xl border border-wedding-border text-center hover:border-wedding-gold transition active-tier bg-wedding-ivory border-wedding-gold">
-                <div class="text-xs font-bold text-wedding-dark">프리미엄 인기</div>
-                <div class="text-[11px] text-wedding-muted mt-0.5">약 420만원</div>
+              <button type="button" onclick="setHallTier(350, this)" class="hall-tier-btn calc-tier active-tier" data-fee="350">
+                <span class="calc-tier-name">실속형 컨벤션</span><span class="calc-tier-fee">약 350만원</span>
               </button>
-              <button type="button" onclick="setSdmTier(680, this)" class="sdm-tier-btn p-3 rounded-xl border border-wedding-border text-center hover:border-wedding-gold transition">
-                <div class="text-xs font-bold text-wedding-dark">하이엔드 꾸뛰르</div>
-                <div class="text-[11px] text-wedding-muted mt-0.5">약 680만원</div>
+              <button type="button" onclick="setHallTier(800, this)" class="hall-tier-btn calc-tier" data-fee="800">
+                <span class="calc-tier-name">인기 하우스·호텔</span><span class="calc-tier-fee">약 800만원</span>
+              </button>
+              <button type="button" onclick="setHallTier(2000, this)" class="hall-tier-btn calc-tier" data-fee="2000">
+                <span class="calc-tier-name">하이엔드 럭셔리</span><span class="calc-tier-fee">약 2,000만원</span>
               </button>
             </div>
           </div>
 
-          <!-- Control 5: 기타 부가 항목 체크 (본식 스냅, DVD, 예복, 허니문) -->
+          <!-- Control 4: 스·드·메 패키지 (선택 또는 직접 입력) -->
           <div>
-            <label class="text-sm font-bold text-wedding-dark block mb-2.5 flex items-center gap-2">
-              <i data-lucide="check-square" class="w-4 h-4 text-wedding-gold"></i> 추가 필수 웨딩 구성 항목
-            </label>
-            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5 text-xs">
-              <label class="flex items-center gap-2 p-2.5 rounded-xl border border-wedding-border cursor-pointer hover:bg-wedding-ivory">
-                <input type="checkbox" id="chkSnap" checked onchange="updateBudgetCalculator()" class="rounded text-wedding-gold">
-                <span>본식 스냅 & DVD (+180만)</span>
+            <div class="flex flex-wrap justify-between items-center gap-2 mb-2">
+              <label for="calcSdmInput" class="text-sm font-bold text-wedding-dark flex items-center gap-2">
+                <i data-lucide="camera" class="w-4 h-4 text-wedding-gold"></i> 스·드·메 패키지
               </label>
-              <label class="flex items-center gap-2 p-2.5 rounded-xl border border-wedding-border cursor-pointer hover:bg-wedding-ivory">
-                <input type="checkbox" id="chkRing" checked onchange="updateBudgetCalculator()" class="rounded text-wedding-gold">
-                <span>웨딩밴드/예복 (+350만)</span>
-              </label>
-              <label class="flex items-center gap-2 p-2.5 rounded-xl border border-wedding-border cursor-pointer hover:bg-wedding-ivory">
-                <input type="checkbox" id="chkHoneymoon" checked onchange="updateBudgetCalculator()" class="rounded text-wedding-gold">
-                <span>신혼여행 항공/숙소 (+700만)</span>
-              </label>
+              <div class="calc-num-wrap">
+                <input type="number" id="calcSdmInput" class="calc-num" inputmode="numeric" min="0" max="100000" step="10" value="420" oninput="setCalcCustomFee('sdm', this.value)">
+                <span>만원</span>
+              </div>
             </div>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+              <button type="button" onclick="setSdmTier(0, this)" class="sdm-tier-btn calc-tier" data-fee="0">
+                <span class="calc-tier-name">셀프·생략</span><span class="calc-tier-fee">0원</span>
+              </button>
+              <button type="button" onclick="setSdmTier(280, this)" class="sdm-tier-btn calc-tier" data-fee="280">
+                <span class="calc-tier-name">스탠다드 실속</span><span class="calc-tier-fee">약 280만원</span>
+              </button>
+              <button type="button" onclick="setSdmTier(420, this)" class="sdm-tier-btn calc-tier active-tier" data-fee="420">
+                <span class="calc-tier-name">프리미엄 인기</span><span class="calc-tier-fee">약 420만원</span>
+              </button>
+              <button type="button" onclick="setSdmTier(680, this)" class="sdm-tier-btn calc-tier" data-fee="680">
+                <span class="calc-tier-name">하이엔드 꾸뛰르</span><span class="calc-tier-fee">약 680만원</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Control 5: 추가 항목 (체크 + 금액 직접 수정) -->
+          <div>
+            <div class="flex flex-wrap justify-between items-end gap-2 mb-2.5">
+              <label class="text-sm font-bold text-wedding-dark flex items-center gap-2">
+                <i data-lucide="check-square" class="w-4 h-4 text-wedding-gold"></i> 추가 항목
+              </label>
+              <span class="text-[11px] text-wedding-muted">체크하고 금액을 바꿔서 쓸 수 있어요 (단위: 만원)</span>
+            </div>
+            <div id="calcExtras" class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              <div class="calc-extra"><label><input type="checkbox" id="chkSnap" checked onchange="updateBudgetCalculator()"><span>본식 스냅·영상</span></label><input type="number" class="calc-num calc-extra-amt" inputmode="numeric" min="0" step="10" value="180" oninput="updateBudgetCalculator()" aria-label="본식 스냅·영상 금액"></div>
+              <div class="calc-extra"><label><input type="checkbox" id="chkRing" checked onchange="updateBudgetCalculator()"><span>웨딩밴드·예복</span></label><input type="number" class="calc-num calc-extra-amt" inputmode="numeric" min="0" step="10" value="350" oninput="updateBudgetCalculator()" aria-label="웨딩밴드·예복 금액"></div>
+              <div class="calc-extra"><label><input type="checkbox" id="chkHoneymoon" checked onchange="updateBudgetCalculator()"><span>신혼여행 (항공·숙소)</span></label><input type="number" class="calc-num calc-extra-amt" inputmode="numeric" min="0" step="10" value="700" oninput="updateBudgetCalculator()" aria-label="신혼여행 금액"></div>
+              <div class="calc-extra"><label><input type="checkbox" id="chkInvite" onchange="updateBudgetCalculator()"><span>청첩장 (종이+모바일)</span></label><input type="number" class="calc-num calc-extra-amt" inputmode="numeric" min="0" step="5" value="50" oninput="updateBudgetCalculator()" aria-label="청첩장 금액"></div>
+              <div class="calc-extra"><label><input type="checkbox" id="chkBouquet" onchange="updateBudgetCalculator()"><span>부케·부토니에·코사지</span></label><input type="number" class="calc-num calc-extra-amt" inputmode="numeric" min="0" step="5" value="40" oninput="updateBudgetCalculator()" aria-label="부케 금액"></div>
+              <div class="calc-extra"><label><input type="checkbox" id="chkHost" onchange="updateBudgetCalculator()"><span>사회·축가·주례 사례비</span></label><input type="number" class="calc-num calc-extra-amt" inputmode="numeric" min="0" step="5" value="60" oninput="updateBudgetCalculator()" aria-label="사회·축가 사례비"></div>
+              <div class="calc-extra"><label><input type="checkbox" id="chkParents" onchange="updateBudgetCalculator()"><span>혼주 한복·메이크업</span></label><input type="number" class="calc-num calc-extra-amt" inputmode="numeric" min="0" step="10" value="150" oninput="updateBudgetCalculator()" aria-label="혼주 한복·메이크업 금액"></div>
+              <div class="calc-extra"><label><input type="checkbox" id="chkPyebaek" onchange="updateBudgetCalculator()"><span>폐백·이바지 음식</span></label><input type="number" class="calc-num calc-extra-amt" inputmode="numeric" min="0" step="10" value="80" oninput="updateBudgetCalculator()" aria-label="폐백·이바지 금액"></div>
+              <div class="calc-extra"><label><input type="checkbox" id="chkYedan" onchange="updateBudgetCalculator()"><span>예단·예물 (양가)</span></label><input type="number" class="calc-num calc-extra-amt" inputmode="numeric" min="0" step="10" value="500" oninput="updateBudgetCalculator()" aria-label="예단·예물 금액"></div>
+              <div class="calc-extra"><label><input type="checkbox" id="chkUpgrade" onchange="updateBudgetCalculator()"><span>2부 드레스·연출 추가</span></label><input type="number" class="calc-num calc-extra-amt" inputmode="numeric" min="0" step="10" value="200" oninput="updateBudgetCalculator()" aria-label="2부 드레스·연출 금액"></div>
+            </div>
+
+            <!-- 직접 추가한 항목 -->
+            <div id="calcCustomList" class="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2"></div>
+            <div class="mt-3 grid grid-cols-[minmax(0,1fr)_6.5rem_auto] gap-2">
+              <input type="text" id="calcCustomName" maxlength="30" placeholder="항목 직접 추가 (예: 웨딩카, 하객 답례품)" class="calc-text">
+              <div class="calc-num-wrap">
+                <input type="number" id="calcCustomAmt" class="calc-num w-full" inputmode="numeric" min="0" step="10" placeholder="금액">
+                <span>만원</span>
+              </div>
+              <button type="button" onclick="addCalcCustomItem()" class="px-3.5 rounded-xl bg-wedding-dark hover:bg-wedding-gold text-white text-sm font-bold transition inline-flex items-center gap-1">
+                <i data-lucide="plus" class="w-4 h-4"></i><span class="hidden sm:inline">추가</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Control 6: 축의금 기준 (실부담 계산) -->
+          <div>
+            <div class="flex flex-wrap justify-between items-center gap-2 mb-2">
+              <label for="calcGiftInput" class="text-sm font-bold text-wedding-dark flex items-center gap-2">
+                <i data-lucide="gift" class="w-4 h-4 text-wedding-gold"></i> 하객 1인 평균 축의금
+              </label>
+              <div class="calc-num-wrap">
+                <input type="number" id="calcGiftInput" class="calc-num" inputmode="numeric" min="0" max="100" step="1" value="10" oninput="setCalcGift(this.value)">
+                <span>만원</span>
+              </div>
+            </div>
+            <div class="grid grid-cols-4 gap-2">
+              <button type="button" class="gift-btn calc-tier" data-gift="5" onclick="setCalcGift(5)"><span class="calc-tier-name">5만원</span></button>
+              <button type="button" class="gift-btn calc-tier" data-gift="7" onclick="setCalcGift(7)"><span class="calc-tier-name">7만원</span></button>
+              <button type="button" class="gift-btn calc-tier active-tier" data-gift="10" onclick="setCalcGift(10)"><span class="calc-tier-name">10만원</span></button>
+              <button type="button" class="gift-btn calc-tier" data-gift="15" onclick="setCalcGift(15)"><span class="calc-tier-name">15만원</span></button>
+            </div>
+            <p class="text-[11px] text-wedding-muted mt-1.5">총 예산에서 ‘하객 수 × 평균 축의금’을 빼서 실제 부담액을 계산해요.</p>
           </div>
 
         </div>
@@ -2746,7 +2825,7 @@
               <span id="calcTotalFormatted" class="gold-text">4,125</span><span class="text-xl sm:text-2xl text-white font-sans ml-1">만원</span>
             </div>
             <p class="text-xs text-wedding-sand/70 mt-2">
-              * 축의금 예상 상쇄 후 실 부담액: <span id="calcNetCost" class="text-wedding-gold font-semibold">약 1,625만원</span>
+              * 축의금(<span id="calcGiftNote">1인 10만원</span>) 상쇄 후 실 부담액: <span id="calcNetCost" class="text-wedding-gold font-semibold">약 1,625만원</span>
             </p>
           </div>
 
@@ -2775,7 +2854,7 @@
 
             <div class="flex justify-between items-center text-wedding-sand/90">
               <span class="flex items-center gap-2">
-                <span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span> 본식 스냅 & 부대비용
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-400"></span> 추가 항목 (<span id="calcEtcCount">3</span>개)
               </span>
               <span class="font-semibold text-white" id="calcEtcTotal">1,230만원</span>
             </div>
@@ -2785,7 +2864,7 @@
           <div class="mt-6">
             <div class="text-[11px] text-white/60 mb-1.5 flex justify-between">
               <span>예산 항목 비중</span>
-              <span>식대(51%) / 홀&스드메(19%) / 기타(30%)</span>
+              <span id="calcRatioText">식대 51% · 홀·스드메 19% · 추가 30%</span>
             </div>
             <div class="w-full h-3 rounded-full bg-white/10 overflow-hidden flex">
               <div id="barMeal" class="bg-amber-400 h-full" style="width: 51%"></div>
@@ -4257,62 +4336,157 @@
     // --------------------------------------------------------------------
     let currentHallFee = 350; // in 10,000 KRW
     let currentSdmFee = 420;  // in 10,000 KRW
+    let currentGiftPerGuest = 10; // 하객 1인 평균 축의금 (만원)
+    let calcCustomItems = [];     // 직접 추가한 항목 [{ name, amount(만원) }]
+
+    // 입력값을 안전한 숫자로 (빈칸·음수·과도한 값 방지)
+    function calcNum(value, min = 0, max = Infinity) {
+      const n = Number(value);
+      return Number.isFinite(n) ? Math.min(max, Math.max(min, n)) : 0;
+    }
+
+    // 금액이 프리셋과 같으면 해당 버튼을 선택 상태로 표시
+    function markCalcTier(selector, value) {
+      document.querySelectorAll(selector).forEach(b => {
+        const preset = Number(b.dataset.fee ?? b.dataset.gift);
+        b.classList.toggle("active-tier", preset === Number(value));
+      });
+    }
 
     function setHallTier(fee, btn) {
       currentHallFee = fee;
-      document.querySelectorAll(".hall-tier-btn").forEach(b => {
-        b.classList.remove("active-tier", "bg-wedding-ivory", "border-wedding-gold");
-      });
-      btn.classList.add("active-tier", "bg-wedding-ivory", "border-wedding-gold");
+      const input = document.getElementById("calcHallInput");
+      if (input) input.value = fee;
+      markCalcTier(".hall-tier-btn", fee);
       updateBudgetCalculator();
     }
 
     function setSdmTier(fee, btn) {
       currentSdmFee = fee;
-      document.querySelectorAll(".sdm-tier-btn").forEach(b => {
-        b.classList.remove("active-tier", "bg-wedding-ivory", "border-wedding-gold");
-      });
-      btn.classList.add("active-tier", "bg-wedding-ivory", "border-wedding-gold");
+      const input = document.getElementById("calcSdmInput");
+      if (input) input.value = fee;
+      markCalcTier(".sdm-tier-btn", fee);
       updateBudgetCalculator();
     }
 
+    // 금액 칸에 직접 입력한 경우
+    function setCalcCustomFee(kind, value) {
+      const fee = Math.round(calcNum(value, 0, 100000));
+      if (kind === "hall") { currentHallFee = fee; markCalcTier(".hall-tier-btn", fee); }
+      else { currentSdmFee = fee; markCalcTier(".sdm-tier-btn", fee); }
+      updateBudgetCalculator();
+    }
+
+    function setCalcGift(value) {
+      currentGiftPerGuest = calcNum(value, 0, 100);
+      const input = document.getElementById("calcGiftInput");
+      if (input && Number(input.value) !== currentGiftPerGuest) input.value = currentGiftPerGuest;
+      markCalcTier(".gift-btn", currentGiftPerGuest);
+      updateBudgetCalculator();
+    }
+
+    // 슬라이더 ↔ 숫자 칸 동기화 (숫자 칸은 슬라이더 범위를 넘어도 그대로 계산)
+    function syncCalcPair(rangeId, inputId, from) {
+      const range = document.getElementById(rangeId);
+      const input = document.getElementById(inputId);
+      if (from === "range") input.value = range.value;
+      else if (input.value !== "") range.value = Math.min(Number(range.max), Math.max(Number(range.min), Number(input.value)));
+      updateBudgetCalculator();
+    }
+
+    const calcEsc = (s) => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+
+    function renderCalcCustomItems() {
+      const list = document.getElementById("calcCustomList");
+      if (!list) return;
+      list.innerHTML = calcCustomItems.map((it, i) => `
+        <div class="calc-extra is-on">
+          <label><span class="calc-custom-dot"></span><span class="truncate">${calcEsc(it.name)}</span></label>
+          <input type="number" class="calc-num calc-custom-amt" inputmode="numeric" min="0" step="10" value="${it.amount}" oninput="updateCalcCustomItem(${i}, this.value)" aria-label="${calcEsc(it.name)} 금액">
+          <button type="button" class="calc-remove" onclick="removeCalcCustomItem(${i})" aria-label="${calcEsc(it.name)} 삭제">×</button>
+        </div>`).join("");
+    }
+
+    function addCalcCustomItem() {
+      const nameEl = document.getElementById("calcCustomName");
+      const amtEl = document.getElementById("calcCustomAmt");
+      const name = nameEl.value.trim();
+      const amount = Math.round(calcNum(amtEl.value, 0, 100000));
+      if (!name) { showToast("추가할 항목 이름을 입력해 주세요."); nameEl.focus(); return; }
+      if (!amount) { showToast("금액을 만원 단위로 입력해 주세요."); amtEl.focus(); return; }
+      calcCustomItems.push({ name, amount });
+      nameEl.value = ""; amtEl.value = "";
+      renderCalcCustomItems();
+      updateBudgetCalculator();
+      showToast(`‘${name}’ ${amount.toLocaleString()}만원을 견적에 추가했습니다.`);
+    }
+
+    function updateCalcCustomItem(index, value) {
+      if (!calcCustomItems[index]) return;
+      calcCustomItems[index].amount = Math.round(calcNum(value, 0, 100000));
+      updateBudgetCalculator();
+    }
+
+    function removeCalcCustomItem(index) {
+      calcCustomItems.splice(index, 1);
+      renderCalcCustomItems();
+      updateBudgetCalculator();
+    }
+
+    ["calcCustomName", "calcCustomAmt"].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.addEventListener("keydown", (e) => { if (e.key === "Enter") { e.preventDefault(); addCalcCustomItem(); } });
+    });
+
     function updateBudgetCalculator() {
-      const guests = parseInt(document.getElementById("calcGuestRange").value);
-      const meal = parseInt(document.getElementById("calcMealRange").value);
+      const guests = Math.round(calcNum(document.getElementById("calcGuestInput").value, 0, 3000));
+      const meal = Math.round(calcNum(document.getElementById("calcMealInput").value, 0, 1000000));
 
       document.getElementById("calcGuestValue").textContent = `${guests}명`;
-      document.getElementById("calcMealValue").textContent = `${meal.toLocaleString()}원`;
+      document.getElementById("calcMealValue").textContent = `(${(meal / 10000).toLocaleString(undefined, { maximumFractionDigits: 2 })}만원)`;
 
       // Meal total in 10,000 KRW (만 원)
       const mealTotalMan = Math.round((guests * meal) / 10000);
 
-      // Additional options
+      // 추가 항목: 체크된 항목의 (수정 가능한) 금액 + 직접 추가한 항목
       let etcTotalMan = 0;
-      if (document.getElementById("chkSnap").checked) etcTotalMan += 180;
-      if (document.getElementById("chkRing").checked) etcTotalMan += 350;
-      if (document.getElementById("chkHoneymoon").checked) etcTotalMan += 700;
+      let etcCount = 0;
+      document.querySelectorAll("#calcExtras .calc-extra").forEach(row => {
+        const chk = row.querySelector('input[type="checkbox"]');
+        const amt = row.querySelector(".calc-extra-amt");
+        row.classList.toggle("is-on", chk.checked);
+        if (chk.checked) { etcTotalMan += Math.round(calcNum(amt.value, 0, 100000)); etcCount++; }
+      });
+      calcCustomItems.forEach(it => { etcTotalMan += it.amount; etcCount++; });
 
       const grandTotalMan = mealTotalMan + currentHallFee + currentSdmFee + etcTotalMan;
 
-      // 축의금 예상 상쇄 (하객 1인당 평균 10만원 축의금 기준)
-      const expectedGiftMoney = guests * 10;
+      // 축의금 예상 상쇄 (하객 수 × 1인 평균 축의금)
+      const expectedGiftMoney = Math.round(guests * currentGiftPerGuest);
       const netCostMan = Math.max(0, grandTotalMan - expectedGiftMoney);
 
       // UI Update
       document.getElementById("calcTotalFormatted").textContent = grandTotalMan.toLocaleString();
       document.getElementById("calcNetCost").textContent = `약 ${netCostMan.toLocaleString()}만원`;
+      const giftNote = document.getElementById("calcGiftNote");
+      if (giftNote) giftNote.textContent = `1인 ${currentGiftPerGuest.toLocaleString()}만원`;
 
-      document.getElementById("calcMealSummary").textContent = `${guests}명 x ${(meal/10000).toFixed(1)}만`;
+      document.getElementById("calcMealSummary").textContent = `${guests.toLocaleString()}명 x ${(meal / 10000).toLocaleString(undefined, { maximumFractionDigits: 2 })}만`;
       document.getElementById("calcMealTotal").textContent = `${mealTotalMan.toLocaleString()}만원`;
       document.getElementById("calcHallTotal").textContent = `${currentHallFee.toLocaleString()}만원`;
       document.getElementById("calcSdmTotal").textContent = `${currentSdmFee.toLocaleString()}만원`;
       document.getElementById("calcEtcTotal").textContent = `${etcTotalMan.toLocaleString()}만원`;
+      const etcCountEl = document.getElementById("calcEtcCount");
+      if (etcCountEl) etcCountEl.textContent = etcCount;
 
       // Update proportion bar
-      const pMeal = ((mealTotalMan / grandTotalMan) * 100).toFixed(1);
-      const pHall = ((currentHallFee / grandTotalMan) * 100).toFixed(1);
-      const pSdm = ((currentSdmFee / grandTotalMan) * 100).toFixed(1);
-      const pEtc = ((etcTotalMan / grandTotalMan) * 100).toFixed(1);
+      const pct = (v) => grandTotalMan > 0 ? (v / grandTotalMan) * 100 : 0;
+      const pMeal = pct(mealTotalMan).toFixed(1);
+      const pHall = pct(currentHallFee).toFixed(1);
+      const pSdm = pct(currentSdmFee).toFixed(1);
+      const pEtc = pct(etcTotalMan).toFixed(1);
+      const ratioText = document.getElementById("calcRatioText");
+      if (ratioText) ratioText.textContent = `식대 ${Math.round(pct(mealTotalMan))}% · 홀·스드메 ${Math.round(pct(currentHallFee + currentSdmFee))}% · 추가 ${Math.round(pct(etcTotalMan))}%`;
 
       document.getElementById("barMeal").style.width = `${pMeal}%`;
       document.getElementById("barHall").style.width = `${pHall}%`;
