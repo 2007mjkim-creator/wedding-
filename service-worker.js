@@ -1,4 +1,4 @@
-const CACHE_NAME = 'marryst-cache-v4';
+const CACHE_NAME = 'marryst-cache-v5';
 
 // 오프라인 캐싱을 허용하는 외부 정적 자원 호스트 (그 외 외부 요청은 항상 네트워크 직접 사용)
 const CACHEABLE_HOSTS = [
@@ -15,6 +15,7 @@ const PRECACHE_ASSETS = [
   './',
   './index.html',
   './manifest.json',
+  './picks.js',
   '/icons/icon-192x192.png',
   '/icons/icon-512x512.png',
   './icons/icon-192x192.png',
@@ -74,6 +75,22 @@ self.addEventListener('fetch', (event) => {
   // 카카오맵 SDK·지도 타일·장소 검색 등 그 외 외부 요청은 서비스워커가 관여하지 않음
   // (실패 응답이 캐시에 고정되는 문제 방지 + 카카오 로컬 API 결과 저장 금지 정책 준수)
   if (url.origin !== self.location.origin && !CACHEABLE_HOSTS.includes(url.hostname)) return;
+
+  // 추천 업체 목록(picks.js)은 자주 바뀌므로 네트워크 우선 → 실패 시 캐시
+  if (url.origin === self.location.origin && url.pathname.endsWith('/picks.js')) {
+    event.respondWith(
+      fetch(request)
+        .then((response) => {
+          if (response && response.status === 200) {
+            const copy = response.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put(request, copy));
+          }
+          return response;
+        })
+        .catch(() => caches.match(request))
+    );
+    return;
+  }
 
   // HTML 탐색(Navigation) 요청: 네트워크 우선 -> 실패 시 오프라인 캐시 반환
   if (request.mode === 'navigate') {
