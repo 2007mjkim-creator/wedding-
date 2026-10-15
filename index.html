@@ -361,60 +361,51 @@
       /* 플로팅 계산기·찜 버튼은 하단 탭/헤더와 중복되어 카드를 가리므로 숨김 (상담 버튼만 유지) */
       .float-extra { display: none !important; }
 
-      #directoryGrid { gap: 0.875rem; }
-      #directoryGrid .card-item { flex-direction: row; border-radius: 1.25rem; }
-      #directoryGrid .card-item:not(.hidden) { display: flex; }
-
-      /* 왼쪽 썸네일 */
-      #directoryGrid .card-item > .img-zoom-wrapper {
-        width: 34%; max-width: 132px; min-width: 112px;
-        height: auto;
-        flex-shrink: 0;
+      /* 큐레이션 카드: 한 줄 2개, 사진 + 제목 + 상세 버튼만 (나머지 설명은 상세 모달에서) */
+      #directoryGrid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.625rem;
       }
-      #directoryGrid .card-item > .img-zoom-wrapper img { position: absolute; inset: 0; }
+      #directoryGrid .card-item { border-radius: 1rem; cursor: pointer; }
+      #directoryGrid .card-item > .img-zoom-wrapper { height: auto; aspect-ratio: 4 / 3; }
       #directoryGrid .card-item > .img-zoom-wrapper > span {
-        top: 0.5rem; left: 0.5rem;
-        max-width: calc(100% - 1rem);
-        padding: 0.15rem 0.45rem;
+        top: 0.45rem; left: 0.45rem;
+        max-width: calc(100% - 2.8rem);
+        padding: 0.1rem 0.45rem;
         font-size: 9px;
         white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
       }
       #directoryGrid .card-item .wish-btn {
-        top: auto; bottom: 0.5rem; right: 0.5rem;
-        width: 1.85rem; height: 1.85rem;
+        top: 0.4rem; right: 0.4rem;
+        width: 1.75rem; height: 1.75rem;
       }
-      #directoryGrid .card-item .wish-btn i { width: 0.85rem; height: 0.85rem; }
-      #directoryGrid .card-item > .img-zoom-wrapper > div {
-        left: 0.5rem; bottom: 0.5rem;
-        max-width: calc(100% - 3rem);
-        padding: 0.1rem 0.4rem;
-        font-size: 9.5px;
-        white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-      }
+      #directoryGrid .card-item .wish-btn i { width: 0.8rem; height: 0.8rem; }
+      #directoryGrid .card-item > .img-zoom-wrapper > div { display: none; }   /* 지역 라벨 */
 
-      /* 오른쪽 정보 영역 */
-      #directoryGrid .card-item > .img-zoom-wrapper + div {
-        padding: 0.85rem 0.95rem;
-        min-width: 0;
+      #directoryGrid .card-item > .img-zoom-wrapper + div { padding: 0.65rem 0.7rem 0.75rem; }
+      #directoryGrid .card-item .justify-between.mb-2 { display: none; }       /* 별점·인원 */
+      #directoryGrid .card-item h3 + p { display: none; }                     /* 설명 */
+      #directoryGrid .card-item .flex-wrap.mt-3 { display: none; }            /* 태그 */
+      #directoryGrid .card-item h3 {
+        font-size: 0.9rem; line-height: 1.32;
+        display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+        overflow: hidden;
+        min-height: 2.64em;
       }
-      #directoryGrid .card-item .justify-between.mb-2 {
-        flex-wrap: wrap; gap: 0.1rem 0.5rem;
-        margin-bottom: 0.3rem;
-        font-size: 10.5px;
-      }
-      #directoryGrid .card-item h3 { font-size: 1.02rem; line-height: 1.3; }
-      #directoryGrid .card-item h3 + p { margin-top: 0.3rem; font-size: 11px; }
-      #directoryGrid .card-item .flex-wrap.mt-3 { display: none; }
-      #directoryGrid .card-item .mt-6 {
-        margin-top: 0.6rem; padding-top: 0.55rem;
-        flex-wrap: wrap; gap: 0.4rem;
-      }
-      #directoryGrid .card-item .mt-6 .text-sm { font-size: 12px; }
+      #directoryGrid .card-item .mt-6 { display: block; margin-top: 0.55rem; padding-top: 0; border-top: 0; }
+      #directoryGrid .card-item .mt-6 > div { display: none; }                /* 가격 */
       #directoryGrid .card-item .mt-6 button {
-        margin-left: auto;
-        padding: 0.3rem 0.65rem;
+        width: 100%;
+        padding: 0.4rem 0.25rem;
         font-size: 10.5px;
+        text-align: center;
       }
+    }
+
+    /* 상세 모달의 별점·태그 줄: 모바일에서만 표시 (PC는 카드에 이미 노출) */
+    .modal-mobile-extra { display: none; }
+    @media (max-width: 639px) {
+      .modal-mobile-extra { display: flex; }
     }
 
     /* 모바일 하단 탭바 */
@@ -4764,6 +4755,17 @@
       const item = detailData[key];
       if (!item) return;
 
+      // 모바일 카드에서 숨긴 별점·태그를 상세 모달에서 보여주기 위해 카드에서 읽어옴 (PC는 카드에 이미 표시)
+      const sourceBtn = document.querySelector(`#directoryGrid button[onclick="openDetailModal('${key}')"]`);
+      const sourceCard = sourceBtn ? sourceBtn.closest(".card-item") : null;
+      const ratingText = sourceCard ? (sourceCard.querySelector(".justify-between.mb-2 > span:first-child")?.textContent || "").trim() : "";
+      const tagList = sourceCard ? [...sourceCard.querySelectorAll(".flex-wrap.mt-3 > span")].map(t => t.textContent.trim()) : [];
+      const mobileExtras = (ratingText || tagList.length) ? `
+        <div class="modal-mobile-extra mt-3 flex-wrap items-center gap-1.5">
+          ${ratingText ? `<span class="inline-flex items-center gap-1 text-[11px] font-semibold text-wedding-dark bg-amber-50 border border-amber-200 px-2 py-0.5 rounded"><i data-lucide="star" class="w-3 h-3 text-amber-500 fill-amber-500"></i>${ratingText}</span>` : ""}
+          ${tagList.map(t => `<span class="text-[11px] px-2 py-0.5 rounded bg-wedding-cream text-wedding-darkgold font-medium">${t}</span>`).join("")}
+        </div>` : "";
+
       const modalContent = document.getElementById("detailModalContent");
       modalContent.innerHTML = `
         <div class="h-64 sm:h-72 rounded-2xl overflow-hidden mb-5">
@@ -4774,6 +4776,7 @@
         <p class="text-xs text-wedding-muted mt-1 flex items-center gap-1.5">
           <i data-lucide="map-pin" class="w-3.5 h-3.5 text-wedding-gold"></i> ${item.location}
         </p>
+        ${mobileExtras}
 
         <p class="text-xs sm:text-sm text-wedding-charcoal/90 mt-4 leading-relaxed bg-wedding-ivory p-4 rounded-xl border border-wedding-border/60">
           ${item.desc}
@@ -5400,6 +5403,18 @@
     });
 
     window.addEventListener('popstate', () => goToHash(location.hash.slice(1), false));
+
+    // 모바일: 큐레이션 카드 아무 곳이나 누르면 상세 견적보기 열기 (찜·버튼 클릭은 그대로)
+    const directoryGridEl = document.getElementById('directoryGrid');
+    if (directoryGridEl) {
+      directoryGridEl.addEventListener('click', (e) => {
+        if (window.innerWidth >= 640) return;
+        if (e.target.closest('button, a')) return;
+        const card = e.target.closest('.card-item');
+        const detailBtn = card && card.querySelector('button[onclick^="openDetailModal"]');
+        if (detailBtn) detailBtn.click();
+      });
+    }
 
     // 스크롤 시 헤더 그림자로 본문과 구분
     const siteHeader = document.querySelector('header');
