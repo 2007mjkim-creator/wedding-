@@ -269,6 +269,7 @@
     /* 뷰별 고유 액센트 컬러 — 페이지마다 색으로 구분 */
     [data-view="home"]       { --accent: #8E6A2C; --accent-soft: #F7F0E1; }
     [data-view="curation"]   { --accent: #8A5F22; --accent-soft: #F6EDDF; }
+    [data-view="directory"]  { --accent: #2D6A68; --accent-soft: #E6F1F0; }
     [data-view="invitation"] { --accent: #A0534B; --accent-soft: #FAEDEB; }
     [data-view="budget"]     { --accent: #3F5B7A; --accent-soft: #E9EFF5; }
     [data-view="checklist"]  { --accent: #4D6B4A; --accent-soft: #EDF3EC; }
@@ -298,14 +299,14 @@
       position: relative;
       display: inline-flex; align-items: center; gap: 0.35rem;
       height: 80px;
-      padding: 0 0.7rem;
+      padding: 0 0.6rem;
       white-space: nowrap;
       color: rgba(34, 32, 30, 0.85);
       transition: color 0.2s;
     }
     .top-nav-link::after {
       content: "";
-      position: absolute; left: 0.7rem; right: 0.7rem; bottom: -1px;
+      position: absolute; left: 0.6rem; right: 0.6rem; bottom: -1px;
       height: 2px; border-radius: 2px;
       background: var(--accent);
       transform: scaleX(0);
@@ -315,6 +316,12 @@
     .top-nav-link:hover::after { transform: scaleX(0.5); }
     .top-nav-link.is-active { color: var(--accent); font-weight: 700; }
     .top-nav-link.is-active::after { transform: scaleX(1); }
+    /* 작은 노트북(1024~1279px): 메뉴 간격·문구를 줄여 한 줄에 맞춤 */
+    @media (max-width: 1279px) {
+      .top-nav-link { padding: 0 0.45rem; }
+      .top-nav-link::after { left: 0.45rem; right: 0.45rem; }
+      .top-nav .xl-only { display: none; }
+    }
 
     /* 페이지 헤더 스트립 (각 뷰 상단) */
     .view-head {
@@ -508,6 +515,31 @@
     }
     .vf-action:hover { border-color: #B8924C; color: var(--gold-text); }
 
+    /* 전국 웨딩 업체 디렉터리 카드 */
+    .dir-card {
+      display: flex; flex-direction: column;
+      background: #fff;
+      border: 1px solid #DDD3C4;
+      border-radius: 1rem;
+      padding: 0.95rem 1rem 1rem;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .dir-card:hover { border-color: #2D6A68; box-shadow: 0 14px 28px -20px rgba(45, 106, 104, 0.8); }
+    .dir-badge {
+      display: inline-flex; align-items: center;
+      padding: 0.15rem 0.55rem; border-radius: 9999px;
+      font-size: 12px; font-weight: 700;
+    }
+    .dir-badge[data-c="hall"]    { background: #F6EDDF; color: #7A5A22; }
+    .dir-badge[data-c="studio"]  { background: #E9EFF5; color: #34506D; }
+    .dir-badge[data-c="dress"]   { background: #FAEDEB; color: #8E463F; }
+    .dir-badge[data-c="makeup"]  { background: #F3ECF4; color: #6A4C70; }
+    .dir-badge[data-c="jewelry"] { background: #EFEBE4; color: #4A4540; }
+    .dir-badge[data-c="hanbok"]  { background: #EDF3EC; color: #45603F; }
+    .dir-badge[data-c="planner"] { background: #E6F1F0; color: #2D5F5D; }
+    #dirCats::-webkit-scrollbar { display: none; }
+    .dir-cat .dir-count { margin-left: 0.3rem; font-weight: 500; opacity: 0.75; }
+
     /* 메리스트 추천 고정 업체 카드 */
     .pick-card {
       background: #fff;
@@ -614,14 +646,15 @@
         </a>
 
         <!-- Desktop Navigation Links (현재 페이지는 액센트 컬러 + 밑줄로 표시) -->
-        <nav class="top-nav hidden lg:flex flex-1 justify-center items-center gap-0.5 xl:gap-2 text-[13px] xl:text-[14px] font-medium px-4">
+        <nav class="top-nav hidden lg:flex flex-1 justify-center items-center gap-0 text-[13px] xl:text-[14px] font-medium px-1 xl:px-2">
           <a href="#wedding-hall" data-view="curation" class="js-nav top-nav-link">웨딩홀·스드메</a>
+          <a href="#directory" data-view="directory" class="js-nav top-nav-link">전국 업체</a>
           <a href="#invitation-studio" data-view="invitation" class="js-nav top-nav-link">
-            <span>청첩장 스튜디오</span>
-            <span class="px-1.5 py-0.5 rounded bg-wedding-rose/15 text-wedding-rose text-[9px] font-bold leading-none">NEW</span>
+            <span>청첩장<span class="xl-only"> 스튜디오</span></span>
+            <span class="xl-only px-1.5 py-0.5 rounded bg-wedding-rose/15 text-wedding-rose text-[9px] font-bold leading-none">NEW</span>
           </a>
-          <a href="#calculator" data-view="budget" class="js-nav top-nav-link">스마트 견적기</a>
-          <a href="#checklist" data-view="checklist" class="js-nav top-nav-link">D-180 체크리스트</a>
+          <a href="#calculator" data-view="budget" class="js-nav top-nav-link"><span class="xl-only">스마트&nbsp;</span>견적기</a>
+          <a href="#checklist" data-view="checklist" class="js-nav top-nav-link"><span class="xl-only">D-180&nbsp;</span>체크리스트</a>
           <a href="#reviews" data-view="stories" class="js-nav top-nav-link">후기·매거진</a>
           <a href="#benefits" data-view="benefits" class="js-nav top-nav-link">박람회·FAQ</a>
         </nav>
@@ -658,6 +691,13 @@
       <div class="flex flex-col space-y-3 font-medium text-base">
         <a href="#home" onclick="toggleMobileMenu()" class="py-2 hover:text-wedding-gold border-b border-wedding-border/40 flex items-center justify-between">
           <span>홈 · 나의 웨딩 대시보드</span>
+          <i data-lucide="chevron-right" class="w-4 h-4 text-wedding-muted"></i>
+        </a>
+        <a href="#directory" onclick="toggleMobileMenu()" class="py-2 hover:text-wedding-gold border-b border-wedding-border/40 flex items-center justify-between">
+          <span class="flex items-center gap-2">
+            <span>전국 웨딩 업체 찾기</span>
+            <span class="px-1.5 py-0.5 rounded bg-wedding-gold text-white text-[10px] font-bold">NEW</span>
+          </span>
           <i data-lucide="chevron-right" class="w-4 h-4 text-wedding-muted"></i>
         </a>
         <a href="#wedding-hall" onclick="navigateToCuration('hall', event); toggleMobileMenu();" class="py-2 hover:text-wedding-gold border-b border-wedding-border/40 flex items-center justify-between">
@@ -916,6 +956,19 @@
           <h2 class="font-serif text-2xl sm:text-3xl font-normal text-wedding-dark mt-1">무엇을 준비하고 계신가요?</h2>
         </div>
 
+        <!-- Featured: 전국 웨딩 업체 디렉터리 -->
+        <a href="#directory" data-view="directory" class="dash-card group flex flex-col sm:flex-row sm:items-center gap-4 bg-white rounded-2xl p-5 sm:p-6 border border-wedding-border shadow-sm mb-4">
+          <span class="dash-icon w-14 h-14 rounded-2xl flex items-center justify-center shrink-0"><i data-lucide="store" class="w-7 h-7"></i></span>
+          <span class="flex-1 min-w-0">
+            <span class="dash-accent block font-serif text-xs font-bold">03 · NEW</span>
+            <span class="block text-lg font-bold text-wedding-dark">전국 웨딩 업체 찾기 <span class="dash-accent">2,702곳</span></span>
+            <span class="block text-sm text-wedding-muted mt-1 leading-relaxed">웨딩홀 698 · 스튜디오·스냅 639 · 한복 513 · 드레스 328 · 플래너 257 · 메이크업 152 · 예물 115 — 시·도와 시·군·구별로 한 번에 찾아보세요.</span>
+          </span>
+          <span class="inline-flex items-center gap-1.5 self-start sm:self-center px-4 py-2 rounded-xl text-sm font-bold text-white shrink-0" style="background: var(--accent)">
+            찾아보기 <i data-lucide="arrow-right" class="w-4 h-4"></i>
+          </span>
+        </a>
+
         <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
           <a href="#wedding-hall" data-view="curation" class="dash-card group flex items-start gap-4 bg-white rounded-2xl p-5 border border-wedding-border shadow-sm">
             <span class="dash-icon w-12 h-12 rounded-2xl flex items-center justify-center shrink-0"><i data-lucide="landmark" class="w-6 h-6"></i></span>
@@ -929,7 +982,7 @@
           <a href="#invitation-studio" data-view="invitation" class="dash-card group flex items-start gap-4 bg-white rounded-2xl p-5 border border-wedding-border shadow-sm">
             <span class="dash-icon w-12 h-12 rounded-2xl flex items-center justify-center shrink-0"><i data-lucide="mail-open" class="w-6 h-6"></i></span>
             <span class="flex-1 min-w-0">
-              <span class="dash-accent block font-serif text-xs font-bold">03</span>
+              <span class="dash-accent block font-serif text-xs font-bold">04</span>
               <span class="block font-bold text-wedding-dark">청첩장 스튜디오</span>
               <span class="block text-xs text-wedding-muted mt-1 leading-relaxed">AI 프롬프트 DIY 디자인, 실물 인쇄, 제휴 브랜드 주문 & 무료 샘플</span>
             </span>
@@ -938,7 +991,7 @@
           <a href="#calculator" data-view="budget" class="dash-card group flex items-start gap-4 bg-white rounded-2xl p-5 border border-wedding-border shadow-sm">
             <span class="dash-icon w-12 h-12 rounded-2xl flex items-center justify-center shrink-0"><i data-lucide="calculator" class="w-6 h-6"></i></span>
             <span class="flex-1 min-w-0">
-              <span class="dash-accent block font-serif text-xs font-bold">04</span>
+              <span class="dash-accent block font-serif text-xs font-bold">05</span>
               <span class="block font-bold text-wedding-dark">스마트 견적 계산기</span>
               <span class="block text-xs text-wedding-muted mt-1 leading-relaxed">하객 수·식대·홀·스드메 등급으로 총 예산과 실 부담액 즉시 산출</span>
             </span>
@@ -947,7 +1000,7 @@
           <a href="#checklist" data-view="checklist" class="dash-card group flex items-start gap-4 bg-white rounded-2xl p-5 border border-wedding-border shadow-sm">
             <span class="dash-icon w-12 h-12 rounded-2xl flex items-center justify-center shrink-0"><i data-lucide="list-checks" class="w-6 h-6"></i></span>
             <span class="flex-1 min-w-0">
-              <span class="dash-accent block font-serif text-xs font-bold">05</span>
+              <span class="dash-accent block font-serif text-xs font-bold">06</span>
               <span class="block font-bold text-wedding-dark">D-180 체크리스트</span>
               <span class="block text-xs text-wedding-muted mt-1 leading-relaxed">시기별 필수 항목, 나만의 항목 추가, 상견례·모임 식당 팁</span>
             </span>
@@ -956,7 +1009,7 @@
           <a href="#reviews" data-view="stories" class="dash-card group flex items-start gap-4 bg-white rounded-2xl p-5 border border-wedding-border shadow-sm">
             <span class="dash-icon w-12 h-12 rounded-2xl flex items-center justify-center shrink-0"><i data-lucide="book-open" class="w-6 h-6"></i></span>
             <span class="flex-1 min-w-0">
-              <span class="dash-accent block font-serif text-xs font-bold">06</span>
+              <span class="dash-accent block font-serif text-xs font-bold">07</span>
               <span class="block font-bold text-wedding-dark">본식 후기 · 매거진</span>
               <span class="block text-xs text-wedding-muted mt-1 leading-relaxed">실계약 인증 리얼 후기와 2026 웨딩 트렌드 가이드</span>
             </span>
@@ -965,7 +1018,7 @@
           <a href="#benefits" data-view="benefits" class="dash-card group flex items-start gap-4 bg-white rounded-2xl p-5 border border-wedding-border shadow-sm">
             <span class="dash-icon w-12 h-12 rounded-2xl flex items-center justify-center shrink-0"><i data-lucide="gift" class="w-6 h-6"></i></span>
             <span class="flex-1 min-w-0">
-              <span class="dash-accent block font-serif text-xs font-bold">07</span>
+              <span class="dash-accent block font-serif text-xs font-bold">08</span>
               <span class="block font-bold text-wedding-dark">VIP 박람회 혜택 · FAQ</span>
               <span class="block text-xs text-wedding-muted mt-1 leading-relaxed">무료 초대권 신청, 대관료 지원 혜택, 자주 묻는 질문</span>
             </span>
@@ -1931,6 +1984,59 @@
 
   </div>
   <!-- ==================== /VIEW 02 · CURATION ==================== -->
+
+  <!-- ==================== VIEW 03 · DIRECTORY ==================== -->
+  <div class="app-view" data-view="directory">
+
+  <!-- ====================================================
+       5-2. NATIONWIDE WEDDING DIRECTORY (전국 웨딩 업체 찾기)
+       - 데이터: data/wedding-directory.json
+         (소상공인시장진흥공단 상가(상권)정보에서 웨딩 업종만 추출)
+       ==================================================== -->
+  <section id="directory" class="bg-wedding-ivory">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-3 mb-6">
+        <div>
+          <span class="inline-flex items-center gap-1.5 text-xs tracking-[0.2em] font-semibold text-wedding-gold uppercase">
+            <i data-lucide="store" class="w-3.5 h-3.5"></i> NATIONWIDE DIRECTORY
+          </span>
+          <h2 class="font-serif text-2xl sm:text-3xl font-normal text-wedding-dark mt-1">전국 웨딩 업체 <span id="dirTotal" class="dash-accent" data-view="directory">—</span>곳</h2>
+          <p class="text-sm text-wedding-muted mt-2">지역과 업종을 고르면 해당 지역의 웨딩 업체를 모두 보여드려요. 전화번호·영업시간은 ‘카카오맵’ 버튼으로 최신 정보를 확인하세요.</p>
+        </div>
+      </div>
+
+      <!-- Filters -->
+      <div class="rounded-2xl border border-wedding-border bg-white p-3 sm:p-4 mb-5">
+        <div id="dirCats" class="flex gap-2 overflow-x-auto pb-1 mb-3" style="scrollbar-width:none"></div>
+        <div class="grid grid-cols-2 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,1.6fr)] gap-2">
+          <select id="dirSido" aria-label="시·도" class="w-full bg-wedding-ivory border border-wedding-border rounded-xl px-3 py-2.5 text-sm font-medium text-wedding-charcoal focus:outline-none focus:ring-2 focus:ring-wedding-gold/50"></select>
+          <select id="dirSigungu" aria-label="시·군·구" class="w-full bg-wedding-ivory border border-wedding-border rounded-xl px-3 py-2.5 text-sm font-medium text-wedding-charcoal focus:outline-none focus:ring-2 focus:ring-wedding-gold/50"></select>
+          <div class="relative col-span-2 sm:col-span-1">
+            <i data-lucide="search" class="w-4 h-4 text-wedding-muted absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+            <input id="dirQuery" type="search" placeholder="업체명·동네로 찾기 (예: 청담, 채플)" class="w-full bg-wedding-ivory border border-wedding-border rounded-xl pl-9 pr-3 py-2.5 text-sm text-wedding-charcoal focus:outline-none focus:ring-2 focus:ring-wedding-gold/50">
+          </div>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-between mb-3">
+        <p id="dirSummary" class="text-sm font-semibold text-wedding-dark">불러오는 중…</p>
+        <button id="dirReset" type="button" class="hidden text-xs font-semibold text-wedding-gold hover:underline">필터 초기화</button>
+      </div>
+
+      <div id="dirGrid" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3"></div>
+
+      <button id="dirMore" type="button" style="display:none" class="w-full sm:w-auto sm:mx-auto sm:flex items-center justify-center gap-2 mt-5 px-8 py-3 rounded-full border border-wedding-dark text-wedding-dark hover:bg-wedding-dark hover:text-white text-sm font-semibold transition"></button>
+
+      <p class="text-[11px] text-wedding-muted mt-6 leading-relaxed">
+        출처: <span id="dirSource">소상공인시장진흥공단 상가(상권)정보</span> · 업종과 상호명을 기준으로 웨딩 관련 업체를 자동으로 골라낸 목록이라 일부 누락되거나 관련 없는 업체가 포함될 수 있어요.
+        메리스트 제휴 여부와는 무관하며, 폐업 등 최신 상태는 카카오맵에서 확인해 주세요.
+      </p>
+    </div>
+  </section>
+
+  </div>
+  <!-- ==================== /VIEW 03 · DIRECTORY ==================== -->
 
   <!-- ==================== VIEW 03 · INVITATION ==================== -->
   <div class="app-view" data-view="invitation">
@@ -3301,6 +3407,7 @@
           <ul class="space-y-2.5 text-xs text-wedding-sand/80">
             <li><a href="#wedding-hall" onclick="navigateToCuration('hall', event)" class="hover:text-wedding-gold transition">인기 웨딩홀 실시간 잔여타임</a></li>
             <li><a href="#sdm-section" onclick="navigateToCuration('sdm', event)" class="hover:text-wedding-gold transition">스드메 브랜드 화보 & 견적</a></li>
+            <li><a href="#directory" class="hover:text-wedding-gold transition">전국 웨딩 업체 찾기</a></li>
             <li><a href="#invitation-studio" class="hover:text-wedding-gold transition">청첩장 스튜디오 (DIY & 주문)</a></li>
             <li><a href="#calculator" class="hover:text-wedding-gold transition">스마트 결혼 예산 계산기</a></li>
             <li><a href="#checklist" class="hover:text-wedding-gold transition">D-180 웨딩 체크리스트</a></li>
@@ -5458,7 +5565,7 @@
        20. VIEW ROUTER (페이지 단위 화면 전환 · 해시 링크 호환)
        ==================================================== -->
   <script>
-    const VIEW_ORDER = ['home', 'curation', 'invitation', 'budget', 'checklist', 'stories', 'benefits'];
+    const VIEW_ORDER = ['home', 'curation', 'directory', 'invitation', 'budget', 'checklist', 'stories', 'benefits'];
 
     const VIEWS = {
       home: {
@@ -5477,8 +5584,19 @@
           { icon: 'map-pinned', label: '업체 실시간 찾기', href: '#vendor-finder' }
         ]
       },
+      directory: {
+        num: '03', hash: 'directory', crumb: 'DIRECTORY', icon: 'store',
+        title: '전국 웨딩 업체 찾기', short: '전국 업체',
+        desc: '전국 웨딩홀·스튜디오·드레스·메이크업·한복·예물·플래너를 지역별로 찾아보세요.',
+        chips: [
+          { icon: 'landmark', label: '웨딩홀', action: "dirQuick('hall')" },
+          { icon: 'camera', label: '스튜디오·스냅', action: "dirQuick('studio')" },
+          { icon: 'sparkles', label: '드레스', action: "dirQuick('dress')" },
+          { icon: 'map-pinned', label: '카카오맵 실시간 찾기', href: '#vendor-finder' }
+        ]
+      },
       invitation: {
-        num: '03', hash: 'invitation-studio', crumb: 'INVITATION', icon: 'mail-open',
+        num: '04', hash: 'invitation-studio', crumb: 'INVITATION', icon: 'mail-open',
         title: '청첩장 스튜디오', short: '청첩장',
         desc: 'AI 프롬프트로 직접 디자인하거나, 제휴 브랜드에 실물 청첩장을 주문하세요.',
         chips: [
@@ -5487,7 +5605,7 @@
         ]
       },
       budget: {
-        num: '04', hash: 'calculator', crumb: 'BUDGET', icon: 'calculator',
+        num: '05', hash: 'calculator', crumb: 'BUDGET', icon: 'calculator',
         title: '스마트 견적 계산기', short: '견적',
         desc: '하객 수와 등급을 고르면 총 예산과 항목별 비중을 실시간으로 계산합니다.',
         chips: [
@@ -5496,7 +5614,7 @@
         ]
       },
       checklist: {
-        num: '05', hash: 'checklist', crumb: 'CHECKLIST', icon: 'list-checks',
+        num: '06', hash: 'checklist', crumb: 'CHECKLIST', icon: 'list-checks',
         title: 'D-180 체크리스트', short: '체크리스트',
         desc: '시기별 필수 준비 항목을 체크하고 나만의 항목을 추가해 관리하세요.',
         chips: [
@@ -5506,7 +5624,7 @@
         ]
       },
       stories: {
-        num: '06', hash: 'reviews', crumb: 'STORIES', icon: 'book-open',
+        num: '07', hash: 'reviews', crumb: 'STORIES', icon: 'book-open',
         title: '본식 후기 · 매거진', short: '후기·매거진',
         desc: '실계약 인증 후기와 현직 에디터의 웨딩 트렌드 가이드.',
         chips: [
@@ -5515,7 +5633,7 @@
         ]
       },
       benefits: {
-        num: '07', hash: 'benefits', crumb: 'BENEFITS', icon: 'gift',
+        num: '08', hash: 'benefits', crumb: 'BENEFITS', icon: 'gift',
         title: 'VIP 박람회 혜택 · FAQ', short: '혜택·FAQ',
         desc: '박람회 무료 초대권을 신청하고 자주 묻는 질문을 확인하세요.',
         chips: [
@@ -5529,6 +5647,7 @@
     const HASH_TO_VIEW = {
       '': 'home', 'home': 'home', 'search-box': 'home',
       'wedding-hall': 'curation', 'sdm-section': 'curation', 'vendor-finder': 'curation',
+      'directory': 'directory',
       'invitation-studio': 'invitation',
       'calculator': 'budget',
       'checklist': 'checklist',
@@ -6215,6 +6334,164 @@
     // 큐레이션 페이지가 열릴 때만 SDK를 불러와 첫 화면 속도에 영향 없음
     document.addEventListener('viewchange', (e) => { if (e.detail === 'curation') { picksInit(); vfInit(); } });
     if (typeof currentView !== 'undefined' && currentView === 'curation') { picksInit(); vfInit(); }
+  </script>
+
+  <!-- ====================================================
+       22. NATIONWIDE WEDDING DIRECTORY (전국 웨딩 업체 찾기)
+       - data/wedding-directory.json 은 페이지가 열릴 때만 불러옴
+       ==================================================== -->
+  <script>
+    const DIR_CAT_LABEL = { hall: '웨딩홀', studio: '스튜디오·스냅', dress: '드레스·예복', makeup: '메이크업', hanbok: '한복', jewelry: '예물·주얼리', planner: '웨딩플래너' };
+    const DIR_CAT_ORDER = ['hall', 'studio', 'dress', 'makeup', 'hanbok', 'jewelry', 'planner'];
+    const DIR_SIDO_ORDER = ['서울', '경기', '인천', '부산', '대구', '광주', '대전', '울산', '세종', '강원', '충북', '충남', '전북', '전남', '경북', '경남', '제주'];
+    const DIR_PAGE = 24;
+
+    const dir = { items: null, loading: null, cat: 'hall', sido: '', sigungu: '', query: '', shown: DIR_PAGE, filtered: [] };
+
+    function dirLoad() {
+      if (dir.loading) return dir.loading;
+      dir.loading = fetch('data/wedding-directory.json', { cache: 'no-cache' })
+        .then(res => { if (!res.ok) throw new Error('HTTP ' + res.status); return res.json(); })
+        .then(data => {
+          // [카테고리, 상호, 지점, 시도, 시군구, 행정동, 주소, 건물명, 층, 경도, 위도]
+          dir.items = data.items.map(r => ({
+            c: r[0], name: r[1], branch: r[2], sido: r[3], sigungu: r[4], dong: r[5],
+            addr: r[6], bldg: r[7], floor: r[8], lng: r[9], lat: r[10],
+            text: (r[1] + ' ' + r[2] + ' ' + r[4] + ' ' + r[5] + ' ' + r[6] + ' ' + r[7]).toLowerCase()
+          }));
+          document.getElementById('dirTotal').textContent = dir.items.length.toLocaleString();
+          document.getElementById('dirSource').textContent = data.source || '소상공인시장진흥공단 상가(상권)정보';
+          dirRenderSido();
+          dirApply();
+        })
+        .catch(() => {
+          dir.loading = null;
+          document.getElementById('dirSummary').textContent = '업체 목록을 불러오지 못했어요. 잠시 후 다시 시도해 주세요.';
+        });
+      return dir.loading;
+    }
+
+    // 현재 필터 중 'except' 항목을 뺀 조건으로 업체 거르기 (드롭다운·탭 개수 계산용)
+    function dirMatch(it, except) {
+      if (except !== 'cat' && dir.cat !== 'all' && it.c !== dir.cat) return false;
+      if (except !== 'sido' && dir.sido && it.sido !== dir.sido) return false;
+      if (except !== 'sigungu' && except !== 'sido' && dir.sigungu && it.sigungu !== dir.sigungu) return false;
+      if (dir.query && !it.text.includes(dir.query)) return false;
+      return true;
+    }
+
+    function dirCount(list, key) {
+      const m = new Map();
+      list.forEach(it => m.set(it[key], (m.get(it[key]) || 0) + 1));
+      return m;
+    }
+
+    function dirRenderSido() {
+      const counts = dirCount(dir.items.filter(it => dirMatch(it, 'sido')), 'sido');
+      const total = [...counts.values()].reduce((a, b) => a + b, 0);
+      const sel = document.getElementById('dirSido');
+      sel.innerHTML = `<option value="">전국 (${total.toLocaleString()})</option>` +
+        DIR_SIDO_ORDER.filter(s => counts.has(s)).map(s => `<option value="${s}" ${s === dir.sido ? 'selected' : ''}>${s} (${counts.get(s).toLocaleString()})</option>`).join('');
+      if (dir.sido && !counts.has(dir.sido)) { dir.sido = ''; dir.sigungu = ''; sel.value = ''; }
+    }
+
+    function dirRenderSigungu() {
+      const sel = document.getElementById('dirSigungu');
+      if (!dir.sido) {
+        sel.innerHTML = '<option value="">시·군·구 전체</option>';
+        sel.disabled = true;
+        return;
+      }
+      sel.disabled = false;
+      const counts = dirCount(dir.items.filter(it => dirMatch(it, 'sigungu')), 'sigungu');
+      const names = [...counts.keys()].sort((a, b) => a.localeCompare(b, 'ko'));
+      if (dir.sigungu && !counts.has(dir.sigungu)) dir.sigungu = '';
+      sel.innerHTML = `<option value="">${dir.sido} 전체</option>` +
+        names.map(n => `<option value="${vfEsc(n)}" ${n === dir.sigungu ? 'selected' : ''}>${vfEsc(n)} (${counts.get(n)})</option>`).join('');
+    }
+
+    function dirRenderCats() {
+      const counts = dirCount(dir.items.filter(it => dirMatch(it, 'cat')), 'c');
+      const total = [...counts.values()].reduce((a, b) => a + b, 0);
+      const btn = (key, label, n) => `<button type="button" data-dir-cat="${key}" class="vf-cat dir-cat ${dir.cat === key ? 'is-active' : ''}">${label}<span class="dir-count">${n.toLocaleString()}</span></button>`;
+      document.getElementById('dirCats').innerHTML = btn('all', '전체', total) +
+        DIR_CAT_ORDER.map(c => btn(c, DIR_CAT_LABEL[c], counts.get(c) || 0)).join('');
+    }
+
+    function dirCardHtml(it) {
+      const region = `${it.sido} ${it.sigungu}`;
+      const place = [it.bldg, it.floor ? `${it.floor}층` : ''].filter(Boolean).join(' ');
+      const kakaoSearch = 'https://map.kakao.com/?q=' + encodeURIComponent(`${it.name} ${it.sigungu}`);
+      const dirUrl = it.lat ? `https://map.kakao.com/link/to/${encodeURIComponent(it.name)},${it.lat},${it.lng}` : kakaoSearch;
+      return `<div class="dir-card">
+        <div class="flex items-center justify-between gap-2">
+          <span class="dir-badge" data-c="${it.c}">${DIR_CAT_LABEL[it.c]}</span>
+          <span class="text-xs text-wedding-muted truncate">${vfEsc(region)}${it.dong ? ' · ' + vfEsc(it.dong) : ''}</span>
+        </div>
+        <h3 class="mt-2 font-bold text-[16px] leading-snug text-wedding-dark">${vfEsc(it.name)}${it.branch ? ` <span class="text-sm font-semibold text-wedding-muted">${vfEsc(it.branch)}</span>` : ''}</h3>
+        <p class="text-xs text-wedding-charcoal/90 mt-1.5">${vfEsc(it.addr)}${place ? ` <span class="text-wedding-muted">(${vfEsc(place)})</span>` : ''}</p>
+        <div class="flex flex-wrap gap-1.5 mt-3 pt-3 border-t border-wedding-border/60 mt-auto">
+          <a class="vf-action" href="${kakaoSearch}" target="_blank" rel="noopener noreferrer"><i data-lucide="map-pinned" class="w-3 h-3"></i>카카오맵·전화번호</a>
+          <a class="vf-action" href="${dirUrl}" target="_blank" rel="noopener noreferrer"><i data-lucide="navigation" class="w-3 h-3"></i>길찾기</a>
+          <button type="button" class="vf-action" onclick="openConsultingModal()"><i data-lucide="message-circle" class="w-3 h-3"></i>상담</button>
+        </div>
+      </div>`;
+    }
+
+    function dirApply(resetPage = true) {
+      if (!dir.items) return;
+      if (resetPage) dir.shown = DIR_PAGE;
+      dirRenderSido();
+      dirRenderSigungu();
+      dirRenderCats();
+      dir.filtered = dir.items.filter(it => dirMatch(it));
+
+      const where = dir.sigungu ? `${dir.sido} ${dir.sigungu}` : (dir.sido || '전국');
+      const what = dir.cat === 'all' ? '웨딩 업체' : DIR_CAT_LABEL[dir.cat];
+      document.getElementById('dirSummary').textContent = `${where} ${what} ${dir.filtered.length.toLocaleString()}곳` + (dir.query ? ` · ‘${document.getElementById('dirQuery').value.trim()}’ 검색` : '');
+      document.getElementById('dirReset').classList.toggle('hidden', dir.cat === 'hall' && !dir.sido && !dir.query);
+
+      const grid = document.getElementById('dirGrid');
+      grid.innerHTML = dir.filtered.length
+        ? dir.filtered.slice(0, dir.shown).map(dirCardHtml).join('')
+        : `<div class="col-span-full p-6 rounded-2xl border border-dashed border-wedding-border bg-white text-sm text-wedding-muted text-center">조건에 맞는 업체가 없어요. 지역이나 업종을 바꿔 보세요.</div>`;
+
+      const more = document.getElementById('dirMore');
+      const remain = dir.filtered.length - dir.shown;
+      more.style.display = remain > 0 ? '' : 'none';
+      more.textContent = `더 보기 (${Math.min(remain, DIR_PAGE)}곳 더 · 남은 ${remain.toLocaleString()}곳)`;
+      if (window.lucide) lucide.createIcons();
+    }
+
+    // 상단 칩 바로가기: 업종만 바꾸고 목록으로 이동
+    function dirQuick(cat) {
+      dir.cat = cat;
+      dirApply();
+      document.getElementById('dirCats').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    document.getElementById('dirCats').addEventListener('click', (e) => {
+      const b = e.target.closest('[data-dir-cat]');
+      if (!b) return;
+      dir.cat = b.dataset.dirCat;
+      dirApply();
+    });
+    document.getElementById('dirSido').addEventListener('change', (e) => { dir.sido = e.target.value; dir.sigungu = ''; dirApply(); });
+    document.getElementById('dirSigungu').addEventListener('change', (e) => { dir.sigungu = e.target.value; dirApply(); });
+    let dirQueryTimer;
+    document.getElementById('dirQuery').addEventListener('input', (e) => {
+      clearTimeout(dirQueryTimer);
+      dirQueryTimer = setTimeout(() => { dir.query = e.target.value.trim().toLowerCase(); dirApply(); }, 200);
+    });
+    document.getElementById('dirMore').addEventListener('click', () => { dir.shown += DIR_PAGE; dirApply(false); });
+    document.getElementById('dirReset').addEventListener('click', () => {
+      Object.assign(dir, { cat: 'hall', sido: '', sigungu: '', query: '' });
+      document.getElementById('dirQuery').value = '';
+      dirApply();
+    });
+
+    document.addEventListener('viewchange', (e) => { if (e.detail === 'directory') dirLoad(); });
+    if (typeof currentView !== 'undefined' && currentView === 'directory') dirLoad();
   </script>
 
   <!-- PWA Service Worker Registration -->

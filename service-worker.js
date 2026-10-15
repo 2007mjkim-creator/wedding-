@@ -1,4 +1,4 @@
-const CACHE_NAME = 'marryst-cache-v5';
+const CACHE_NAME = 'marryst-cache-v6';
 
 // 오프라인 캐싱을 허용하는 외부 정적 자원 호스트 (그 외 외부 요청은 항상 네트워크 직접 사용)
 const CACHEABLE_HOSTS = [
@@ -76,8 +76,8 @@ self.addEventListener('fetch', (event) => {
   // (실패 응답이 캐시에 고정되는 문제 방지 + 카카오 로컬 API 결과 저장 금지 정책 준수)
   if (url.origin !== self.location.origin && !CACHEABLE_HOSTS.includes(url.hostname)) return;
 
-  // 추천 업체 목록(picks.js)은 자주 바뀌므로 네트워크 우선 → 실패 시 캐시
-  if (url.origin === self.location.origin && url.pathname.endsWith('/picks.js')) {
+  // 추천 업체 목록(picks.js)·업체 데이터(/data/)는 갱신되므로 네트워크 우선 → 실패 시 캐시
+  if (url.origin === self.location.origin && (url.pathname.endsWith('/picks.js') || url.pathname.includes('/data/'))) {
     event.respondWith(
       fetch(request)
         .then((response) => {
