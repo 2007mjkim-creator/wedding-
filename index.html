@@ -196,15 +196,8 @@
     }
 
     /* ====================================================
-       APP SHELL LAYOUT (사이드바 + 페이지 단위 뷰 전환)
+       APP SHELL LAYOUT (상단 메뉴 + 페이지 단위 뷰 전환)
        ==================================================== */
-    :root {
-      --sidebar-w: 88px;
-      --header-h: 80px;
-    }
-    @media (min-width: 1280px) {
-      :root { --sidebar-w: 268px; }
-    }
 
     /* 뷰별 고유 액센트 컬러 — 페이지마다 색으로 구분 */
     [data-view="home"]       { --accent: #C5A059; --accent-soft: #F7F0E1; }
@@ -230,64 +223,47 @@
       border-top: 0;
     }
 
-    /* 사이드바 */
-    #appSidebar {
-      width: var(--sidebar-w);
-      top: var(--header-h);
-      height: calc(100vh - var(--header-h));
-    }
-    .side-link {
+    /* 헤더: 스크롤 시 그림자 */
+    header.is-scrolled { box-shadow: 0 10px 30px -18px rgba(34, 32, 30, 0.35); }
+
+    /* 상단 메뉴 (PC) — 현재 페이지는 액센트 컬러 + 밑줄 */
+    .top-nav-link {
       position: relative;
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      border-radius: 1rem;
-      padding: 0.7rem 0.75rem;
-      color: #4A4540;
-      transition: background 0.2s, color 0.2s;
+      display: inline-flex; align-items: center; gap: 0.35rem;
+      height: 80px;
+      padding: 0 0.7rem;
+      white-space: nowrap;
+      color: rgba(34, 32, 30, 0.85);
+      transition: color 0.2s;
     }
-    .side-link:hover { background: var(--accent-soft); color: #22201E; }
-    .side-link .side-icon {
-      width: 2.5rem; height: 2.5rem;
-      border-radius: 0.85rem;
-      display: flex; align-items: center; justify-content: center;
-      background: var(--accent-soft);
-      color: var(--accent);
-      flex-shrink: 0;
-      transition: background 0.2s, color 0.2s;
-    }
-    .side-link.is-active { background: var(--accent-soft); color: #161514; }
-    .side-link.is-active .side-icon { background: var(--accent); color: #fff; box-shadow: 0 8px 18px -8px var(--accent); }
-    .side-link.is-active::before {
+    .top-nav-link::after {
       content: "";
-      position: absolute; left: -0.75rem; top: 22%; bottom: 22%;
-      width: 4px; border-radius: 0 4px 4px 0;
+      position: absolute; left: 0.7rem; right: 0.7rem; bottom: -1px;
+      height: 2px; border-radius: 2px;
       background: var(--accent);
+      transform: scaleX(0);
+      transition: transform 0.25s ease;
     }
-    .side-num { font-family: "Cormorant Garamond", serif; font-weight: 700; font-size: 0.75rem; color: var(--accent); }
-    @media (max-width: 1279px) {
-      .side-link { flex-direction: column; gap: 0.3rem; padding: 0.6rem 0.25rem; text-align: center; }
-      .side-link .side-text { font-size: 10px; line-height: 1.2; }
-      .side-link .side-desc, .side-link .side-num, .side-extra { display: none; }
-    }
+    .top-nav-link:hover { color: var(--accent); }
+    .top-nav-link:hover::after { transform: scaleX(0.5); }
+    .top-nav-link.is-active { color: var(--accent); font-weight: 700; }
+    .top-nav-link.is-active::after { transform: scaleX(1); }
 
     /* 페이지 헤더 스트립 (각 뷰 상단) */
     .view-head {
       position: relative;
-      background: linear-gradient(100deg, var(--accent-soft) 0%, #FDFBF7 70%);
-      border-bottom: 1px solid rgba(0,0,0,0.05);
-      overflow: hidden;
+      background: linear-gradient(90deg, var(--accent-soft) 0%, rgba(253, 251, 247, 0) 85%);
+      border-bottom: 1px solid #EFE8DC;
     }
     .view-head::before {
       content: "";
-      position: absolute; left: 0; top: 0; bottom: 0; width: 6px;
+      position: absolute; left: 0; top: 0; bottom: 0; width: 4px;
       background: var(--accent);
     }
     .view-head-num {
       font-family: "Cormorant Garamond", serif;
-      font-size: 3.25rem; line-height: 1; font-weight: 700;
+      font-size: 2.5rem; line-height: 1; font-weight: 700;
       color: var(--accent);
-      opacity: 0.9;
     }
     .view-head-chip {
       display: inline-flex; align-items: center; gap: 0.35rem;
@@ -298,7 +274,7 @@
       transition: border-color 0.2s, color 0.2s;
     }
     .view-head-chip:hover { border-color: var(--accent); color: var(--accent); }
-    .app-view section[id] { scroll-margin-top: 96px; }
+    .app-view section[id] { scroll-margin-top: 88px; }
 
     /* 이전/다음 페이지 이동 카드 */
     .view-pager a {
@@ -386,12 +362,18 @@
           </div>
         </a>
 
-        <!-- Current Page Indicator (메뉴는 좌측 사이드바 / 모바일 하단 탭으로 이동) -->
-        <div id="headerViewLabel" data-view="home" class="hidden md:flex items-center gap-2.5 px-4 py-2 rounded-full bg-white/70 border border-wedding-border text-[13px] font-semibold text-wedding-dark min-w-0">
-          <span class="w-2 h-2 rounded-full shrink-0" style="background: var(--accent)"></span>
-          <span id="headerViewNum" class="font-serif text-sm font-bold shrink-0" style="color: var(--accent)">01</span>
-          <span id="headerViewTitle" class="truncate">홈 · 나의 웨딩</span>
-        </div>
+        <!-- Desktop Navigation Links (현재 페이지는 액센트 컬러 + 밑줄로 표시) -->
+        <nav class="top-nav hidden lg:flex flex-1 justify-center items-center gap-0.5 xl:gap-2 text-[13px] xl:text-[14px] font-medium px-4">
+          <a href="#wedding-hall" data-view="curation" class="js-nav top-nav-link">웨딩홀·스드메</a>
+          <a href="#invitation-studio" data-view="invitation" class="js-nav top-nav-link">
+            <span>청첩장 스튜디오</span>
+            <span class="px-1.5 py-0.5 rounded bg-wedding-rose/15 text-wedding-rose text-[9px] font-bold leading-none">NEW</span>
+          </a>
+          <a href="#calculator" data-view="budget" class="js-nav top-nav-link">스마트 견적기</a>
+          <a href="#checklist" data-view="checklist" class="js-nav top-nav-link">D-180 체크리스트</a>
+          <a href="#reviews" data-view="stories" class="js-nav top-nav-link">후기·매거진</a>
+          <a href="#benefits" data-view="benefits" class="js-nav top-nav-link">박람회·FAQ</a>
+        </nav>
 
         <!-- Right Quick Actions -->
         <div class="flex items-center gap-2 sm:gap-3 xl:gap-4 shrink-0">
@@ -474,90 +456,11 @@
     </div>
   </header>
 
-
   <!-- ====================================================
-       APP SHELL: 좌측 사이드바 + 우측 페이지 뷰
+       APP SHELL: 상단 메뉴 + 페이지 단위 뷰
        ==================================================== -->
-  <div class="lg:flex lg:items-start">
-
-    <aside id="appSidebar" aria-label="메인 메뉴" class="hidden lg:flex flex-col justify-between sticky shrink-0 border-r border-wedding-border/70 bg-white/60 backdrop-blur-sm px-3 xl:px-4 py-5 overflow-y-auto">
-      <nav class="flex flex-col gap-1.5">
-        <span class="side-extra px-3 pb-2 text-[10px] tracking-[0.25em] font-bold text-wedding-muted uppercase">Wedding Menu</span>
-
-        <a href="#home" data-view="home" class="js-nav side-link">
-          <span class="side-icon"><i data-lucide="layout-dashboard" class="w-5 h-5"></i></span>
-          <span class="flex-1 min-w-0">
-            <span class="side-text block text-sm font-bold">홈</span>
-            <span class="side-desc block text-[11px] text-wedding-muted truncate">나의 웨딩 대시보드</span>
-          </span>
-          <span class="side-num">01</span>
-        </a>
-        <a href="#wedding-hall" data-view="curation" class="js-nav side-link">
-          <span class="side-icon"><i data-lucide="landmark" class="w-5 h-5"></i></span>
-          <span class="flex-1 min-w-0">
-            <span class="side-text block text-sm font-bold">큐레이션</span>
-            <span class="side-desc block text-[11px] text-wedding-muted truncate">웨딩홀 · 스드메 · 예물</span>
-          </span>
-          <span class="side-num">02</span>
-        </a>
-        <a href="#invitation-studio" data-view="invitation" class="js-nav side-link">
-          <span class="side-icon"><i data-lucide="mail-open" class="w-5 h-5"></i></span>
-          <span class="flex-1 min-w-0">
-            <span class="side-text block text-sm font-bold">청첩장 <span class="side-desc inline px-1.5 py-0.5 rounded bg-wedding-rose/15 text-wedding-rose text-[9px] font-bold align-middle">NEW</span></span>
-            <span class="side-desc block text-[11px] text-wedding-muted truncate">AI · DIY 디자인 & 주문</span>
-          </span>
-          <span class="side-num">03</span>
-        </a>
-        <a href="#calculator" data-view="budget" class="js-nav side-link">
-          <span class="side-icon"><i data-lucide="calculator" class="w-5 h-5"></i></span>
-          <span class="flex-1 min-w-0">
-            <span class="side-text block text-sm font-bold">견적 계산기</span>
-            <span class="side-desc block text-[11px] text-wedding-muted truncate">실시간 예산 시뮬레이션</span>
-          </span>
-          <span class="side-num">04</span>
-        </a>
-        <a href="#checklist" data-view="checklist" class="js-nav side-link">
-          <span class="side-icon"><i data-lucide="list-checks" class="w-5 h-5"></i></span>
-          <span class="flex-1 min-w-0">
-            <span class="side-text block text-sm font-bold">체크리스트</span>
-            <span class="side-desc block text-[11px] text-wedding-muted truncate">D-180 준비 로드맵</span>
-          </span>
-          <span class="side-num">05</span>
-        </a>
-        <a href="#reviews" data-view="stories" class="js-nav side-link">
-          <span class="side-icon"><i data-lucide="book-open" class="w-5 h-5"></i></span>
-          <span class="flex-1 min-w-0">
-            <span class="side-text block text-sm font-bold">후기·매거진</span>
-            <span class="side-desc block text-[11px] text-wedding-muted truncate">리얼 후기 & 트렌드</span>
-          </span>
-          <span class="side-num">06</span>
-        </a>
-        <a href="#benefits" data-view="benefits" class="js-nav side-link">
-          <span class="side-icon"><i data-lucide="gift" class="w-5 h-5"></i></span>
-          <span class="flex-1 min-w-0">
-            <span class="side-text block text-sm font-bold">혜택·FAQ</span>
-            <span class="side-desc block text-[11px] text-wedding-muted truncate">VIP 박람회 · 자주 묻는 질문</span>
-          </span>
-          <span class="side-num">07</span>
-        </a>
-      </nav>
-
-      <!-- Sidebar Bottom: D-Day & Consulting -->
-      <div class="side-extra mt-6 space-y-3">
-        <button onclick="openDDayModal()" class="w-full text-left p-4 rounded-2xl bg-wedding-dark text-wedding-cream border border-wedding-darkgold/30 hover:border-wedding-gold transition group">
-          <span class="flex items-center gap-1.5 text-[10px] tracking-[0.2em] uppercase text-wedding-gold font-bold">
-            <i data-lucide="heart" class="w-3 h-3 fill-wedding-rose text-wedding-rose"></i> Our Wedding Day
-          </span>
-          <span id="sidebarDDay" class="block font-serif text-3xl font-bold text-white mt-1">D-150</span>
-          <span class="block text-[11px] text-wedding-sand/70 mt-0.5 group-hover:text-wedding-gold transition">예식일 설정하기 &rarr;</span>
-        </button>
-        <button onclick="openConsultingModal()" class="w-full py-3 rounded-2xl bg-wedding-gold hover:bg-wedding-darkgold text-white text-xs font-bold transition flex items-center justify-center gap-2 shadow-sm">
-          <i data-lucide="message-circle" class="w-4 h-4"></i> 무료 1:1 디렉팅 상담
-        </button>
-      </div>
-    </aside>
-
-    <main id="appMain" class="flex-1 min-w-0">
+  <div>
+    <main id="appMain">
 
   <!-- ==================== VIEW 01 · HOME ==================== -->
   <div class="app-view" data-view="home">
@@ -565,7 +468,7 @@
   <!-- ====================================================
        3. HERO SECTION WITH SEARCH ENGINE
        ==================================================== -->
-  <section class="relative min-h-[600px] lg:min-h-[640px] flex items-center justify-center overflow-hidden lg:m-6 lg:rounded-[2rem] lg:shadow-luxury">
+  <section class="relative min-h-[640px] lg:min-h-[720px] flex items-center justify-center overflow-hidden">
     <!-- Hero Background Image with Overlay -->
     <div class="absolute inset-0 z-0">
       <img 
@@ -682,7 +585,7 @@
   <!-- ====================================================
        4. TRUST METRICS & BRAND PROMISES
        ==================================================== -->
-  <section class="relative z-10 -mt-10 lg:-mt-16 mx-4 lg:mx-12 rounded-3xl border border-wedding-border bg-white py-8 shadow-luxury">
+  <section class="relative z-10 -mt-12 lg:-mt-16 mx-4 sm:mx-6 lg:mx-auto lg:max-w-6xl rounded-3xl border border-wedding-border bg-white py-8 shadow-luxury">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8 text-center divide-y md:divide-y-0 md:divide-x divide-wedding-border/60">
         
@@ -3033,8 +2936,11 @@
           <ul class="space-y-2.5 text-xs text-wedding-sand/80">
             <li><a href="#wedding-hall" onclick="navigateToCuration('hall', event)" class="hover:text-wedding-gold transition">인기 웨딩홀 실시간 잔여타임</a></li>
             <li><a href="#sdm-section" onclick="navigateToCuration('sdm', event)" class="hover:text-wedding-gold transition">스드메 브랜드 화보 & 견적</a></li>
+            <li><a href="#invitation-studio" class="hover:text-wedding-gold transition">청첩장 스튜디오 (DIY & 주문)</a></li>
             <li><a href="#calculator" class="hover:text-wedding-gold transition">스마트 결혼 예산 계산기</a></li>
             <li><a href="#checklist" class="hover:text-wedding-gold transition">D-180 웨딩 체크리스트</a></li>
+            <li><a href="#reviews" class="hover:text-wedding-gold transition">본식 후기 & 웨딩 매거진</a></li>
+            <li><a href="#faq" class="hover:text-wedding-gold transition">자주 묻는 질문</a></li>
             <li><button onclick="openFairModal()" class="hover:text-wedding-gold transition text-left">2026 웨딩박람회 무료초대권</button></li>
           </ul>
         </div>
@@ -5270,17 +5176,16 @@
           const head = document.createElement('div');
           head.className = 'view-head';
           head.innerHTML = `
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-6 flex flex-col md:flex-row md:items-center gap-4">
-              <div class="flex items-center gap-4 min-w-0">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col md:flex-row md:items-center gap-3 md:gap-4">
+              <div class="flex items-center gap-3.5 min-w-0">
                 <span class="view-head-num">${v.num}</span>
                 <div class="min-w-0">
-                  <div class="flex items-center gap-1 text-[10px] sm:text-[11px] font-bold tracking-[0.18em] text-wedding-muted">
+                  <div class="flex items-center gap-1 text-[10px] font-bold tracking-[0.18em] text-wedding-muted">
                     <a href="#home" class="hover:text-wedding-dark transition">HOME</a>
                     <i data-lucide="chevron-right" class="w-3 h-3"></i>
                     <span style="color: var(--accent)">${v.crumb}</span>
                   </div>
-                  <h2 class="font-bold text-lg sm:text-xl text-wedding-dark mt-0.5">${v.title}</h2>
-                  <p class="text-xs text-wedding-muted mt-0.5">${v.desc}</p>
+                  <h2 class="font-bold text-base sm:text-lg text-wedding-dark leading-snug">${v.title}</h2>
                 </div>
               </div>
               <div class="md:ml-auto flex flex-wrap gap-2">${chips}</div>
@@ -5339,13 +5244,6 @@
         el.classList.toggle('is-active', el.dataset.view === name);
       });
 
-      // 헤더 현재 페이지 표시
-      const label = document.getElementById('headerViewLabel');
-      if (label) label.dataset.view = name;
-      const labelNum = document.getElementById('headerViewNum');
-      const labelTitle = document.getElementById('headerViewTitle');
-      if (labelNum) labelNum.textContent = v.num;
-      if (labelTitle) labelTitle.textContent = v.title;
       document.title = name === 'home'
         ? 'MARRYST | 메리스트 - 대한민국 프리미엄 웨딩 큐레이션'
         : `${v.title} | MARRYST 메리스트`;
@@ -5384,6 +5282,12 @@
     });
 
     window.addEventListener('popstate', () => goToHash(location.hash.slice(1), false));
+
+    // 스크롤 시 헤더 그림자로 본문과 구분
+    const siteHeader = document.querySelector('header');
+    const updateHeaderShadow = () => siteHeader && siteHeader.classList.toggle('is-scrolled', window.scrollY > 8);
+    window.addEventListener('scroll', updateHeaderShadow, { passive: true });
+    updateHeaderShadow();
 
     buildViewChrome();
     goToHash(location.hash.slice(1), false);
