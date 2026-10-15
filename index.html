@@ -469,6 +469,58 @@
       }
     }
 
+    /* ====================================================
+       카카오맵 실시간 업체 찾기
+       ==================================================== */
+    .vf-cat {
+      flex-shrink: 0; white-space: nowrap;
+      padding: 0.5rem 0.95rem; border-radius: 9999px;
+      font-size: 13px; font-weight: 600;
+      background: #fff; color: #22201E;
+      border: 1px solid #DDD3C4;
+      transition: background 0.2s, color 0.2s, border-color 0.2s;
+    }
+    .vf-cat:hover { border-color: #B8924C; }
+    .vf-cat.is-active { background: #22201E; color: #fff; border-color: #22201E; }
+    #vfCategoryTabs::-webkit-scrollbar { display: none; }
+
+    .vf-item {
+      display: flex; gap: 0.75rem;
+      padding: 0.85rem 0.9rem; border-radius: 1rem;
+      border: 1px solid #DDD3C4; background: #fff;
+      cursor: pointer;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .vf-item:hover { border-color: #B8924C; }
+    .vf-item.is-focus { border-color: #8F6A2B; box-shadow: 0 10px 24px -16px rgba(143, 106, 43, 0.8); }
+    .vf-num {
+      width: 1.65rem; height: 1.65rem; border-radius: 9999px;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+      background: #22201E; color: #fff; font-size: 12px; font-weight: 700;
+    }
+    .vf-item.is-focus .vf-num { background: var(--gold-btn); }
+    .vf-action {
+      display: inline-flex; align-items: center; gap: 0.25rem;
+      padding: 0.32rem 0.65rem; border-radius: 0.6rem;
+      font-size: 12px; font-weight: 600;
+      border: 1px solid #DDD3C4; background: #FDFBF7; color: #22201E;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .vf-action:hover { border-color: #B8924C; color: var(--gold-text); }
+
+    /* 지도 위 번호 핀 */
+    .vf-pin {
+      width: 30px; height: 30px;
+      border-radius: 50% 50% 50% 0;
+      transform: rotate(-45deg);
+      background: #22201E; border: 2px solid #fff;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.35);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+    }
+    .vf-pin span { transform: rotate(45deg); color: #fff; font-size: 12px; font-weight: 700; font-family: "Pretendard Variable", Pretendard, sans-serif; }
+    .vf-pin.is-focus { background: #8F6A2B; width: 36px; height: 36px; }
+
     /* 상세 모달의 별점·태그 줄: 모바일에서만 표시 (PC는 카드에 이미 노출) */
     .modal-mobile-extra { display: none; }
     @media (max-width: 639px) {
@@ -1735,6 +1787,97 @@
           <span>더 많은 제휴 웨딩홀 &amp; 스드메 아카이브 보기 (9개 더보기)</span>
           <i data-lucide="arrow-down" class="w-4 h-4 group-hover:translate-y-0.5 transition-transform"></i>
         </button>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ====================================================
+       5-1. LIVE VENDOR FINDER (카카오맵 실시간 업체 찾기)
+       - 카카오 로컬 장소 검색 결과는 저장하지 않고 실시간으로만 표시
+       ==================================================== -->
+  <section id="vendor-finder" class="bg-white border-t border-wedding-border">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6">
+        <div>
+          <span class="inline-flex items-center gap-1.5 text-xs tracking-[0.2em] font-semibold text-wedding-gold uppercase">
+            <i data-lucide="map-pinned" class="w-3.5 h-3.5"></i> LIVE SEARCH
+          </span>
+          <h2 class="font-serif text-2xl sm:text-3xl font-normal text-wedding-dark mt-1">지역별 웨딩 업체 실시간 찾기</h2>
+          <p class="text-sm text-wedding-muted mt-2">카카오맵에 등록된 웨딩홀·스튜디오·드레스·메이크업 업체를 지역별로 바로 찾아보세요.</p>
+        </div>
+        <button type="button" onclick="vfSearchNearby()" class="self-start md:self-auto inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-wedding-border bg-wedding-ivory hover:border-wedding-gold text-sm font-semibold text-wedding-dark transition shrink-0">
+          <i data-lucide="locate-fixed" class="w-4 h-4 text-wedding-gold"></i> 내 위치 주변에서 찾기
+        </button>
+      </div>
+
+      <!-- Search Controls -->
+      <div class="rounded-2xl border border-wedding-border bg-wedding-ivory p-3 sm:p-4 mb-5">
+        <div id="vfCategoryTabs" class="flex gap-2 overflow-x-auto pb-1 mb-3" style="scrollbar-width:none">
+          <button type="button" data-kw="웨딩홀" class="vf-cat is-active">웨딩홀</button>
+          <button type="button" data-kw="웨딩스튜디오" class="vf-cat">스튜디오</button>
+          <button type="button" data-kw="웨딩드레스" class="vf-cat">드레스</button>
+          <button type="button" data-kw="웨딩 메이크업" class="vf-cat">메이크업·헤어</button>
+          <button type="button" data-kw="웨딩밴드 예물" class="vf-cat">예물·반지</button>
+          <button type="button" data-kw="한복" class="vf-cat">한복</button>
+          <button type="button" data-kw="스냅 촬영" class="vf-cat">본식 스냅</button>
+        </div>
+        <form id="vfForm" class="grid grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)_auto] gap-2">
+          <select id="vfRegion" class="w-full bg-white border border-wedding-border rounded-xl px-3 py-2.5 text-sm font-medium text-wedding-charcoal focus:outline-none focus:ring-2 focus:ring-wedding-gold/50">
+            <option value="서울 강남">서울 강남</option>
+            <option value="서울 서초">서울 서초</option>
+            <option value="서울 송파">서울 송파</option>
+            <option value="서울 중구">서울 종로·중구</option>
+            <option value="여의도">서울 여의도</option>
+            <option value="서울 마포">서울 마포</option>
+            <option value="서울 용산">서울 용산</option>
+            <option value="성수동">서울 성수</option>
+            <option value="성남 분당">경기 분당</option>
+            <option value="수원">경기 수원</option>
+            <option value="고양 일산">경기 일산</option>
+            <option value="인천">인천</option>
+            <option value="대전">대전</option>
+            <option value="대구">대구</option>
+            <option value="광주광역시">광주</option>
+            <option value="부산">부산</option>
+            <option value="제주">제주</option>
+          </select>
+          <input id="vfKeyword" type="text" placeholder="업체명으로 찾기 (선택)" class="w-full bg-white border border-wedding-border rounded-xl px-3 py-2.5 text-sm text-wedding-charcoal focus:outline-none focus:ring-2 focus:ring-wedding-gold/50">
+          <button type="submit" class="px-4 sm:px-5 rounded-xl bg-wedding-gold hover:bg-wedding-darkgold text-white text-sm font-bold transition inline-flex items-center gap-1.5">
+            <i data-lucide="search" class="w-4 h-4"></i><span class="hidden sm:inline">검색</span>
+          </button>
+        </form>
+      </div>
+
+      <!-- Map + Results -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-5">
+        <div class="lg:col-span-7">
+          <div class="relative rounded-2xl overflow-hidden border border-wedding-border bg-wedding-cream h-[260px] sm:h-[340px] lg:h-[560px] lg:sticky lg:top-24">
+            <div id="vfMap" class="absolute inset-0"></div>
+            <div id="vfMapNotice" class="absolute inset-0 hidden flex-col items-center justify-center text-center p-6 bg-wedding-cream">
+              <i data-lucide="map" class="w-8 h-8 text-wedding-gold mb-2"></i>
+              <p id="vfMapNoticeText" class="text-sm font-semibold text-wedding-dark">지도를 불러오는 중입니다…</p>
+              <p id="vfMapNoticeSub" class="text-xs text-wedding-muted mt-1"></p>
+            </div>
+          </div>
+        </div>
+        <div class="lg:col-span-5">
+          <div class="flex items-center justify-between mb-2">
+            <p id="vfSummary" class="text-sm font-semibold text-wedding-dark">검색 결과</p>
+            <a id="vfKakaoLink" href="https://map.kakao.com/" target="_blank" rel="noopener noreferrer" class="text-xs font-semibold text-wedding-gold hover:underline inline-flex items-center gap-1">
+              카카오맵에서 보기 <i data-lucide="external-link" class="w-3 h-3"></i>
+            </a>
+          </div>
+          <ul id="vfList" class="space-y-2.5 lg:max-h-[520px] lg:overflow-y-auto lg:pr-1"></ul>
+          <button id="vfMore" type="button" class="hidden w-full mt-3 py-2.5 rounded-xl border border-wedding-border bg-white hover:border-wedding-gold text-sm font-semibold text-wedding-dark transition">
+            결과 더 보기
+          </button>
+          <p class="text-[11px] text-wedding-muted mt-3 leading-relaxed">
+            업체 정보는 카카오 로컬 검색 결과를 실시간으로 보여주며, 메리스트 제휴 여부와는 무관합니다. 가격·잔여 타임은 1:1 상담으로 확인해 드립니다.
+          </p>
+        </div>
       </div>
 
     </div>
@@ -5284,7 +5427,8 @@
         chips: [
           { icon: 'building-2', label: '웨딩홀만 보기', action: "navigateToCuration('hall')" },
           { icon: 'sparkles', label: '스·드·메 보기', action: "navigateToCuration('sdm')" },
-          { icon: 'search', label: '조건 검색', action: 'scrollToSearch()' }
+          { icon: 'search', label: '조건 검색', action: 'scrollToSearch()' },
+          { icon: 'map-pinned', label: '업체 실시간 찾기', href: '#vendor-finder' }
         ]
       },
       invitation: {
@@ -5338,7 +5482,7 @@
     // 기존 앵커(#calculator 등) → 소속 페이지 매핑
     const HASH_TO_VIEW = {
       '': 'home', 'home': 'home', 'search-box': 'home',
-      'wedding-hall': 'curation', 'sdm-section': 'curation',
+      'wedding-hall': 'curation', 'sdm-section': 'curation', 'vendor-finder': 'curation',
       'invitation-studio': 'invitation',
       'calculator': 'budget',
       'checklist': 'checklist',
@@ -5443,6 +5587,7 @@
 
       if (name === 'home') syncDashboard();
       currentView = name;
+      document.dispatchEvent(new CustomEvent('viewchange', { detail: name }));
 
       if (target) {
         const el = document.getElementById(target);
@@ -5501,6 +5646,247 @@
       const view = HASH_TO_VIEW[h] || 'home';
       if (!h || h === VIEWS[view].hash) window.scrollTo(0, 0);
     });
+  </script>
+
+  <!-- ====================================================
+       21. LIVE VENDOR FINDER (카카오맵 JavaScript SDK)
+       - JavaScript 키는 카카오 개발자 콘솔에 등록된 도메인에서만 동작
+       - 검색 결과는 저장하지 않고 실시간으로만 표시 (카카오 로컬 API 정책)
+       ==================================================== -->
+  <script>
+    const KAKAO_JS_KEY = '5ad87419f287212890e0d86a4791b012';
+    const VF_DEFAULT_CENTER = { lat: 37.4979, lng: 127.0276 }; // 강남역
+
+    const vf = {
+      sdk: null, map: null, ps: null,
+      overlays: [], places: [], pagination: null,
+      category: '웨딩홀', query: '', nearby: false, focusIdx: -1
+    };
+
+    const vfEsc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+    function vfLoadSdk() {
+      if (vf.sdk) return vf.sdk;
+      vf.sdk = new Promise((resolve, reject) => {
+        const s = document.createElement('script');
+        s.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${KAKAO_JS_KEY}&libraries=services&autoload=false`;
+        s.onload = () => (window.kakao && kakao.maps) ? kakao.maps.load(resolve) : reject(new Error('kakao sdk unavailable'));
+        s.onerror = () => reject(new Error('kakao sdk blocked'));
+        document.head.appendChild(s);
+      });
+      return vf.sdk;
+    }
+
+    function vfNotice(title, sub) {
+      const box = document.getElementById('vfMapNotice');
+      if (!box) return;
+      if (!title) { box.classList.add('hidden'); box.classList.remove('flex'); return; }
+      document.getElementById('vfMapNoticeText').textContent = title;
+      document.getElementById('vfMapNoticeSub').textContent = sub || '';
+      box.classList.remove('hidden'); box.classList.add('flex');
+    }
+
+    function vfBuildQuery() {
+      const region = document.getElementById('vfRegion').value;
+      const typed = document.getElementById('vfKeyword').value.trim();
+      return vf.nearby ? (typed || vf.category) : `${region} ${typed || vf.category}`;
+    }
+
+    function vfUpdateKakaoLink(query) {
+      const link = document.getElementById('vfKakaoLink');
+      if (link) link.href = 'https://map.kakao.com/?q=' + encodeURIComponent(query);
+    }
+
+    function vfInit() {
+      if (vf.map) {
+        vf.map.relayout();
+        vfFitBounds();
+        return;
+      }
+      if (vf.initializing) return;
+      vf.initializing = true;
+      vfNotice('지도를 불러오는 중입니다…');
+      vfUpdateKakaoLink(vfBuildQuery());
+      vfLoadSdk().then(() => {
+        const el = document.getElementById('vfMap');
+        vf.map = new kakao.maps.Map(el, {
+          center: new kakao.maps.LatLng(VF_DEFAULT_CENTER.lat, VF_DEFAULT_CENTER.lng),
+          level: 6
+        });
+        vf.map.addControl(new kakao.maps.ZoomControl(), kakao.maps.ControlPosition.RIGHT);
+        vf.ps = new kakao.maps.services.Places();
+        vfNotice(null);
+        vfSearch();
+      }).catch(() => {
+        vf.initializing = false;
+        console.warn(`[메리스트] 카카오맵 SDK 로드 실패: 카카오 개발자 콘솔 > 앱 > 플랫폼 > Web 사이트 도메인에 ${location.origin} 을(를) 등록해야 합니다.`);
+        vfNotice('지도를 불러오지 못했습니다', '오른쪽 위 ‘카카오맵에서 보기’로 같은 검색 결과를 확인하실 수 있어요.');
+        document.getElementById('vfSummary').textContent = '실시간 검색을 사용할 수 없습니다';
+        document.getElementById('vfList').innerHTML = `
+          <li class="p-4 rounded-2xl border border-dashed border-wedding-border bg-wedding-ivory text-sm text-wedding-charcoal leading-relaxed">
+            지금은 지도 서비스에 연결할 수 없어요.<br>
+            <a href="https://map.kakao.com/?q=${encodeURIComponent(vfBuildQuery())}" target="_blank" rel="noopener noreferrer" class="font-bold text-wedding-gold underline">카카오맵에서 ‘${vfEsc(vfBuildQuery())}’ 검색하기 &rarr;</a>
+          </li>`;
+      });
+    }
+
+    function vfClearMarkers() {
+      vf.overlays.forEach(o => o.setMap(null));
+      vf.overlays = [];
+    }
+
+    function vfFitBounds() {
+      if (!vf.map || !vf.places.length) return;
+      const bounds = new kakao.maps.LatLngBounds();
+      vf.places.forEach(p => bounds.extend(new kakao.maps.LatLng(p.y, p.x)));
+      vf.map.setBounds(bounds, 40, 40, 40, 40);
+    }
+
+    function vfSearch(options = {}) {
+      const query = vfBuildQuery();
+      vf.query = query;
+      vfUpdateKakaoLink(query);
+      if (!vf.ps) { vfInit(); return; }
+
+      vf.places = [];
+      vf.focusIdx = -1;
+      vfClearMarkers();
+      document.getElementById('vfList').innerHTML = '';
+      document.getElementById('vfMore').classList.add('hidden');
+      document.getElementById('vfSummary').textContent = '검색 중…';
+
+      const searchOpts = { size: 15 };
+      if (options.location) {
+        searchOpts.location = options.location;
+        searchOpts.radius = 20000;
+        searchOpts.sort = kakao.maps.services.SortBy.DISTANCE;
+      }
+      vf.ps.keywordSearch(query, vfOnResult, searchOpts);
+    }
+
+    function vfOnResult(data, status, pagination) {
+      const summary = document.getElementById('vfSummary');
+      const list = document.getElementById('vfList');
+
+      if (status === kakao.maps.services.Status.ZERO_RESULT) {
+        summary.textContent = `‘${vf.query}’ 검색 결과가 없습니다`;
+        list.innerHTML = `<li class="p-4 rounded-2xl border border-dashed border-wedding-border bg-wedding-ivory text-sm text-wedding-muted">다른 지역이나 업종으로 다시 찾아보세요.</li>`;
+        return;
+      }
+      if (status !== kakao.maps.services.Status.OK) {
+        summary.textContent = '검색 중 문제가 발생했습니다';
+        list.innerHTML = `<li class="p-4 rounded-2xl border border-dashed border-wedding-border bg-wedding-ivory text-sm text-wedding-muted">잠시 후 다시 시도해 주세요.</li>`;
+        return;
+      }
+
+      const startIdx = vf.places.length;
+      vf.places.push(...data);
+      vf.pagination = pagination;
+
+      summary.textContent = `‘${vf.query}’ ${pagination.totalCount.toLocaleString()}곳` + (pagination.totalCount > 45 ? ' (상위 45곳 표시)' : '');
+      document.getElementById('vfMore').classList.toggle('hidden', !pagination.hasNextPage);
+
+      data.forEach((place, i) => {
+        const idx = startIdx + i;
+        list.insertAdjacentHTML('beforeend', vfItemHtml(place, idx));
+        vfAddMarker(place, idx);
+      });
+      if (window.lucide) lucide.createIcons();
+      vfFitBounds();
+    }
+
+    function vfItemHtml(p, idx) {
+      const category = (p.category_name || '').split('>').pop().trim();
+      const address = p.road_address_name || p.address_name;
+      const distance = p.distance ? (p.distance >= 1000 ? (p.distance / 1000).toFixed(1) + 'km' : p.distance + 'm') : '';
+      const dirUrl = `https://map.kakao.com/link/to/${encodeURIComponent(p.place_name)},${p.y},${p.x}`;
+      return `
+        <li>
+          <div class="vf-item" data-idx="${idx}">
+            <span class="vf-num">${idx + 1}</span>
+            <div class="min-w-0 flex-1">
+              <p class="font-bold text-[15px] text-wedding-dark leading-snug">${vfEsc(p.place_name)}</p>
+              <p class="text-xs text-wedding-muted mt-0.5">${vfEsc(category)}${distance ? ' · ' + distance : ''}</p>
+              <p class="text-xs text-wedding-charcoal/90 mt-0.5 truncate">${vfEsc(address)}</p>
+              <div class="flex flex-wrap gap-1.5 mt-2">
+                ${p.phone ? `<a class="vf-action" href="tel:${vfEsc(p.phone)}"><i data-lucide="phone" class="w-3 h-3"></i>${vfEsc(p.phone)}</a>` : ''}
+                <a class="vf-action" href="${vfEsc(p.place_url)}" target="_blank" rel="noopener noreferrer"><i data-lucide="info" class="w-3 h-3"></i>상세정보</a>
+                <a class="vf-action" href="${dirUrl}" target="_blank" rel="noopener noreferrer"><i data-lucide="navigation" class="w-3 h-3"></i>길찾기</a>
+                <button type="button" class="vf-action" onclick="openConsultingModal()"><i data-lucide="message-circle" class="w-3 h-3"></i>상담</button>
+              </div>
+            </div>
+          </div>
+        </li>`;
+    }
+
+    function vfAddMarker(p, idx) {
+      const pin = document.createElement('div');
+      pin.className = 'vf-pin';
+      pin.innerHTML = `<span>${idx + 1}</span>`;
+      pin.title = p.place_name;
+      pin.addEventListener('click', () => vfFocus(idx, { scrollList: true }));
+      const overlay = new kakao.maps.CustomOverlay({
+        position: new kakao.maps.LatLng(p.y, p.x),
+        content: pin, yAnchor: 1.15, zIndex: 1
+      });
+      overlay.setMap(vf.map);
+      vf.overlays[idx] = overlay;
+    }
+
+    function vfFocus(idx, { scrollList = false, pan = true } = {}) {
+      const p = vf.places[idx];
+      if (!p) return;
+      vf.focusIdx = idx;
+      document.querySelectorAll('#vfList .vf-item').forEach(el => el.classList.toggle('is-focus', Number(el.dataset.idx) === idx));
+      vf.overlays.forEach((o, i) => {
+        if (!o) return;
+        o.getContent().classList.toggle('is-focus', i === idx);
+        o.setZIndex(i === idx ? 5 : 1);
+      });
+      if (pan && vf.map) vf.map.panTo(new kakao.maps.LatLng(p.y, p.x));
+      if (scrollList) {
+        const item = document.querySelector(`#vfList .vf-item[data-idx="${idx}"]`);
+        if (item) item.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+    }
+
+    function vfSearchNearby() {
+      if (!navigator.geolocation) { showToast('이 브라우저에서는 위치 찾기를 사용할 수 없어요.'); return; }
+      if (!vf.ps) { showToast('지도를 불러온 뒤 다시 시도해 주세요.'); vfInit(); return; }
+      showToast('현재 위치를 확인하고 있어요…');
+      navigator.geolocation.getCurrentPosition((pos) => {
+        vf.nearby = true;
+        vfSearch({ location: new kakao.maps.LatLng(pos.coords.latitude, pos.coords.longitude) });
+      }, () => showToast('위치 권한이 없어 현재 위치를 찾지 못했어요. 지역을 선택해 검색해 주세요.'), { timeout: 8000 });
+    }
+
+    // 이벤트 연결
+    document.getElementById('vfCategoryTabs').addEventListener('click', (e) => {
+      const btn = e.target.closest('.vf-cat');
+      if (!btn) return;
+      document.querySelectorAll('#vfCategoryTabs .vf-cat').forEach(b => b.classList.toggle('is-active', b === btn));
+      vf.category = btn.dataset.kw;
+      document.getElementById('vfKeyword').value = '';
+      vfSearch(vf.nearby && vf.map ? { location: vf.map.getCenter() } : {});
+    });
+    document.getElementById('vfForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      vf.nearby = false;
+      vfSearch();
+    });
+    document.getElementById('vfRegion').addEventListener('change', () => { vf.nearby = false; vfSearch(); });
+    document.getElementById('vfMore').addEventListener('click', () => {
+      if (vf.pagination && vf.pagination.hasNextPage) vf.pagination.nextPage();
+    });
+    document.getElementById('vfList').addEventListener('click', (e) => {
+      if (e.target.closest('a, button')) return;
+      const item = e.target.closest('.vf-item');
+      if (item) vfFocus(Number(item.dataset.idx));
+    });
+
+    // 큐레이션 페이지가 열릴 때만 SDK를 불러와 첫 화면 속도에 영향 없음
+    document.addEventListener('viewchange', (e) => { if (e.detail === 'curation') vfInit(); });
+    if (typeof currentView !== 'undefined' && currentView === 'curation') vfInit();
   </script>
 
   <!-- PWA Service Worker Registration -->
