@@ -1,4 +1,4 @@
-const CACHE_NAME = 'marryst-cache-v1';
+const CACHE_NAME = 'marryst-cache-v2';
 
 // 오프라인 사전 캐싱 자산 목록
 const PRECACHE_ASSETS = [
