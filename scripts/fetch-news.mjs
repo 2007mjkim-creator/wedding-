@@ -23,7 +23,7 @@ const CATEGORIES = [
   { key: 'studio', queries: ['웨딩스튜디오', '웨딩 촬영'] },
   { key: 'makeup', queries: ['웨딩 메이크업', '신부 메이크업'] },
   { key: 'hall',   queries: ['웨딩홀', '예식장 식대'] },
-  { key: 'prep',   queries: ['스드메', '결혼 준비 비용', '웨딩박람회'] }
+  { key: 'prep',   queries: ['스드메', '결혼 준비 비용', '웨딩박람회', '웨딩 트렌드'] }
 ];
 const PER_QUERY = 40;     // 검색어당 가져올 기사 수 (최대 100)
 const PER_CATEGORY = 12;  // 분야별로 보여줄 최대 기사 수
