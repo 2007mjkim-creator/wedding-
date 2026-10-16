@@ -549,6 +549,84 @@
       .calc-num, .calc-text, .calc-extra .calc-num { font-size: 16px; }
     }
 
+    /* ====================================================
+       박람회 · 초대권 · FAQ
+       ==================================================== */
+    .fair-benefit {
+      display: flex; gap: 0.7rem; align-items: flex-start;
+      padding: 0.8rem 0.9rem; border-radius: 0.9rem;
+      background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .fair-benefit > svg { width: 1.15rem; height: 1.15rem; color: #E3C47F; flex-shrink: 0; margin-top: 0.1rem; }
+    .fair-benefit b { display: block; font-size: 13.5px; color: #fff; }
+    .fair-benefit span { display: block; font-size: 12px; color: rgba(239, 232, 220, 0.82); margin-top: 0.1rem; line-height: 1.45; }
+    .fair-chip { cursor: pointer; }
+    .fair-chip input { position: absolute; opacity: 0; pointer-events: none; }
+    .fair-chip span {
+      display: inline-block; padding: 0.35rem 0.75rem; border-radius: 9999px;
+      font-size: 12.5px; font-weight: 600; color: #4A4540;
+      background: #fff; border: 1px solid #DDD3C4; transition: all 0.15s;
+    }
+    .fair-chip input:checked + span { background: #22201E; color: #fff; border-color: #22201E; }
+    .fair-chip input:focus-visible + span { box-shadow: 0 0 0 3px rgba(143, 106, 43, 0.3); }
+    .fair-session {
+      display: flex; flex-direction: column;
+      background: #fff; border: 1px solid #DDD3C4; border-radius: 1.1rem;
+      padding: 1.1rem; transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .fair-session:hover { border-color: #8F6A2B; box-shadow: 0 16px 30px -22px rgba(143, 106, 43, 0.9); }
+    .fair-session.is-ended { opacity: 0.55; }
+    .fair-cat {
+      display: flex; flex-direction: column; align-items: center; text-align: center; gap: 0.3rem;
+      padding: 1rem 0.6rem; border-radius: 1rem; background: #fff; border: 1px solid #DDD3C4;
+    }
+    .fair-cat > svg { width: 1.6rem; height: 1.6rem; color: #8F6A2B; }
+    .fair-cat b { font-size: 14px; color: #22201E; }
+    .fair-cat span { font-size: 12px; color: #5F5953; }
+    .fair-tip-num {
+      width: 1.5rem; height: 1.5rem; border-radius: 9999px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      background: #F7F0E1; color: #7A5A22; font-size: 12px; font-weight: 800; margin-top: 0.05rem;
+    }
+
+    /* 모바일 초대권 */
+    .fair-ticket {
+      position: relative; overflow: hidden;
+      border-radius: 1.4rem;
+      background: linear-gradient(145deg, #2B2724 0%, #161514 60%, #2B2420 100%);
+      border: 1px solid rgba(227, 196, 127, 0.45);
+      color: #F7F3EB;
+      box-shadow: 0 30px 60px -25px rgba(0, 0, 0, 0.6);
+    }
+    .fair-ticket::before {
+      content: ""; position: absolute; inset: 0;
+      background: radial-gradient(circle at 85% 10%, rgba(227, 196, 127, 0.18), transparent 45%);
+      pointer-events: none;
+    }
+    .fair-ticket-cut { position: relative; border-top: 2px dashed rgba(227, 196, 127, 0.35); margin: 0 1.25rem; }
+    .fair-ticket-cut::before, .fair-ticket-cut::after {
+      content: ""; position: absolute; top: -13px; width: 24px; height: 24px; border-radius: 9999px; background: rgba(0,0,0,0.6);
+    }
+    .fair-ticket-cut::before { left: -2.05rem; }
+    .fair-ticket-cut::after { right: -2.05rem; }
+    .fair-ticket-code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; letter-spacing: 0.12em; }
+
+    /* FAQ */
+    .faq-item { background: #fff; border: 1px solid #DDD3C4; border-radius: 0.9rem; overflow: hidden; }
+    .faq-q {
+      width: 100%; padding: 1rem 1.15rem; text-align: left;
+      display: flex; justify-content: space-between; align-items: center; gap: 0.75rem;
+      font-weight: 700; font-size: 14.5px; color: #22201E; transition: background 0.2s;
+    }
+    .faq-q:hover { background: rgba(247, 243, 235, 0.6); }
+    .faq-q em {
+      font-style: normal; display: inline-block; margin-right: 0.45rem;
+      padding: 0.1rem 0.45rem; border-radius: 0.4rem; vertical-align: 1px;
+      font-size: 11.5px; font-weight: 700; background: #F7F0E1; color: #7A5A22;
+    }
+    .faq-a { padding: 0.8rem 1.15rem 1.05rem; border-top: 1px solid rgba(221, 211, 196, 0.6); font-size: 13.5px; line-height: 1.7; color: #4A4540; }
+    #faqTabs::-webkit-scrollbar { display: none; }
+
     /* 홈 메인 배경 슬라이드: 다음 사진이 오른쪽에서 밀려 들어오는 가로 슬라이드
        - 대기 중인 사진은 화면 오른쪽 밖(100%)에 있다가, 활성화되면 가운데로 이동
        - 나가는 사진은 왼쪽 밖(-100%)으로 밀려난 뒤, 보이지 않게 오른쪽 대기 위치로 복귀 */
@@ -665,7 +743,7 @@
         </span>
         <p class="font-normal text-wedding-sand/90 text-center sm:text-left">
           2026 하반기 & 2027 상반기 골든타임 웨딩홀 조기 마감 임박! 
-          <span class="font-medium text-wedding-gold underline cursor-pointer ml-1" onclick="openFairModal()">VIP 무료 홀 섭외 신청 &rarr;</span>
+          <span class="font-medium text-wedding-gold underline cursor-pointer ml-1" onclick="openConsultingModal()">VIP 무료 홀 섭외 신청 &rarr;</span>
         </p>
       </div>
 
@@ -3165,61 +3243,93 @@
     <div class="absolute -left-20 -top-20 w-96 h-96 rounded-full bg-wedding-rose/10 blur-3xl pointer-events-none"></div>
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-      <div class="bg-gradient-to-r from-wedding-charcoal to-wedding-dark border border-wedding-darkgold/40 rounded-3xl p-8 sm:p-12 shadow-2xl">
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-          
-          <div class="lg:col-span-7 space-y-4">
+      <div class="bg-gradient-to-r from-wedding-charcoal to-wedding-dark border border-wedding-darkgold/40 rounded-3xl p-6 sm:p-10 lg:p-12 shadow-2xl">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+
+          <!-- 박람회 소개 + 혜택 -->
+          <div class="lg:col-span-7 space-y-5">
             <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-wedding-gold text-wedding-dark">
               <i data-lucide="crown" class="w-3.5 h-3.5"></i> 2026 하반기 프리미엄 메가 페어
             </span>
             <h2 class="font-serif text-2xl sm:text-3xl lg:text-4xl font-normal text-white leading-tight">
               <span class="inline-block whitespace-nowrap">메리스트 VIP 웨딩 박람회</span><br class="hidden sm:inline">
-              <span class="gold-text italic inline-block whitespace-nowrap">선착순 사전예약</span> <span class="gold-text italic inline-block whitespace-nowrap">100% 혜택 증정</span>
+              <span class="gold-text italic inline-block whitespace-nowrap">사전 신청 시</span> <span class="gold-text italic inline-block whitespace-nowrap">입장 무료 + 혜택 증정</span>
             </h2>
-            <p class="text-xs sm:text-sm text-wedding-sand/80 leading-relaxed">
-              웨딩홀 대관료 최대 500만원 지원, 스드메 120만원 바우처, 명품 가전 추첨 및 1:1 수석 디렉터 무료 배정 기회를 놓치지 마세요.
+            <p class="text-sm text-wedding-sand/80 leading-relaxed">
+              웨딩홀·스드메·예물·혼수·허니문까지 한 자리에서 비교 상담하고, 사전 신청자 전용 혜택을 받아 가세요.
+              초대권 1매로 본인 포함 최대 4인까지 무료 입장할 수 있습니다.
             </p>
 
-            <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-3">
+            <!-- 핵심 숫자 -->
+            <div class="grid grid-cols-3 gap-2 sm:gap-3">
               <div class="p-3 rounded-xl bg-white/5 border border-white/10 text-center">
-                <span class="text-wedding-gold font-bold text-sm block">혜택 1</span>
-                <span class="text-xs text-white/90">웨딩홀 식대 최대 할인</span>
+                <span class="block font-serif text-xl sm:text-2xl font-bold text-white">4<span class="text-sm font-sans text-wedding-gold">회차</span></span>
+                <span class="block text-[11px] text-wedding-sand/80 mt-0.5">서울·경기·부산</span>
               </div>
               <div class="p-3 rounded-xl bg-white/5 border border-white/10 text-center">
-                <span class="text-wedding-gold font-bold text-sm block">혜택 2</span>
-                <span class="text-xs text-white/90">스드메 안심 정찰 지원금</span>
+                <span class="block font-serif text-xl sm:text-2xl font-bold text-white">0<span class="text-sm font-sans text-wedding-gold">원</span></span>
+                <span class="block text-[11px] text-wedding-sand/80 mt-0.5">입장료·상담료</span>
               </div>
-              <div class="p-3 rounded-xl bg-white/5 border border-white/10 text-center col-span-2 sm:col-span-1">
-                <span class="text-wedding-gold font-bold text-sm block">혜택 3</span>
-                <span class="text-xs text-white/90">웨딩 다이어리 무료 증정</span>
+              <div class="p-3 rounded-xl bg-white/5 border border-white/10 text-center">
+                <span class="block font-serif text-xl sm:text-2xl font-bold text-white">4<span class="text-sm font-sans text-wedding-gold">인</span></span>
+                <span class="block text-[11px] text-wedding-sand/80 mt-0.5">초대권 1매 동반 입장</span>
               </div>
+            </div>
+
+            <!-- 사전 신청자 혜택 -->
+            <div>
+              <h3 class="text-sm font-bold text-white mb-2.5 flex items-center gap-1.5"><i data-lucide="gift" class="w-4 h-4 text-wedding-gold"></i> 사전 신청자 전용 혜택</h3>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                <div class="fair-benefit"><i data-lucide="building-2"></i><div><b>웨딩홀 대관료 지원</b><span>제휴 홀 계약 시 대관료 최대 500만원 지원</span></div></div>
+                <div class="fair-benefit"><i data-lucide="camera"></i><div><b>스드메 바우처</b><span>스튜디오·드레스·메이크업 계약 시 120만원 바우처</span></div></div>
+                <div class="fair-benefit"><i data-lucide="user-check"></i><div><b>1:1 수석 디렉터 배정</b><span>현장 상담부터 본식까지 전담 디렉터 무료 매칭</span></div></div>
+                <div class="fair-benefit"><i data-lucide="book-heart"></i><div><b>웨딩 다이어리 증정</b><span>D-180 플래너 다이어리 현장 수령 (회차별 선착순)</span></div></div>
+                <div class="fair-benefit"><i data-lucide="plane"></i><div><b>허니문 경품 추첨</b><span>방문 고객 대상 허니문 항공권·숙박권 추첨</span></div></div>
+                <div class="fair-benefit"><i data-lucide="tv"></i><div><b>혼수 가전 특가</b><span>제휴 가전·가구 브랜드 박람회 전용 특가</span></div></div>
+              </div>
+              <p class="text-[11px] text-wedding-sand/60 mt-2">* 혜택별 세부 조건(계약 금액·기간 등)은 현장 상담 시 안내되며, 회차·업체별로 다를 수 있습니다.</p>
             </div>
           </div>
 
-          <!-- Quick Fast Registration Form -->
-          <div class="lg:col-span-5 bg-white text-wedding-charcoal rounded-2xl p-6 sm:p-7 shadow-xl border border-wedding-border">
-            <h3 class="font-serif text-lg font-bold text-wedding-dark text-center mb-1">
-              VIP 무료 초대권 신청하기
-            </h3>
-            <p class="text-[11px] text-wedding-muted text-center mb-5">
-              입력하신 연락처로 모바일 모바일 무료 입장권이 전송됩니다.
-            </p>
+          <!-- 무료 초대권 신청 -->
+          <div class="lg:col-span-5 bg-white text-wedding-charcoal rounded-2xl p-5 sm:p-7 shadow-xl border border-wedding-border">
+            <div class="flex items-center justify-between gap-2 mb-1">
+              <h3 class="font-serif text-lg font-bold text-wedding-dark">VIP 무료 초대권 신청</h3>
+              <button type="button" id="myTicketLink" onclick="showMyTicket()" class="hidden text-xs font-bold text-wedding-gold hover:underline">내 초대권 보기 &rarr;</button>
+            </div>
+            <p class="text-xs text-wedding-muted mb-4">신청 즉시 모바일 초대권이 발급됩니다. 현장 접수처에서 화면을 보여주세요.</p>
 
-            <form onsubmit="handleFairSubmit(event)" class="space-y-3.5">
+            <form id="fairForm" onsubmit="handleFairSubmit(event)" class="space-y-3" novalidate>
               <div>
-                <label class="text-xs font-semibold text-wedding-muted block mb-1">신랑 / 신부 성함</label>
-                <input type="text" id="fairName" required placeholder="예: 김민우 / 이서연" class="w-full bg-wedding-ivory border border-wedding-border rounded-xl px-3.5 py-2.5 text-xs text-wedding-charcoal focus:outline-none focus:ring-2 focus:ring-wedding-gold/50">
+                <label for="fairSession" class="text-xs font-semibold text-wedding-muted block mb-1">방문 회차 <span class="text-wedding-rose">*</span></label>
+                <select id="fairSession" required class="w-full bg-wedding-ivory border border-wedding-border rounded-xl px-3 py-2.5 text-sm text-wedding-charcoal focus:outline-none focus:ring-2 focus:ring-wedding-gold/50"></select>
               </div>
 
-              <div>
-                <label class="text-xs font-semibold text-wedding-muted block mb-1">연락처</label>
-                <input type="tel" id="fairPhone" required placeholder="010-0000-0000" class="w-full bg-wedding-ivory border border-wedding-border rounded-xl px-3.5 py-2.5 text-xs text-wedding-charcoal focus:outline-none focus:ring-2 focus:ring-wedding-gold/50">
-              </div>
-
-              <div class="grid grid-cols-2 gap-3">
+              <div class="grid grid-cols-2 gap-2.5">
                 <div>
-                  <label class="text-xs font-semibold text-wedding-muted block mb-1">예식 예정 시기</label>
-                  <select id="fairDate" class="w-full bg-wedding-ivory border border-wedding-border rounded-xl px-3 py-2.5 text-xs text-wedding-charcoal focus:outline-none focus:ring-2 focus:ring-wedding-gold/50">
+                  <label for="fairName" class="text-xs font-semibold text-wedding-muted block mb-1">신청자 성함 <span class="text-wedding-rose">*</span></label>
+                  <input type="text" id="fairName" required maxlength="20" autocomplete="name" placeholder="예: 김민우" class="w-full bg-wedding-ivory border border-wedding-border rounded-xl px-3 py-2.5 text-sm text-wedding-charcoal focus:outline-none focus:ring-2 focus:ring-wedding-gold/50">
+                </div>
+                <div>
+                  <label for="fairCompanions" class="text-xs font-semibold text-wedding-muted block mb-1">입장 인원</label>
+                  <select id="fairCompanions" class="w-full bg-wedding-ivory border border-wedding-border rounded-xl px-3 py-2.5 text-sm text-wedding-charcoal focus:outline-none focus:ring-2 focus:ring-wedding-gold/50">
+                    <option value="1">본인 1인</option>
+                    <option value="2" selected>2인 (예비부부)</option>
+                    <option value="3">3인 (가족 동반)</option>
+                    <option value="4">4인 (가족 동반)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label for="fairPhone" class="text-xs font-semibold text-wedding-muted block mb-1">휴대폰 번호 <span class="text-wedding-rose">*</span></label>
+                <input type="tel" id="fairPhone" required inputmode="numeric" autocomplete="tel" placeholder="010-0000-0000" maxlength="13" class="w-full bg-wedding-ivory border border-wedding-border rounded-xl px-3 py-2.5 text-sm text-wedding-charcoal focus:outline-none focus:ring-2 focus:ring-wedding-gold/50">
+              </div>
+
+              <div class="grid grid-cols-2 gap-2.5">
+                <div>
+                  <label for="fairDate" class="text-xs font-semibold text-wedding-muted block mb-1">예식 예정 시기</label>
+                  <select id="fairDate" class="w-full bg-wedding-ivory border border-wedding-border rounded-xl px-3 py-2.5 text-sm text-wedding-charcoal focus:outline-none focus:ring-2 focus:ring-wedding-gold/50">
                     <option value="2026_h2">2026년 하반기</option>
                     <option value="2027_h1">2027년 상반기</option>
                     <option value="2027_h2">2027년 하반기</option>
@@ -3227,8 +3337,8 @@
                   </select>
                 </div>
                 <div>
-                  <label class="text-xs font-semibold text-wedding-muted block mb-1">희망 예식 지역</label>
-                  <select id="fairLocation" class="w-full bg-wedding-ivory border border-wedding-border rounded-xl px-3 py-2.5 text-xs text-wedding-charcoal focus:outline-none focus:ring-2 focus:ring-wedding-gold/50">
+                  <label for="fairLocation" class="text-xs font-semibold text-wedding-muted block mb-1">희망 예식 지역</label>
+                  <select id="fairLocation" class="w-full bg-wedding-ivory border border-wedding-border rounded-xl px-3 py-2.5 text-sm text-wedding-charcoal focus:outline-none focus:ring-2 focus:ring-wedding-gold/50">
                     <option value="gangnam">서울 강남/서초</option>
                     <option value="seoul_etc">서울 기타 지역</option>
                     <option value="gyeonggi">경기/인천</option>
@@ -3237,19 +3347,88 @@
                 </div>
               </div>
 
-              <button type="submit" class="w-full mt-2 py-3 bg-wedding-gold hover:bg-wedding-darkgold text-white font-bold rounded-xl text-xs sm:text-sm transition-all shadow-md">
-                무료 초대권 즉시 발급받기 &rarr;
-              </button>
-              
-              <div class="flex items-center justify-center gap-1.5 text-[10px] text-wedding-muted pt-1">
-                <i data-lucide="shield-check" class="w-3.5 h-3.5 text-emerald-600"></i>
-                <span>개인정보는 초대권 발송 및 상담 목적 외 이용되지 않습니다.</span>
+              <div>
+                <span class="text-xs font-semibold text-wedding-muted block mb-1.5">관심 분야 (선택)</span>
+                <div class="flex flex-wrap gap-1.5" id="fairInterests">
+                  <label class="fair-chip"><input type="checkbox" value="웨딩홀" checked><span>웨딩홀</span></label>
+                  <label class="fair-chip"><input type="checkbox" value="스드메" checked><span>스드메</span></label>
+                  <label class="fair-chip"><input type="checkbox" value="예물·예복"><span>예물·예복</span></label>
+                  <label class="fair-chip"><input type="checkbox" value="혼수 가전"><span>혼수 가전</span></label>
+                  <label class="fair-chip"><input type="checkbox" value="허니문"><span>허니문</span></label>
+                </div>
               </div>
+
+              <div class="rounded-xl bg-wedding-ivory border border-wedding-border p-3">
+                <label class="flex items-start gap-2 text-xs text-wedding-charcoal cursor-pointer">
+                  <input type="checkbox" id="fairAgree" class="mt-0.5 w-4 h-4 shrink-0" style="accent-color:#8F6A2B">
+                  <span><b>[필수] 개인정보 수집·이용 동의</b> — 성함·연락처를 초대권 발급 및 박람회 안내 목적으로 수집하며, 박람회 종료 후 6개월 뒤 파기합니다.</span>
+                </label>
+              </div>
+
+              <p id="fairError" class="hidden text-xs font-semibold text-red-700"></p>
+
+              <button type="submit" class="w-full py-3 bg-wedding-gold hover:bg-wedding-darkgold text-white font-bold rounded-xl text-sm transition-all shadow-md inline-flex items-center justify-center gap-2">
+                <i data-lucide="ticket" class="w-4 h-4"></i> 무료 초대권 즉시 발급받기
+              </button>
             </form>
           </div>
 
         </div>
       </div>
+    </div>
+  </section>
+
+  <!-- 박람회 일정 · 참가 분야 · 방문 가이드 -->
+  <section id="fair-info" class="bg-wedding-ivory">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+
+      <!-- 회차별 일정 (FAIR_SESSIONS 데이터로 렌더링) -->
+      <div>
+        <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-2 mb-5">
+          <div>
+            <h2 class="font-serif text-2xl sm:text-3xl font-normal text-wedding-dark">박람회 일정</h2>
+            <p class="text-sm text-wedding-muted mt-1">원하는 회차를 골라 초대권을 신청하세요. 회차별 사전 신청 인원이 차면 조기 마감될 수 있어요.</p>
+          </div>
+        </div>
+        <div id="fairSchedule" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3 sm:gap-4"></div>
+      </div>
+
+      <!-- 참가 분야 -->
+      <div>
+        <h2 class="font-serif text-2xl sm:text-3xl font-normal text-wedding-dark mb-5">한 자리에서 만나는 참가 분야</h2>
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5 sm:gap-3">
+          <div class="fair-cat"><i data-lucide="landmark"></i><b>웨딩홀</b><span>호텔·컨벤션·하우스</span></div>
+          <div class="fair-cat"><i data-lucide="camera"></i><b>스드메</b><span>스튜디오·드레스·메이크업</span></div>
+          <div class="fair-cat"><i data-lucide="gem"></i><b>예물·예복</b><span>웨딩밴드·맞춤 예복</span></div>
+          <div class="fair-cat"><i data-lucide="sofa"></i><b>혼수</b><span>가전·가구·침구</span></div>
+          <div class="fair-cat"><i data-lucide="plane"></i><b>허니문</b><span>항공·리조트·패키지</span></div>
+          <div class="fair-cat"><i data-lucide="mail-open"></i><b>청첩장·답례품</b><span>종이·모바일·답례</span></div>
+        </div>
+      </div>
+
+      <!-- 방문 가이드 & 활용 팁 -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-5">
+        <div class="bg-white rounded-2xl border border-wedding-border p-5 sm:p-6">
+          <h3 class="font-bold text-lg text-wedding-dark mb-4 flex items-center gap-2"><i data-lucide="map" class="w-5 h-5 text-wedding-gold"></i> 방문 가이드</h3>
+          <ul class="space-y-3 text-sm text-wedding-charcoal">
+            <li class="flex gap-3"><i data-lucide="smartphone" class="w-4 h-4 text-wedding-gold shrink-0 mt-0.5"></i><span><b>준비물</b> — 모바일 초대권 화면, 본인 확인용 신분증. 예상 하객 수와 예산을 메모해 오시면 상담이 빨라요.</span></li>
+            <li class="flex gap-3"><i data-lucide="clock" class="w-4 h-4 text-wedding-gold shrink-0 mt-0.5"></i><span><b>소요 시간</b> — 3~4곳 상담 기준 평균 2~3시간. 오전 시간대가 상대적으로 한산합니다.</span></li>
+            <li class="flex gap-3"><i data-lucide="users" class="w-4 h-4 text-wedding-gold shrink-0 mt-0.5"></i><span><b>동반 입장</b> — 초대권 1매로 본인 포함 최대 4인 무료 입장 (부모님 동반 가능).</span></li>
+            <li class="flex gap-3"><i data-lucide="car" class="w-4 h-4 text-wedding-gold shrink-0 mt-0.5"></i><span><b>교통·주차</b> — 회차별 장소·주차 안내는 행사 3일 전 신청하신 연락처로 안내해 드려요.</span></li>
+            <li class="flex gap-3"><i data-lucide="door-open" class="w-4 h-4 text-wedding-gold shrink-0 mt-0.5"></i><span><b>현장 입장 마감</b> — 행사 종료 1시간 전까지 입장 가능합니다.</span></li>
+          </ul>
+        </div>
+        <div class="bg-white rounded-2xl border border-wedding-border p-5 sm:p-6">
+          <h3 class="font-bold text-lg text-wedding-dark mb-4 flex items-center gap-2"><i data-lucide="lightbulb" class="w-5 h-5 text-wedding-gold"></i> 박람회 200% 활용 팁</h3>
+          <ol class="space-y-3 text-sm text-wedding-charcoal">
+            <li class="flex gap-3"><span class="fair-tip-num">1</span><span><b>예산부터 정하고 가기</b> — <a href="#calculator" class="text-wedding-gold font-semibold underline">스마트 견적 계산기</a>로 총예산과 항목별 상한을 미리 정해 두세요.</span></li>
+            <li class="flex gap-3"><span class="fair-tip-num">2</span><span><b>현장 계약은 서두르지 않기</b> — '오늘만 할인'이라도 견적서를 받아 비교한 뒤 결정하고, 계약금 환불 조건을 꼭 확인하세요.</span></li>
+            <li class="flex gap-3"><span class="fair-tip-num">3</span><span><b>스드메 추가금 목록 요청</b> — 헬퍼비, 원본 데이터비, 드레스 업그레이드비 등 추가금 항목표를 서면으로 받아 두세요.</span></li>
+            <li class="flex gap-3"><span class="fair-tip-num">4</span><span><b>사은품 조건 확인</b> — 방문만으로 받는 사은품인지, 계약 시 지급되는 혜택인지 구분해서 확인하세요.</span></li>
+          </ol>
+        </div>
+      </div>
+
     </div>
   </section>
   </div>
@@ -3465,43 +3644,100 @@
        ==================================================== -->
   <section id="faq" class="py-16 bg-wedding-ivory">
     <div class="max-w-4xl mx-auto px-4 sm:px-6">
-      
-      <div class="text-center mb-10">
-        <h2 class="font-serif text-2xl sm:text-3xl font-normal text-wedding-dark mt-1">자주 묻는 질문</h2>
+
+      <div class="text-center mb-6">
+        <h2 class="font-serif text-2xl sm:text-3xl font-normal text-wedding-dark">자주 묻는 질문</h2>
+        <p class="text-sm text-wedding-muted mt-2">원하는 답이 없다면 1:1 상담으로 편하게 물어보세요.</p>
+      </div>
+
+      <div id="faqTabs" class="flex gap-2 overflow-x-auto pb-1 mb-5 justify-start sm:justify-center" style="scrollbar-width:none">
+        <button type="button" data-faq="all" class="vf-cat is-active">전체</button>
+        <button type="button" data-faq="service" class="vf-cat">서비스</button>
+        <button type="button" data-faq="fair" class="vf-cat">박람회·초대권</button>
+        <button type="button" data-faq="contract" class="vf-cat">견적·계약</button>
+        <button type="button" data-faq="etc" class="vf-cat">이용 안내</button>
       </div>
 
       <div class="space-y-3" id="faqList">
-        
-        <div class="bg-white rounded-xl border border-wedding-border overflow-hidden">
-          <button onclick="toggleFaq(this)" class="w-full px-5 py-4 text-left font-bold text-sm text-wedding-dark flex justify-between items-center hover:bg-wedding-cream/30 transition">
-            <span>메리스트의 웨딩홀 섭외 및 플래닝 서비스는 정말 무료인가요?</span>
-            <i data-lucide="chevron-down" class="w-4 h-4 text-wedding-gold transition-transform"></i>
-          </button>
-          <div class="hidden px-5 pb-4 text-xs text-wedding-muted leading-relaxed border-t border-wedding-border/40 pt-3">
-            네, 100% 무료입니다. 제휴 웨딩홀 및 브랜드사와의 공식 B2B 다이렉트 협약을 통해 운영되므로 신랑·신부님께 어떠한 중개 수수료나 상담 비용도 요구하지 않습니다. 오히려 플랫폼 단독 제휴 할인 및 식대 할인 혜택이 적용됩니다.
-          </div>
+
+        <!-- 서비스 -->
+        <div class="faq-item" data-faq="service">
+          <button onclick="toggleFaq(this)" class="faq-q"><span><em>서비스</em>메리스트의 웨딩홀 섭외 및 플래닝 서비스는 정말 무료인가요?</span><i data-lucide="chevron-down" class="w-4 h-4 text-wedding-gold transition-transform shrink-0"></i></button>
+          <div class="faq-a hidden">네, 100% 무료입니다. 제휴 웨딩홀 및 브랜드사와의 공식 B2B 다이렉트 협약을 통해 운영되므로 신랑·신부님께 어떠한 중개 수수료나 상담 비용도 요구하지 않습니다. 오히려 플랫폼 단독 제휴 할인 및 식대 할인 혜택이 적용됩니다.</div>
+        </div>
+        <div class="faq-item" data-faq="service">
+          <button onclick="toggleFaq(this)" class="faq-q"><span><em>서비스</em>워킹(개인 방문)으로 웨딩홀 알아보는 것과 메리스트를 통한 예약의 차이는 무엇인가요?</span><i data-lucide="chevron-down" class="w-4 h-4 text-wedding-gold transition-transform shrink-0"></i></button>
+          <div class="faq-a hidden">개인이 홀에 직접 방문하실 경우 정가 견적을 받게 되는 경우가 많지만, 메리스트를 통해 제휴 코드로 사전 예약 후 방문하시면 대관료 무료 및 식대 1인당 5,000원~15,000원 상당의 비공개 프로모션 할인가가 적용됩니다.</div>
+        </div>
+        <div class="faq-item" data-faq="service">
+          <button onclick="toggleFaq(this)" class="faq-q"><span><em>서비스</em>비동행 플래너와 동행 플래너 중 선택할 수 있나요?</span><i data-lucide="chevron-down" class="w-4 h-4 text-wedding-gold transition-transform shrink-0"></i></button>
+          <div class="faq-a hidden">신랑신부님의 성향에 맞춰 자유롭게 선택 가능합니다. 합리적인 실속 견적을 원하시면 일정과 예약 조율을 비동행으로 원격 지원해 드리며, 드레스 투어와 본식 피팅까지 꼼꼼한 안목이 필요하시다면 프리미엄 동행 디렉터를 매칭해 드립니다.</div>
+        </div>
+        <div class="faq-item" data-faq="service">
+          <button onclick="toggleFaq(this)" class="faq-q"><span><em>서비스</em>‘전국 업체 찾기’에 나오는 업체는 모두 메리스트 제휴 업체인가요?</span><i data-lucide="chevron-down" class="w-4 h-4 text-wedding-gold transition-transform shrink-0"></i></button>
+          <div class="faq-a hidden">아니요. ‘전국 업체 찾기’는 공공데이터(소상공인시장진흥공단 상가정보)를 바탕으로 전국의 웨딩 관련 업체를 폭넓게 보여 드리는 목록이며 제휴 여부와는 무관합니다. 메리스트가 직접 확인한 업체는 ‘웨딩홀·스드메 큐레이션’과 ‘메리스트가 고른 추천 업체’에서 보실 수 있어요.</div>
         </div>
 
-        <div class="bg-white rounded-xl border border-wedding-border overflow-hidden">
-          <button onclick="toggleFaq(this)" class="w-full px-5 py-4 text-left font-bold text-sm text-wedding-dark flex justify-between items-center hover:bg-wedding-cream/30 transition">
-            <span>워킹(개인 방문)으로 웨딩홀 알아보는 것과 메리스트를 통한 예약의 차이는 무엇인가요?</span>
-            <i data-lucide="chevron-down" class="w-4 h-4 text-wedding-gold transition-transform"></i>
-          </button>
-          <div class="hidden px-5 pb-4 text-xs text-wedding-muted leading-relaxed border-t border-wedding-border/40 pt-3">
-            개인이 홀에 직접 방문하실 경우 정가 견적을 받게 되는 경우가 많지만, 메리스트를 통해 제휴 코드로 사전 예약 후 방문하시면 대관료 무료 및 식대 1인당 5,000원~15,000원 상당의 비공개 프로모션 할인가가 적용됩니다.
-          </div>
+        <!-- 박람회·초대권 -->
+        <div class="faq-item" data-faq="fair">
+          <button onclick="toggleFaq(this)" class="faq-q"><span><em>박람회·초대권</em>박람회 초대권은 정말 무료인가요? 몇 명까지 입장할 수 있나요?</span><i data-lucide="chevron-down" class="w-4 h-4 text-wedding-gold transition-transform shrink-0"></i></button>
+          <div class="faq-a hidden">네, 사전 신청하시면 입장료 없이 무료로 입장하실 수 있습니다. 초대권 1매로 본인 포함 최대 4인까지 함께 입장할 수 있어 예비부부와 양가 부모님이 같이 오셔도 됩니다.</div>
+        </div>
+        <div class="faq-item" data-faq="fair">
+          <button onclick="toggleFaq(this)" class="faq-q"><span><em>박람회·초대권</em>초대권은 어떻게 받고, 현장에서는 어떻게 사용하나요?</span><i data-lucide="chevron-down" class="w-4 h-4 text-wedding-gold transition-transform shrink-0"></i></button>
+          <div class="faq-a hidden">신청 즉시 화면에 모바일 초대권(초대권 번호 포함)이 발급됩니다. 현장 접수처에서 초대권 화면과 신분증을 보여 주시면 입장 팔찌와 사전 신청자 혜택 안내지를 드려요. 발급된 초대권은 같은 기기에서 ‘내 초대권 보기’로 언제든 다시 열 수 있습니다.</div>
+        </div>
+        <div class="faq-item" data-faq="fair">
+          <button onclick="toggleFaq(this)" class="faq-q"><span><em>박람회·초대권</em>신청한 회차를 바꾸거나 취소할 수 있나요?</span><i data-lucide="chevron-down" class="w-4 h-4 text-wedding-gold transition-transform shrink-0"></i></button>
+          <div class="faq-a hidden">네. ‘내 초대권 보기’에서 초대권을 취소한 뒤 원하는 회차로 다시 신청하시면 됩니다. 별도의 취소 수수료는 없습니다.</div>
+        </div>
+        <div class="faq-item" data-faq="fair">
+          <button onclick="toggleFaq(this)" class="faq-q"><span><em>박람회·초대권</em>박람회에서 꼭 계약해야 하나요?</span><i data-lucide="chevron-down" class="w-4 h-4 text-wedding-gold transition-transform shrink-0"></i></button>
+          <div class="faq-a hidden">아니요. 상담과 견적 비교만 하셔도 됩니다. 현장 계약 할인이 있더라도 견적서를 받아 충분히 비교한 뒤 결정하시길 권해 드려요. 계약을 고민 중이라면 계약금 환불 조건과 추가금 항목을 메리스트 디렉터가 함께 확인해 드립니다.</div>
+        </div>
+        <div class="faq-item" data-faq="fair">
+          <button onclick="toggleFaq(this)" class="faq-q"><span><em>박람회·초대권</em>사은품과 혜택은 누구나 받을 수 있나요?</span><i data-lucide="chevron-down" class="w-4 h-4 text-wedding-gold transition-transform shrink-0"></i></button>
+          <div class="faq-a hidden">웨딩 다이어리처럼 방문만으로 받는 혜택(회차별 선착순)과, 대관료 지원·스드메 바우처처럼 계약 시 적용되는 혜택이 나뉘어 있습니다. 세부 조건은 회차·업체별로 다를 수 있어 현장 상담 시 안내해 드려요.</div>
         </div>
 
-        <div class="bg-white rounded-xl border border-wedding-border overflow-hidden">
-          <button onclick="toggleFaq(this)" class="w-full px-5 py-4 text-left font-bold text-sm text-wedding-dark flex justify-between items-center hover:bg-wedding-cream/30 transition">
-            <span>비동행 플래너와 동행 플래너 중 선택할 수 있나요?</span>
-            <i data-lucide="chevron-down" class="w-4 h-4 text-wedding-gold transition-transform"></i>
-          </button>
-          <div class="hidden px-5 pb-4 text-xs text-wedding-muted leading-relaxed border-t border-wedding-border/40 pt-3">
-            신랑신부님의 성향에 맞춰 자유롭게 선택 가능합니다. 합리적인 실속 견적을 원하시면 일정과 예약 조율을 비동행으로 원격 지원해 드리며, 드레스 투어와 본식 피팅까지 꼼꼼한 안목이 필요하시다면 프리미엄 동행 디렉터를 매칭해 드립니다.
-          </div>
+        <!-- 견적·계약 -->
+        <div class="faq-item" data-faq="contract">
+          <button onclick="toggleFaq(this)" class="faq-q"><span><em>견적·계약</em>스마트 견적 계산기 금액은 실제 계약 금액과 같나요?</span><i data-lucide="chevron-down" class="w-4 h-4 text-wedding-gold transition-transform shrink-0"></i></button>
+          <div class="faq-a hidden">계산기는 평균 시세를 바탕으로 한 참고용 예상 금액입니다. 실제 금액은 예식 날짜·시간대, 보증 인원, 업체별 프로모션에 따라 달라지므로, 계산 결과를 가지고 1:1 상담을 신청하시면 조건에 맞는 실제 견적으로 다시 안내해 드립니다.</div>
+        </div>
+        <div class="faq-item" data-faq="contract">
+          <button onclick="toggleFaq(this)" class="faq-q"><span><em>견적·계약</em>스드메 추가금은 어떻게 막을 수 있나요?</span><i data-lucide="chevron-down" class="w-4 h-4 text-wedding-gold transition-transform shrink-0"></i></button>
+          <div class="faq-a hidden">계약 전에 헬퍼비, 원본·수정본 데이터비, 드레스 라벨 업그레이드비, 얼리스타트비 등 추가금 항목표를 서면으로 받아 두는 것이 가장 확실합니다. 메리스트 상담을 이용하시면 업체별 추가금 항목을 미리 정리해 비교해 드려요.</div>
+        </div>
+        <div class="faq-item" data-faq="contract">
+          <button onclick="toggleFaq(this)" class="faq-q"><span><em>견적·계약</em>상담만 받고 다른 업체와 계약해도 되나요?</span><i data-lucide="chevron-down" class="w-4 h-4 text-wedding-gold transition-transform shrink-0"></i></button>
+          <div class="faq-a hidden">물론입니다. 상담은 계약 의무가 전혀 없으며, 다른 업체와 비교하시는 데 필요한 견적 정보도 편하게 요청하셔도 됩니다.</div>
         </div>
 
+        <!-- 이용 안내 -->
+        <div class="faq-item" data-faq="etc">
+          <button onclick="toggleFaq(this)" class="faq-q"><span><em>이용 안내</em>상담 가능한 시간은 언제인가요?</span><i data-lucide="chevron-down" class="w-4 h-4 text-wedding-gold transition-transform shrink-0"></i></button>
+          <div class="faq-a hidden">평일 오전 10시부터 오후 7시까지 상담하며(월요일 정기휴무), 주말·공휴일은 사전 예약 상담으로 운영합니다. 온라인 상담 신청은 24시간 받고 있어요. 대표번호 1588-7920, 카카오톡 채널 @메리스트로도 문의하실 수 있습니다.</div>
+        </div>
+        <div class="faq-item" data-faq="etc">
+          <button onclick="toggleFaq(this)" class="faq-q"><span><em>이용 안내</em>입력한 개인정보는 어떻게 사용되나요?</span><i data-lucide="chevron-down" class="w-4 h-4 text-wedding-gold transition-transform shrink-0"></i></button>
+          <div class="faq-a hidden">상담 신청·초대권 발급 시 입력하신 성함과 연락처는 해당 목적(상담 안내, 초대권 발급 및 박람회 안내)에만 사용되며, 목적 달성 후 관련 법령에 따라 파기됩니다. 동의 없이 제3자에게 제공하지 않습니다.</div>
+        </div>
+        <div class="faq-item" data-faq="etc">
+          <button onclick="toggleFaq(this)" class="faq-q"><span><em>이용 안내</em>체크리스트와 찜 목록은 어디에 저장되나요?</span><i data-lucide="chevron-down" class="w-4 h-4 text-wedding-gold transition-transform shrink-0"></i></button>
+          <div class="faq-a hidden">D-Day, 체크리스트 진행 상황, 직접 추가한 항목은 지금 사용 중인 브라우저에 저장됩니다. 같은 기기·브라우저에서는 다시 방문해도 그대로 남아 있지만, 다른 기기에서는 보이지 않으며 브라우저 데이터를 삭제하면 함께 지워집니다.</div>
+        </div>
+
+      </div>
+
+      <div class="mt-8 rounded-2xl bg-white border border-wedding-border p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+        <div>
+          <p class="font-bold text-wedding-dark">찾는 답이 없나요?</p>
+          <p class="text-sm text-wedding-muted mt-0.5">전담 웨딩 디렉터가 직접 답변해 드려요.</p>
+        </div>
+        <button type="button" onclick="openConsultingModal()" class="px-5 py-2.5 rounded-xl bg-wedding-dark hover:bg-wedding-gold text-white text-sm font-bold transition inline-flex items-center gap-2 shrink-0">
+          <i data-lucide="message-circle" class="w-4 h-4"></i> 1:1 무료 상담 신청
+        </button>
       </div>
 
     </div>
@@ -3958,6 +4194,22 @@
     </div>
   </div>
 
+
+  <!-- ====================================================
+       17.6. MODAL: 박람회 모바일 초대권
+       ==================================================== -->
+  <div id="ticketModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/60 backdrop-blur-sm" onclick="if (event.target === this) closeTicketModal()">
+    <div class="w-full max-w-sm animate-fade-in">
+      <div id="ticketCard" class="fair-ticket"></div>
+      <div class="grid grid-cols-2 gap-2 mt-3">
+        <button type="button" onclick="downloadTicketIcs()" class="py-2.5 rounded-xl bg-white text-wedding-dark text-sm font-bold inline-flex items-center justify-center gap-1.5 hover:bg-wedding-cream transition">
+          <i data-lucide="calendar-plus" class="w-4 h-4"></i> 캘린더에 추가
+        </button>
+        <button type="button" onclick="closeTicketModal()" class="py-2.5 rounded-xl bg-wedding-gold text-white text-sm font-bold hover:bg-wedding-darkgold transition">확인</button>
+      </div>
+      <button type="button" onclick="cancelMyTicket()" class="w-full mt-2 py-2 text-xs font-semibold text-white/80 hover:text-white underline">초대권 취소하기</button>
+    </div>
+  </div>
 
   <!-- ====================================================
        18. TOAST NOTIFICATION CONTAINER
@@ -5466,18 +5718,221 @@
     // --------------------------------------------------------------------
     // FAIR & CONSULTING FORMS
     // --------------------------------------------------------------------
+    // --------------------------------------------------------------------
+    // 박람회 일정 · 무료 초대권
+    //  - 실제 일정이 정해지면 아래 FAIR_SESSIONS 만 수정하면 일정 카드·신청 회차·초대권에 모두 반영됩니다.
+    // --------------------------------------------------------------------
+    const FAIR_SESSIONS = [
+      { id: 'seoul-1114', code: '1114', city: '서울', title: '서울 강남 메가 페어', start: '2026-11-14', end: '2026-11-15', dateLabel: '11.14(토) – 11.15(일)', time: '10:00 – 19:00', place: '서울 강남구 삼성동 일대 전시장' },
+      { id: 'suwon-1128', code: '1128', city: '경기', title: '경기 수원 웨딩 페어', start: '2026-11-28', end: '2026-11-29', dateLabel: '11.28(토) – 11.29(일)', time: '11:00 – 19:00', place: '경기 수원시 광교 컨벤션' },
+      { id: 'busan-1205', code: '1205', city: '부산', title: '부산 해운대 웨딩 페어', start: '2026-12-05', end: '2026-12-06', dateLabel: '12.05(토) – 12.06(일)', time: '11:00 – 18:00', place: '부산 해운대구 센텀 전시장' },
+      { id: 'seoul-1219', code: '1219', city: '서울', title: '서울 2027 S/S 프리뷰 페어', start: '2026-12-19', end: '2026-12-20', dateLabel: '12.19(토) – 12.20(일)', time: '10:00 – 19:00', place: '서울 영등포구 여의도 컨벤션' }
+    ];
+    const FAIR_TICKET_KEY = 'marryst_fair_ticket';
+
+    const fairIsEnded = (s) => new Date(s.end + 'T23:59:59') < new Date();
+
+    function renderFairSessions() {
+      const box = document.getElementById('fairSchedule');
+      const select = document.getElementById('fairSession');
+      if (box) {
+        box.innerHTML = FAIR_SESSIONS.map(s => {
+          const ended = fairIsEnded(s);
+          return `<div class="fair-session ${ended ? 'is-ended' : ''}">
+            <div class="flex items-center justify-between gap-2">
+              <span class="inline-flex px-2 py-0.5 rounded-md text-xs font-bold bg-wedding-dark text-white">${s.city}</span>
+              <span class="text-xs font-semibold ${ended ? 'text-wedding-muted' : 'text-wedding-gold'}">${ended ? '종료' : '사전 신청 중'}</span>
+            </div>
+            <h3 class="mt-2.5 font-bold text-[16px] text-wedding-dark leading-snug">${s.title}</h3>
+            <ul class="mt-2 space-y-1 text-[13px] text-wedding-charcoal">
+              <li class="flex gap-1.5"><i data-lucide="calendar" class="w-3.5 h-3.5 text-wedding-gold shrink-0 mt-0.5"></i>${s.dateLabel}</li>
+              <li class="flex gap-1.5"><i data-lucide="clock" class="w-3.5 h-3.5 text-wedding-gold shrink-0 mt-0.5"></i>${s.time}</li>
+              <li class="flex gap-1.5"><i data-lucide="map-pin" class="w-3.5 h-3.5 text-wedding-gold shrink-0 mt-0.5"></i>${s.place}</li>
+            </ul>
+            <button type="button" ${ended ? 'disabled' : ''} onclick="pickFairSession('${s.id}')" class="mt-auto pt-0 w-full">
+              <span class="block mt-4 w-full py-2.5 rounded-xl text-sm font-bold ${ended ? 'bg-wedding-sand text-wedding-muted' : 'bg-wedding-dark text-white hover:bg-wedding-gold'} transition">${ended ? '종료된 회차' : '이 회차로 초대권 신청'}</span>
+            </button>
+          </div>`;
+        }).join('');
+      }
+      if (select) {
+        const open = FAIR_SESSIONS.filter(s => !fairIsEnded(s));
+        select.innerHTML = open.length
+          ? open.map(s => `<option value="${s.id}">${s.title} · ${s.dateLabel}</option>`).join('')
+          : '<option value="">예정된 박람회가 없습니다</option>';
+      }
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function pickFairSession(id) {
+      const select = document.getElementById('fairSession');
+      if (select) select.value = id;
+      document.getElementById('fairForm').scrollIntoView({ behavior: 'smooth', block: 'center' });
+      setTimeout(() => document.getElementById('fairName').focus({ preventScroll: true }), 500);
+    }
+
+    // 상단 배너·모바일 메뉴·푸터의 '박람회 초대권' → 초대권 신청 폼으로 이동
     function openFairModal() {
-      document.getElementById("consultingModal").classList.remove("hidden");
-      document.getElementById("consultingModal").classList.add("flex");
+      goToHash('fair');
+      setTimeout(() => {
+        const form = document.getElementById('fairForm');
+        if (form) form.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 150);
+    }
+
+    // 휴대폰 번호 자동 하이픈
+    function formatPhone(value) {
+      const d = value.replace(/\D/g, '').slice(0, 11);
+      if (d.length < 4) return d;
+      if (d.length < 8) return `${d.slice(0, 3)}-${d.slice(3)}`;
+      return `${d.slice(0, 3)}-${d.slice(3, d.length - 4)}-${d.slice(-4)}`;
+    }
+    (function () {
+      const phone = document.getElementById('fairPhone');
+      if (phone) phone.addEventListener('input', () => { phone.value = formatPhone(phone.value); });
+    })();
+
+    const maskName = (n) => n.length <= 1 ? n : (n.length === 2 ? n[0] + '*' : n[0] + '*'.repeat(n.length - 2) + n[n.length - 1]);
+
+    function loadMyTicket() {
+      try { return JSON.parse(localStorage.getItem(FAIR_TICKET_KEY)); } catch (err) { return null; }
+    }
+
+    function updateMyTicketLink() {
+      const link = document.getElementById('myTicketLink');
+      if (link) link.classList.toggle('hidden', !loadMyTicket());
     }
 
     function handleFairSubmit(e) {
       e.preventDefault();
-      const name = document.getElementById("fairName").value;
-      const phone = document.getElementById("fairPhone").value;
-      showToast(`${name}님, VIP 무료 초대권 및 제휴 할인 바우처가 모바일로 발송되었습니다!`);
+      const err = document.getElementById('fairError');
+      const fail = (msg, focusId) => {
+        err.textContent = msg; err.classList.remove('hidden');
+        if (focusId) document.getElementById(focusId).focus();
+      };
+      err.classList.add('hidden');
+
+      const sessionId = document.getElementById('fairSession').value;
+      const session = FAIR_SESSIONS.find(s => s.id === sessionId);
+      const name = document.getElementById('fairName').value.trim();
+      const phoneDigits = document.getElementById('fairPhone').value.replace(/\D/g, '');
+      if (!session) return fail('방문하실 회차를 선택해 주세요.', 'fairSession');
+      if (name.length < 2) return fail('신청자 성함을 2자 이상 입력해 주세요.', 'fairName');
+      if (!/^01[016789]\d{7,8}$/.test(phoneDigits)) return fail('휴대폰 번호를 정확히 입력해 주세요. (예: 010-1234-5678)', 'fairPhone');
+      if (!document.getElementById('fairAgree').checked) return fail('개인정보 수집·이용에 동의해 주셔야 초대권을 발급할 수 있어요.', 'fairAgree');
+
+      // 브라우저에는 화면 표시에 필요한 최소 정보만 저장 (전화번호는 저장하지 않음)
+      const ticket = {
+        code: `MRS-${session.code}-${String(Math.floor(1000 + Math.random() * 9000))}`,
+        sessionId: session.id,
+        holder: maskName(name),
+        people: Number(document.getElementById('fairCompanions').value) || 1,
+        interests: [...document.querySelectorAll('#fairInterests input:checked')].map(i => i.value),
+        issuedAt: new Date().toISOString()
+      };
+      try { localStorage.setItem(FAIR_TICKET_KEY, JSON.stringify(ticket)); } catch (err2) { /* 저장 불가 시 화면에만 표시 */ }
+
       e.target.reset();
+      renderFairSessions();
+      updateMyTicketLink();
+      openTicketModal(ticket);
+      showToast(`${name}님, 무료 초대권이 발급되었어요. 현장에서 이 화면을 보여주세요.`);
     }
+
+    function openTicketModal(ticket) {
+      const s = FAIR_SESSIONS.find(x => x.id === ticket.sessionId);
+      if (!s) return;
+      const issued = new Date(ticket.issuedAt);
+      document.getElementById('ticketCard').innerHTML = `
+        <div class="relative p-5 pb-4">
+          <div class="flex items-center justify-between">
+            <span class="brand-logo font-serif text-lg font-bold tracking-wider text-white">MARRYST</span>
+            <span class="px-2 py-0.5 rounded-md text-[11px] font-bold bg-wedding-gold text-wedding-dark">VIP 무료 초대권</span>
+          </div>
+          <p class="mt-4 text-xs text-wedding-sand/80">메리스트 VIP 웨딩 박람회</p>
+          <h3 class="font-serif text-xl font-bold text-white mt-0.5">${s.title}</h3>
+          <ul class="mt-3 space-y-1.5 text-[13px]">
+            <li class="flex gap-2"><i data-lucide="calendar" class="w-4 h-4 text-wedding-gold shrink-0"></i>${s.dateLabel}</li>
+            <li class="flex gap-2"><i data-lucide="clock" class="w-4 h-4 text-wedding-gold shrink-0"></i>${s.time} (종료 1시간 전 입장 마감)</li>
+            <li class="flex gap-2"><i data-lucide="map-pin" class="w-4 h-4 text-wedding-gold shrink-0"></i>${s.place}</li>
+          </ul>
+        </div>
+        <div class="fair-ticket-cut"></div>
+        <div class="relative p-5 pt-4">
+          <div class="grid grid-cols-2 gap-3 text-[13px]">
+            <div><span class="block text-[11px] text-wedding-sand/70">신청자</span><b class="text-white">${calcEsc(ticket.holder)}</b></div>
+            <div><span class="block text-[11px] text-wedding-sand/70">입장 인원</span><b class="text-white">${ticket.people}인</b></div>
+          </div>
+          <div class="mt-4 rounded-xl bg-white/5 border border-white/10 p-3 text-center">
+            <span class="block text-[11px] text-wedding-sand/70">초대권 번호</span>
+            <span class="fair-ticket-code block text-2xl font-bold text-white mt-0.5">${ticket.code}</span>
+          </div>
+          <p class="mt-3 text-[11px] text-wedding-sand/70 leading-relaxed">현장 접수처에서 이 화면과 신분증을 보여주세요. 화면을 캡처해 두면 인터넷이 안 될 때도 사용할 수 있어요. · 발급 ${issued.getMonth() + 1}.${issued.getDate()}</p>
+        </div>`;
+      const modal = document.getElementById('ticketModal');
+      modal.classList.remove('hidden'); modal.classList.add('flex');
+      if (window.lucide) lucide.createIcons();
+    }
+
+    function closeTicketModal() {
+      const modal = document.getElementById('ticketModal');
+      modal.classList.add('hidden'); modal.classList.remove('flex');
+    }
+
+    function showMyTicket() {
+      const t = loadMyTicket();
+      if (t && FAIR_SESSIONS.some(s => s.id === t.sessionId)) return openTicketModal(t);
+      showToast('아직 발급된 초대권이 없어요. 회차를 골라 무료로 신청해 보세요.');
+      openFairModal();
+    }
+
+    function cancelMyTicket() {
+      try { localStorage.removeItem(FAIR_TICKET_KEY); } catch (err) { /* 무시 */ }
+      closeTicketModal();
+      updateMyTicketLink();
+      showToast('초대권을 취소했어요. 다른 회차로 다시 신청할 수 있습니다.');
+    }
+
+    // 캘린더(.ics) 파일로 일정 저장
+    function downloadTicketIcs() {
+      const t = loadMyTicket();
+      const s = t && FAIR_SESSIONS.find(x => x.id === t.sessionId);
+      if (!s) return;
+      const [startTime, endTime] = s.time.split('–').map(x => x.trim().replace(':', '') + '00');
+      const ics = [
+        'BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//MARRYST//Wedding Fair//KO', 'BEGIN:VEVENT',
+        `UID:${t.code}@marryst`,
+        `DTSTAMP:${new Date().toISOString().replace(/[-:]/g, '').split('.')[0]}Z`,
+        `DTSTART:${s.start.replace(/-/g, '')}T${startTime}`,
+        `DTEND:${s.end.replace(/-/g, '')}T${endTime}`,
+        `SUMMARY:메리스트 ${s.title}`,
+        `LOCATION:${s.place}`,
+        `DESCRIPTION:초대권 번호 ${t.code} · 입장 ${t.people}인 · 현장 접수처에서 초대권 화면과 신분증을 보여주세요.`,
+        'END:VEVENT', 'END:VCALENDAR'
+      ].join('\r\n');
+      const url = URL.createObjectURL(new Blob([ics], { type: 'text/calendar;charset=utf-8' }));
+      const a = document.createElement('a');
+      a.href = url; a.download = `marryst-fair-${s.code}.ics`;
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    }
+
+    // FAQ 카테고리 탭
+    (function () {
+      const tabs = document.getElementById('faqTabs');
+      if (!tabs) return;
+      tabs.addEventListener('click', (e) => {
+        const btn = e.target.closest('[data-faq]');
+        if (!btn) return;
+        tabs.querySelectorAll('[data-faq]').forEach(b => b.classList.toggle('is-active', b === btn));
+        document.querySelectorAll('#faqList .faq-item').forEach(item => {
+          item.classList.toggle('hidden', btn.dataset.faq !== 'all' && item.dataset.faq !== btn.dataset.faq);
+        });
+      });
+    })();
+
+    renderFairSessions();
+    updateMyTicketLink();
 
     function openConsultingModal() {
       document.getElementById("consultingModal").classList.remove("hidden");
@@ -5501,8 +5956,9 @@
     // --------------------------------------------------------------------
     function toggleFaq(btn) {
       const content = btn.nextElementSibling;
-      const icon = btn.querySelector("i");
+      const icon = btn.querySelector("svg, i"); // 아이콘 라이브러리가 <i>를 <svg>로 바꾸므로 둘 다 찾음
       content.classList.toggle("hidden");
+      if (!icon) return;
       if (content.classList.contains("hidden")) {
         icon.style.transform = "rotate(0deg)";
       } else {
@@ -5925,6 +6381,8 @@
         desc: '박람회 무료 초대권을 신청하고 자주 묻는 질문을 확인하세요.',
         chips: [
           { icon: 'ticket', label: '초대권 신청', href: '#fair' },
+          { icon: 'badge-check', label: '내 초대권', action: 'showMyTicket()' },
+          { icon: 'calendar', label: '박람회 일정', href: '#fair-info' },
           { icon: 'help-circle', label: '자주 묻는 질문', href: '#faq' }
         ]
       }
@@ -5939,7 +6397,7 @@
       'calculator': 'budget',
       'checklist': 'checklist',
       'reviews': 'stories', 'magazine': 'stories',
-      'benefits': 'benefits', 'fair': 'benefits', 'faq': 'benefits'
+      'benefits': 'benefits', 'fair': 'benefits', 'fair-info': 'benefits', 'faq': 'benefits'
     };
 
     let currentView = null;
