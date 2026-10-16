@@ -690,6 +690,15 @@
     }
     @media (prefers-reduced-motion: reduce) { .home-news-dot { animation: none; } .home-news-item { transition: none; } }
 
+    /* 홈 신뢰 지표 카드 (PC 전용): 스크롤을 조금 더 내리면 카드 전체가 흐릿하게 떠오르며 '사라락' 또렷해짐 */
+    @media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
+      .js-router .metrics-reveal {
+        opacity: 0; transform: translateY(40px); filter: blur(8px);
+        transition: opacity 1.3s ease, transform 1.3s cubic-bezier(0.16, 1, 0.3, 1), filter 1.1s ease;
+      }
+      .js-router .metrics-reveal.is-in { opacity: 1; transform: none; filter: none; }
+    }
+
     /* 전국 웨딩 업체 디렉터리 카드 */
     .dir-card {
       display: flex; flex-direction: column;
@@ -1200,7 +1209,8 @@
   <!-- ====================================================
        4. TRUST METRICS & BRAND PROMISES
        ==================================================== -->
-  <section class="relative z-10 -mt-12 lg:-mt-16 mx-4 sm:mx-6 lg:mx-auto lg:max-w-6xl rounded-3xl border border-wedding-border bg-white py-8 shadow-luxury">
+  <!-- PC: 히어로 사진 아래에 놓이고, 스크롤을 내리면 '사라락' 나타났다가 맨 위로 올리면 다시 사라짐 (모바일은 기존처럼 사진에 겹쳐 항상 표시) -->
+  <section id="homeMetrics" class="metrics-reveal relative z-10 -mt-12 lg:mt-14 mx-4 sm:mx-6 lg:mx-auto lg:max-w-6xl rounded-3xl border border-wedding-border bg-white py-8 shadow-luxury">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8 text-center divide-y md:divide-y-0 md:divide-x divide-wedding-border/60">
         
@@ -5000,6 +5010,27 @@
         setTimeout(() => current.classList.remove('is-leaving'), SLIDE_MS + 50); // 보이지 않게 오른쪽 대기 위치로 복귀
         index = next;
       }, HOLD_MS + SLIDE_MS);
+    })();
+
+    // 홈 신뢰 지표 (PC 전용): 스크롤을 내리면 등장, 맨 위 근처로 다시 올리면 사라짐 (몇 번이든 반복)
+    // 화면 크기와 상관없이 실제로 스크롤해야 나타남. PC 인트로 중에는 스크롤이 잠겨 있어 인트로 뒤에만 재생됨
+    (function homeMetricsReveal() {
+      const box = document.getElementById('homeMetrics');
+      if (!box) return;
+      const pc = window.matchMedia('(min-width: 1024px) and (prefers-reduced-motion: no-preference)');
+      const SHOW_AT = 160, HIDE_BELOW = 80;                     // 두 기준 사이에서는 상태 유지 (경계에서 깜빡임 방지)
+      let ticking = false;
+      function check() {
+        ticking = false;
+        if (!pc.matches) { box.classList.add('is-in'); return; } // 모바일·작은 창은 애니메이션 없이 항상 표시
+        const y = window.scrollY;
+        const inView = box.getBoundingClientRect().top < window.innerHeight * 0.88;
+        if (y >= SHOW_AT && inView) box.classList.add('is-in');
+        else if (y < HIDE_BELOW) box.classList.remove('is-in');
+      }
+      window.addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(check); } }, { passive: true });
+      if (pc.addEventListener) pc.addEventListener('change', check);
+      check();                                                  // 새로고침 시 이미 아래로 스크롤된 상태면 바로 표시
     })();
 
     // 아래쪽 전체 리포트가 화면에 보이면 요약 바는 숨김 (중복 표시 방지)
