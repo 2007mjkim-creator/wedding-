@@ -35,11 +35,14 @@ const TITLE_MUST_HAVE = /웨딩|예식|스드메|드레스|신부|신랑|결혼�
 const EXCLUDE = /부고|별세|사망|숨져|숨진|화재|살인|폭행|성범죄|마약|음주운전|혐의|구속|기소|사기|피의자/;
 const VENUE_ONLY = /(웨딩홀|예식장|컨벤션)에서\s?(열린|개최|진행된|열려)/;
 // 연예·가십성 제목 제외
-const GOSSIP = /♥|★|나솔|나는\s?솔로|열애|결혼\s?발표|결혼\s?소식|결혼\s?임박|득녀|득남|임신|아이돌|열애설|스캔들/;
+const GOSSIP = /♥|★|나솔|나는\s?솔로|열애|결혼\s?발표|결혼\s?소식|결혼\s?임박|결혼\s?앞두고|득녀|득남|임신|아이돌|열애설|스캔들|자태|아내|남편|예비\s?신부와|신랑수업|혼전순결|현커|조폭|\[[^\]]*(라스|해시태그|종합|인터뷰)/;
 
-// 같은 사건을 여러 언론사가 쓴 기사 묶기: 제목 단어가 많이 겹치면 같은 기사로 보고 1건만 남김
-const STOP = new Set(['위해', '관련', '통해', '대한', '등', '및', '첫', '한', '것', '수', '더', '중', '後', '오늘', '올해']);
-const words = (t) => new Set(t.replace(/[^가-힣A-Za-z0-9~]+/g, ' ').split(' ').filter(w => w.length >= 2 && !STOP.has(w)));
+// 같은 사건을 여러 언론사가 쓴 기사 묶기: 제목 단어가 많이 겹치면 같은 기사로 보고 최신 1건만 남김
+const STOP = new Set(['위해', '관련', '통해', '대한', '등', '및', '첫', '한', '것', '수', '더', '중', '오늘', '올해', '개최', '진행', '운영']);
+const words = (t) => new Set(
+  t.replace(/(\d+)\s?(곳|개|건|명|만원|원)/g, '$1')       // '17곳'·'17개' 같은 표현을 같은 단어로
+   .replace(/[^가-힣A-Za-z0-9~]+/g, ' ')
+   .split(' ').filter(w => w.length >= 2 && !STOP.has(w)));
 const keptWordSets = [];
 function isSameStory(title) {
   const a = words(title);
@@ -47,8 +50,19 @@ function isSameStory(title) {
   return keptWordSets.some(b => {
     let common = 0;
     a.forEach(w => { if (b.has(w)) common++; });
-    return common >= 2 && common / Math.min(a.size, b.size) >= 0.5;
+    const ratio = common / Math.min(a.size, b.size);
+    return (common >= 2 && ratio >= 0.5) || (common >= 3 && ratio >= 0.3);
   });
+}
+
+// 분야는 제목 단어로 결정 (검색어는 기사를 찾는 용도로만 사용)
+function categoryOf(title, fallback) {
+  if (/드레스|턱시도|예복/.test(title)) return 'dress';
+  if (/스튜디오|촬영|스냅|화보/.test(title)) return 'studio';
+  if (/메이크업|헤어|뷰티|네일/.test(title)) return 'makeup';
+  if (/웨딩홀|예식장|식대|결혼식장|컨벤션|하객|축의금/.test(title)) return 'hall';
+  if (/스드메|박람회|비용|준비|혼수|예비부부|허니문|신혼여행|청첩장|트렌드/.test(title)) return 'prep';
+  return fallback;
 }
 
 // 주요 언론사 도메인 → 이름 (없으면 도메인 그대로 표시)
@@ -106,12 +120,12 @@ const seenTitle = new Set();
 const normTitle = (t) => t.replace(/[^가-힣A-Za-z0-9]/g, '').slice(0, 40);
 const cutoff = Date.now() - MAX_AGE_DAYS * 86400000;
 
-const items = [];
 let failures = 0;
 let calls = 0;
 
+// 1) 모든 검색어 결과를 한데 모음
+const candidates = [];
 for (const cat of CATEGORIES) {
-  const bucket = [];
   for (const q of cat.queries) {
     calls++;
     let found;
@@ -124,14 +138,23 @@ for (const cat of CATEGORIES) {
       if (!title || !url || !time || time < cutoff) continue;
       const text = title + ' ' + desc;
       if (!TITLE_MUST_HAVE.test(title) || EXCLUDE.test(text) || VENUE_ONLY.test(text) || GOSSIP.test(title)) continue;
-      const key = normTitle(title);
-      if (seenUrl.has(url) || seenTitle.has(key) || isSameStory(title)) continue;
-      seenUrl.add(url); seenTitle.add(key); keptWordSets.push(words(title));
-      bucket.push({ cat: cat.key, title, desc: desc.slice(0, 160), url, source: sourceOf(url), date: new Date(time).toISOString() });
+      candidates.push({ fallback: cat.key, title, desc, url, time });
     }
   }
-  bucket.sort((a, b) => b.date.localeCompare(a.date));
-  items.push(...bucket.slice(0, PER_CATEGORY));
+}
+
+// 2) 최신순으로 보면서 같은 기사·같은 사건은 1건만 남기고, 제목으로 분야 결정
+candidates.sort((a, b) => b.time - a.time);
+const perCat = {};
+const items = [];
+for (const c of candidates) {
+  const key = normTitle(c.title);
+  if (seenUrl.has(c.url) || seenTitle.has(key) || isSameStory(c.title)) continue;
+  seenUrl.add(c.url); seenTitle.add(key); keptWordSets.push(words(c.title));
+  const cat = categoryOf(c.title, c.fallback);
+  perCat[cat] = (perCat[cat] || 0) + 1;
+  if (perCat[cat] > PER_CATEGORY) continue;
+  items.push({ cat, title: c.title, desc: c.desc.slice(0, 160), url: c.url, source: sourceOf(c.url), date: new Date(c.time).toISOString() });
 }
 
 if (failures === calls) {
