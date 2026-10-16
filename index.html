@@ -323,11 +323,31 @@
     .top-nav-link.is-active { color: var(--accent); font-weight: 700; }
     .top-nav-link.is-active::after { transform: scaleX(1); }
 
-    /* 홈 화면(PC): 위쪽 흰 헤더 띠를 없애고 어두운 헤더로 — 검은 공지 바·히어로 사진과 이어지게, 글자는 밝게 */
+    /* 홈 화면(PC): 경계선 없이 — 히어로 사진이 맨 위부터 깔리고, 공지 바·헤더는 투명하게 사진 위에 얹힘.
+       스크롤을 내리면 헤더만 어두운 배경이 생겨 아래 밝은 영역에서도 글자가 보이게. 글자는 밝게 */
     @media (min-width: 1024px) {
+      html[data-page="home"] #topPromoBar {
+        position: absolute; top: 0; left: 0; right: 0; z-index: 41;
+        background: transparent; border-bottom-color: transparent;
+      }
       html[data-page="home"] header.glass-nav {
         --gold-text: #E3C47F;
-        background: rgba(18, 17, 16, 0.96); border-bottom-color: rgba(255, 255, 255, 0.08);
+        margin-top: var(--promo-h, 0px);                 /* 공지 바 아래에서 시작, 스크롤하면 맨 위에 붙음 */
+        background: transparent; border-bottom-color: transparent;
+        backdrop-filter: none; -webkit-backdrop-filter: none;
+      }
+      html[data-page="home"].is-scrolled header.glass-nav {
+        background: rgba(18, 17, 16, 0.92);
+        backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+      }
+      html[data-page="home"] #homeHero {
+        margin-top: calc(0px - var(--hdr-h, 81px) - var(--promo-h, 0px));   /* 공지 바 + 헤더 뒤까지 사진을 끌어올림 */
+        padding-top: calc(var(--hdr-h, 81px) + var(--promo-h, 0px)); padding-bottom: 0;
+        min-height: max(720px, 100vh);
+      }
+      html[data-page="home"] #homeHero::before {          /* 위쪽 메뉴 글자가 잘 보이게 살짝 어둡게 */
+        content: ""; position: absolute; left: 0; right: 0; top: 0; height: 240px; z-index: 1; pointer-events: none;
+        background: linear-gradient(to bottom, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0));
       }
       html[data-page="home"] header .brand-logo { color: #fff; }
       html[data-page="home"] header .brand-logo + span { color: rgba(255, 255, 255, 0.62); }
@@ -1120,8 +1140,8 @@
   <!-- ====================================================
        3. HERO SECTION WITH SEARCH ENGINE
        ==================================================== -->
-  <!-- PC: 화면 높이 이상으로 채워 스크롤 전 아래쪽에 밝은 띠가 보이지 않게 (아래 여백 128px = 공지 바+헤더 높이만큼 내용을 위로 올려 보이는 영역 가운데에 맞춤) -->
-  <section id="homeHero" class="on-dark relative min-h-[480px] sm:min-h-[560px] lg:min-h-[max(720px,100vh)] lg:pb-32 flex items-center justify-center overflow-hidden">
+  <!-- PC: 맨 위(공지 바·헤더 뒤)부터 화면 끝까지 사진으로 채움 — 위치·여백은 CSS의 html[data-page="home"] #homeHero 참고 -->
+  <section id="homeHero" class="on-dark relative min-h-[480px] sm:min-h-[560px] lg:min-h-[720px] flex items-center justify-center overflow-hidden">
     <!-- Hero Background Image with Overlay -->
     <div class="absolute inset-0 z-0">
       <!-- 배경 슬라이드: 약 3초마다 다음 사진으로 천천히 전환 (첫 장 외에는 페이지 로드 후 불러옴) -->
@@ -5036,6 +5056,23 @@
         setTimeout(() => current.classList.remove('is-leaving'), SLIDE_MS + 50); // 보이지 않게 오른쪽 대기 위치로 복귀
         index = next;
       }, HOLD_MS + SLIDE_MS);
+    })();
+
+    // 홈(PC) 경계선 없는 상단: 공지 바 높이를 CSS 변수로 넘기고(닫으면 0), 스크롤하면 헤더에 어두운 배경
+    (function homeTopChrome() {
+      const root = document.documentElement;
+      const bar = document.getElementById('topPromoBar');
+      const header = document.querySelector('header');
+      const setPromo = () => {
+        root.style.setProperty('--promo-h', (bar ? bar.offsetHeight : 0) + 'px');
+        if (header) root.style.setProperty('--hdr-h', header.offsetHeight + 'px');
+      };
+      setPromo();
+      if (bar && 'ResizeObserver' in window) new ResizeObserver(setPromo).observe(bar);
+      window.addEventListener('resize', setPromo);
+      const onScroll = () => root.classList.toggle('is-scrolled', window.scrollY > 24);
+      window.addEventListener('scroll', onScroll, { passive: true });
+      onScroll();
     })();
 
     // 스크롤바 뒤 띠: 홈 히어로(어두운 사진)가 화면 절반 이상을 덮는 동안은 어둡게, 아래 밝은 영역으로 내려가면 원래 색
