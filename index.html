@@ -653,6 +653,15 @@
       100% { transform: scale(1); }
     }
 
+    /* 실시간 웨딩 소식 카드 */
+    .news-card {
+      display: flex; flex-direction: column;
+      padding: 1rem 1.1rem; border-radius: 1rem;
+      background: #FDFBF7; border: 1px solid #DDD3C4;
+      transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+    }
+    .news-card:hover { border-color: #8F6A2B; box-shadow: 0 16px 30px -22px rgba(143, 106, 43, 0.9); transform: translateY(-2px); }
+
     /* 전국 웨딩 업체 디렉터리 카드 */
     .dir-card {
       display: flex; flex-direction: column;
@@ -3515,6 +3524,30 @@
   <!-- ====================================================
        10. WEDDING TREND MAGAZINE & EXPERT GUIDES
        ==================================================== -->
+  <!-- ====================================================
+       9.5. 실시간 웨딩 소식 (네이버 뉴스 · data/news.json, 3시간마다 자동 갱신)
+       ==================================================== -->
+  <section id="news" class="hidden bg-white border-t border-wedding-border">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-3 mb-5">
+        <div>
+          <h2 class="font-serif text-2xl sm:text-3xl font-normal text-wedding-dark flex items-center gap-2">
+            실시간 웨딩 소식
+            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-red-50 text-red-700 text-[11px] font-sans font-bold border border-red-200"><span class="w-1.5 h-1.5 rounded-full bg-red-600 animate-pulse"></span>LIVE</span>
+          </h2>
+          <p class="text-sm text-wedding-muted mt-2">스튜디오·드레스·메이크업·웨딩홀 최신 기사를 모았어요. 제목을 누르면 원문 기사로 이동합니다.</p>
+        </div>
+        <span id="newsUpdated" class="text-xs text-wedding-muted"></span>
+      </div>
+      <div id="newsTabs" class="flex gap-2 overflow-x-auto pb-1 mb-4" style="scrollbar-width:none"></div>
+      <div id="newsGrid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3"></div>
+      <div class="mt-4 flex flex-col sm:flex-row items-center justify-between gap-2">
+        <span class="text-[11px] text-wedding-muted">출처: 네이버 뉴스 검색 · 기사 저작권은 각 언론사에 있습니다.</span>
+        <button id="newsMore" type="button" style="display:none" class="px-6 py-2.5 rounded-full border border-wedding-dark text-wedding-dark hover:bg-wedding-dark hover:text-white text-sm font-semibold transition"></button>
+      </div>
+    </div>
+  </section>
+
   <section id="magazine" class="py-20 bg-wedding-cream/40 border-t border-wedding-border">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       
@@ -6284,6 +6317,7 @@
         desc: '실계약 인증 후기와 현직 에디터의 웨딩 트렌드 가이드.',
         chips: [
           { icon: 'star', label: '본식 후기', href: '#reviews' },
+          { icon: 'radio', label: '실시간 소식', href: '#news' },
           { icon: 'newspaper', label: '매거진', href: '#magazine' }
         ]
       },
@@ -6308,7 +6342,7 @@
       'invitation-studio': 'invitation',
       'calculator': 'budget',
       'checklist': 'checklist',
-      'reviews': 'stories', 'magazine': 'stories',
+      'reviews': 'stories', 'magazine': 'stories', 'news': 'stories',
       'benefits': 'benefits', 'fair': 'benefits', 'fair-info': 'benefits', 'faq': 'benefits'
     };
 
@@ -7171,6 +7205,83 @@
 
     document.addEventListener('viewchange', (e) => { if (e.detail === 'directory') dirLoad(); });
     if (typeof currentView !== 'undefined' && currentView === 'directory') dirLoad();
+  </script>
+
+  <!-- ====================================================
+       23. 실시간 웨딩 소식 (data/news.json — GitHub Actions가 3시간마다 갱신)
+       ==================================================== -->
+  <script>
+    const NEWS_CATS = [
+      { key: 'all', label: '전체' }, { key: 'dress', label: '드레스' }, { key: 'studio', label: '스튜디오' },
+      { key: 'makeup', label: '메이크업' }, { key: 'hall', label: '웨딩홀' }, { key: 'prep', label: '결혼 준비' }
+    ];
+    const NEWS_PAGE = 9;
+    const news = { items: null, loading: null, cat: 'all', shown: NEWS_PAGE };
+    const newsEsc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+    function newsAgo(iso) {
+      const diff = (Date.now() - new Date(iso).getTime()) / 60000;
+      if (diff < 60) return `${Math.max(1, Math.round(diff))}분 전`;
+      if (diff < 1440) return `${Math.round(diff / 60)}시간 전`;
+      if (diff < 1440 * 7) return `${Math.round(diff / 1440)}일 전`;
+      const d = new Date(iso);
+      return `${d.getMonth() + 1}.${d.getDate()}`;
+    }
+
+    function newsLoad() {
+      if (news.loading) return news.loading;
+      news.loading = fetch('data/news.json', { cache: 'no-cache' })
+        .then(res => { if (!res.ok) throw new Error('HTTP ' + res.status); return res.json(); })
+        .then(data => {
+          news.items = (data.items || []).filter(it => it.title && /^https?:\/\//.test(it.url));
+          if (!news.items.length) return;
+          document.getElementById('news').classList.remove('hidden');
+          const u = new Date(data.updatedAt);
+          document.getElementById('newsUpdated').textContent = `업데이트 ${u.getMonth() + 1}.${u.getDate()} ${String(u.getHours()).padStart(2, '0')}:${String(u.getMinutes()).padStart(2, '0')} · 3시간마다 자동 갱신`;
+          newsRender();
+        })
+        .catch(() => { news.loading = null; }); // 아직 수집 전이면 섹션을 숨긴 채로 둠
+      return news.loading;
+    }
+
+    function newsRender(resetPage = true) {
+      if (!news.items) return;
+      if (resetPage) news.shown = NEWS_PAGE;
+      const counts = (key) => key === 'all' ? news.items.length : news.items.filter(it => it.cat === key).length;
+      document.getElementById('newsTabs').innerHTML = NEWS_CATS.filter(c => counts(c.key) > 0)
+        .map(c => `<button type="button" data-news-cat="${c.key}" class="vf-cat ${news.cat === c.key ? 'is-active' : ''}">${c.label}<span class="dir-count">${counts(c.key)}</span></button>`).join('');
+
+      const list = news.cat === 'all' ? news.items : news.items.filter(it => it.cat === news.cat);
+      const catLabel = (k) => (NEWS_CATS.find(c => c.key === k) || {}).label || '';
+      document.getElementById('newsGrid').innerHTML = list.slice(0, news.shown).map(it => `
+        <a href="${newsEsc(it.url)}" target="_blank" rel="noopener noreferrer nofollow" class="news-card group">
+          <div class="flex items-center gap-2 text-xs text-wedding-muted">
+            <span class="dir-badge" data-c="planner">${catLabel(it.cat)}</span>
+            <span class="font-semibold text-wedding-charcoal truncate">${newsEsc(it.source)}</span>
+            <span class="shrink-0">· ${newsAgo(it.date)}</span>
+          </div>
+          <h3 class="mt-2 font-bold text-[15px] leading-snug text-wedding-dark group-hover:text-wedding-gold transition line-clamp-2">${newsEsc(it.title)}</h3>
+          <p class="mt-1.5 text-[13px] text-wedding-muted leading-relaxed line-clamp-2">${newsEsc(it.desc)}</p>
+          <span class="mt-auto pt-3 text-xs font-semibold text-wedding-gold inline-flex items-center gap-1">원문 보기 <i data-lucide="external-link" class="w-3 h-3"></i></span>
+        </a>`).join('');
+
+      const more = document.getElementById('newsMore');
+      const remain = list.length - news.shown;
+      more.style.display = remain > 0 ? '' : 'none';
+      more.textContent = `기사 더 보기 (${remain}건)`;
+      if (window.lucide) lucide.createIcons();
+    }
+
+    document.getElementById('newsTabs').addEventListener('click', (e) => {
+      const b = e.target.closest('[data-news-cat]');
+      if (!b) return;
+      news.cat = b.dataset.newsCat;
+      newsRender();
+    });
+    document.getElementById('newsMore').addEventListener('click', () => { news.shown += NEWS_PAGE; newsRender(false); });
+
+    document.addEventListener('viewchange', (e) => { if (e.detail === 'stories') newsLoad(); });
+    if (typeof currentView !== 'undefined' && currentView === 'stories') newsLoad();
   </script>
 
   <!-- PWA Service Worker Registration -->
