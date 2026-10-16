@@ -96,8 +96,12 @@ const SOURCES = {
 const decode = (s) => String(s || '')
   .replace(/<[^>]+>/g, '')
   .replace(/&quot;/g, '"').replace(/&#39;|&apos;/g, "'").replace(/&lt;/g, '<').replace(/&gt;/g, '>')
-  .replace(/&nbsp;/g, ' ').replace(/&middot;/g, '·').replace(/&amp;/g, '&')
+  .replace(/&nbsp;/g, ' ').replace(/&middot;/g, '·').replace(/&hellip;/g, '…')
+  .replace(/&lsquo;/g, '‘').replace(/&rsquo;/g, '’').replace(/&ldquo;/g, '“').replace(/&rdquo;/g, '”')
+  .replace(/&#x([0-9a-f]+);/gi, (m, h) => safeChar(parseInt(h, 16), m)).replace(/&#(\d+);/g, (m, d) => safeChar(+d, m))
+  .replace(/&amp;/g, '&')
   .replace(/\s+/g, ' ').trim();
+function safeChar(code, raw) { try { return String.fromCodePoint(code); } catch { return raw; } }
 
 function sourceOf(url) {
   try {
@@ -166,9 +170,95 @@ if (failures === calls) {
 
 items.sort((a, b) => b.date.localeCompare(a.date));
 
-// 기사 목록이 그대로면 파일을 건드리지 않음 (불필요한 커밋 방지)
 let previous = null;
 try { previous = JSON.parse(await readFile(OUT, 'utf8')); } catch { /* 첫 실행 */ }
+
+// 3) 검색 API가 잘라서 준 제목('...'·'…'로 끝남)은 기사 페이지의 og:title(없으면 <title>)로 복원
+//    - 이전 실행에서 복원한 제목이 있으면 그대로 재사용 (요청 수 절약, 일시적 실패로 제목이 바뀌는 것 방지)
+//    - 실패하거나 엉뚱한 제목이면 원래 제목 유지
+const TRUNCATED = /\s*(\.{2,}|…)$/;
+const PAGE_TIMEOUT = 5000;      // 기사 1건당 최대 대기 (ms)
+const PAGE_CONCURRENCY = 4;     // 동시에 여는 기사 수
+const REPAIR_BUDGET = 60000;    // 복원 단계 전체 제한 (워크플로 5분 제한 안에서 여유 있게)
+const BROWSER_UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36';
+const plain = (t) => t.replace(/[^가-힣A-Za-z0-9]/g, '');
+
+function metaContent(html, key) {
+  for (const tag of html.match(/<meta\b[^>]*>/gi) || []) {
+    const attrs = {};
+    for (const m of tag.matchAll(/([\w:-]+)\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'>]+))/g)) attrs[m[1].toLowerCase()] = m[2] ?? m[3] ?? m[4];
+    if ((attrs.property || attrs.name || '').toLowerCase() === key && attrs.content) return attrs.content;
+  }
+  return '';
+}
+
+// 'EUC-KR'·'ks_c_5601-1987' 등 한국 언론사 인코딩 처리: 헤더 → <meta> → UTF-8 순으로 시도해 깨지지 않는 제목 사용
+async function pageTitle(url) {
+  const res = await fetch(url, {
+    headers: { 'User-Agent': BROWSER_UA, 'Accept': 'text/html,application/xhtml+xml;q=0.9,*/*;q=0.8', 'Accept-Language': 'ko-KR,ko;q=0.9,en;q=0.5' },
+    redirect: 'follow',
+    signal: AbortSignal.timeout(PAGE_TIMEOUT)
+  });
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  const type = res.headers.get('content-type') || '';
+  if (type && !/html|xml/i.test(type)) throw new Error(type);
+  const bytes = new Uint8Array(await res.arrayBuffer());
+  const head = new TextDecoder('latin1').decode(bytes.subarray(0, 32768));
+  const charsets = [
+    (type.match(/charset=["']?\s*([\w.:-]+)/i) || [])[1],
+    (head.match(/<meta[^>]+charset\s*=\s*["']?\s*([\w.:-]+)/i) || [])[1],
+    'utf-8'
+  ].filter(Boolean).map(c => c.toLowerCase());
+  let fallback = '';
+  for (const cs of [...new Set(charsets)]) {
+    let html;
+    try { html = new TextDecoder(cs).decode(bytes); } catch { continue; }   // 모르는 인코딩 이름이면 다음 후보
+    const t = decode(decode(metaContent(html, 'og:title') || (html.match(/<title[^>]*>([\s\S]*?)<\/title>/i) || [])[1]));   // '&amp;hellip;'처럼 두 번 인코딩된 사이트 대비
+    if (t && !t.includes('�')) return t;
+    fallback ||= t;
+  }
+  return fallback.includes('�') ? '' : fallback;
+}
+
+// 잘린 제목과 이어지는 전체 제목인지 확인하고, 뒤에 붙은 ' - 매체명' / ' | 매체명' / ' < 섹션 < 기사본문' 등을 떼어냄
+const SOURCE_NAMES = new Set(Object.values(SOURCES));
+const MEDIA_WORD = /^\S*(뉴스|일보|신문|경제|타임스|저널|미디어|방송|데일리|투데이|TV|기사본문|news|times|daily|media)$|^\S+\.(com|kr|net|co\.kr)$/i;   // 띄어쓰기 없는 매체명·도메인만
+function fullTitleFor(cut, fetched, source) {
+  const base = plain(cut.replace(TRUNCATED, ''));
+  if (!fetched || base.length < 10 || !plain(fetched).startsWith(base.slice(0, 10))) return null;
+  let t = fetched;
+  for (;;) {
+    const m = t.match(/^(.*\S)\s+([-|ㅣ<>»–—]|::)\s+([^|ㅣ<>»]{1,30})$/);
+    if (!m) break;
+    const [, rest, sep, tail] = m;
+    const isSiteName = /[<>»]/.test(sep) || tail === source || SOURCE_NAMES.has(tail) || MEDIA_WORD.test(tail);
+    if (!isSiteName || plain(rest).length <= base.length) break;   // 떼고 나서도 잘린 제목보다 길 때만 제거
+    t = rest;
+  }
+  if (plain(t).length <= base.length || TRUNCATED.test(t) || t.length > 200) return null;   // 더 짧거나(=엉뚱함) 또 잘려 있으면 사용 안 함
+  return t;
+}
+
+const prevTitles = new Map((previous?.items || []).filter(i => !TRUNCATED.test(i.title)).map(i => [i.url, i.title]));
+const cutItems = items.filter(i => TRUNCATED.test(i.title));
+let repaired = 0, reused = 0;
+const repairStart = Date.now();
+let next = 0;
+await Promise.all(Array.from({ length: PAGE_CONCURRENCY }, async () => {
+  while (next < cutItems.length) {
+    const it = cutItems[next++];
+    const cached = prevTitles.get(it.url);
+    if (cached && fullTitleFor(it.title, cached, it.source)) { it.title = cached; reused++; continue; }
+    if (Date.now() - repairStart > REPAIR_BUDGET) continue;
+    try {
+      const full = fullTitleFor(it.title, await pageTitle(it.url), it.source);
+      if (full) { it.title = full; repaired++; }
+    } catch { /* 열지 못한 기사는 원래 제목 유지 */ }
+  }
+}));
+if (cutItems.length) console.log(`잘린 제목 ${cutItems.length}건 중 ${repaired + reused}건 복원 (새로 ${repaired}, 재사용 ${reused})`);
+
+// 기사 목록이 그대로면 파일을 건드리지 않음 (불필요한 커밋 방지)
 if (previous && JSON.stringify(previous.items) === JSON.stringify(items)) {
   console.log(`변경 없음 (${items.length}건)`);
   process.exit(0);
