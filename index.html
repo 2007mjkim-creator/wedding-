@@ -92,13 +92,19 @@
   <script src="https://unpkg.com/lucide@latest"></script>
 
   <style>
-    /* Custom Scrollbar */
+    /* Custom Scrollbar: 얇은 막대만, 트랙 배경 없음 (크롬·엣지는 ::-webkit-, 파이어폭스는 scrollbar-width/color) */
     ::-webkit-scrollbar {
       width: 6px;
     }
     ::-webkit-scrollbar-track {
-      background: #FDFBF7;
+      background: transparent;
     }
+    @supports (-moz-appearance: none) {
+      html { scrollbar-width: thin; scrollbar-color: #C9BBA6 transparent; }
+    }
+    /* 스크롤바 뒤 띠는 페이지 바탕색이 비침 → 홈의 어두운 히어로가 화면을 채울 땐 어둡게 */
+    html { transition: background-color 0.3s ease; }
+    html.is-dark-top { background-color: #161514; }
     ::-webkit-scrollbar-thumb {
       background: #D6C8B5;
       border-radius: 9999px;
@@ -316,6 +322,25 @@
     .top-nav-link:hover::after { transform: scaleX(0.5); }
     .top-nav-link.is-active { color: var(--accent); font-weight: 700; }
     .top-nav-link.is-active::after { transform: scaleX(1); }
+
+    /* 홈 화면(PC): 위쪽 흰 헤더 띠를 없애고 어두운 헤더로 — 검은 공지 바·히어로 사진과 이어지게, 글자는 밝게 */
+    @media (min-width: 1024px) {
+      html[data-page="home"] header.glass-nav {
+        --gold-text: #E3C47F;
+        background: rgba(18, 17, 16, 0.96); border-bottom-color: rgba(255, 255, 255, 0.08);
+      }
+      html[data-page="home"] header .brand-logo { color: #fff; }
+      html[data-page="home"] header .brand-logo + span { color: rgba(255, 255, 255, 0.62); }
+      html[data-page="home"] header a.group > div:first-child { background: transparent; }
+      html[data-page="home"] header .top-nav-link { color: rgba(255, 255, 255, 0.9); }
+      html[data-page="home"] header .top-nav-link:hover { color: #E8CF9A; }
+      html[data-page="home"] header .top-nav-link::after { background: #E8CF9A; }
+      html[data-page="home"] header button.text-wedding-charcoal { color: rgba(255, 255, 255, 0.92); }
+      html[data-page="home"] header button.text-wedding-charcoal:hover { color: #E8CF9A; background: rgba(255, 255, 255, 0.1); }
+      html[data-page="home"] header button.bg-wedding-dark { background: #fff; color: #161514; }
+      html[data-page="home"] header button.bg-wedding-dark:hover { background: #E8CF9A; color: #161514; }
+      html[data-page="home"] header button.bg-wedding-dark i { color: #8F6A2B; }
+    }
     /* 작은 노트북(1024~1279px): 메뉴 간격·문구를 줄여 한 줄에 맞춤 */
     @media (max-width: 1279px) {
       .top-nav-link { padding: 0 0.45rem; }
@@ -1095,7 +1120,8 @@
   <!-- ====================================================
        3. HERO SECTION WITH SEARCH ENGINE
        ==================================================== -->
-  <section class="on-dark relative min-h-[480px] sm:min-h-[560px] lg:min-h-[720px] flex items-center justify-center overflow-hidden">
+  <!-- PC: 화면 높이 이상으로 채워 스크롤 전 아래쪽에 밝은 띠가 보이지 않게 (아래 여백 128px = 공지 바+헤더 높이만큼 내용을 위로 올려 보이는 영역 가운데에 맞춤) -->
+  <section id="homeHero" class="on-dark relative min-h-[480px] sm:min-h-[560px] lg:min-h-[max(720px,100vh)] lg:pb-32 flex items-center justify-center overflow-hidden">
     <!-- Hero Background Image with Overlay -->
     <div class="absolute inset-0 z-0">
       <!-- 배경 슬라이드: 약 3초마다 다음 사진으로 천천히 전환 (첫 장 외에는 페이지 로드 후 불러옴) -->
@@ -5012,6 +5038,23 @@
       }, HOLD_MS + SLIDE_MS);
     })();
 
+    // 스크롤바 뒤 띠: 홈 히어로(어두운 사진)가 화면 절반 이상을 덮는 동안은 어둡게, 아래 밝은 영역으로 내려가면 원래 색
+    (function scrollbarStripTone() {
+      const hero = document.getElementById('homeHero');
+      if (!hero) return;
+      let ticking = false;
+      const update = () => {
+        ticking = false;
+        const dark = currentView === 'home' && hero.getBoundingClientRect().bottom > window.innerHeight * 0.5;
+        document.documentElement.classList.toggle('is-dark-top', dark);
+      };
+      const queue = () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } };
+      window.addEventListener('scroll', queue, { passive: true });
+      window.addEventListener('resize', queue);
+      document.addEventListener('viewchange', queue);
+      queue();
+    })();
+
     // 홈 신뢰 지표 (PC 전용): 스크롤을 내리면 등장, 맨 위 근처로 다시 올리면 사라짐 (몇 번이든 반복)
     // 화면 크기와 상관없이 실제로 스크롤해야 나타남. PC 인트로 중에는 스크롤이 잠겨 있어 인트로 뒤에만 재생됨
     (function homeMetricsReveal() {
@@ -6642,6 +6685,7 @@
 
       if (name === 'home') syncDashboard();
       currentView = name;
+      document.documentElement.dataset.page = name;   // 페이지별 헤더 스타일용 (홈 PC: 어두운 헤더)
       document.dispatchEvent(new CustomEvent('viewchange', { detail: name }));
 
       if (target) {
