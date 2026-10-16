@@ -34,6 +34,22 @@ const TITLE_MUST_HAVE = /웨딩|예식|스드메|드레스|신부|신랑|결혼�
 // 불미스러운 사건·사고 기사, 행사 장소로만 언급된 기사 제외
 const EXCLUDE = /부고|별세|사망|숨져|숨진|화재|살인|폭행|성범죄|마약|음주운전|혐의|구속|기소|사기|피의자/;
 const VENUE_ONLY = /(웨딩홀|예식장|컨벤션)에서\s?(열린|개최|진행된|열려)/;
+// 연예·가십성 제목 제외
+const GOSSIP = /♥|★|나솔|나는\s?솔로|열애|결혼\s?발표|결혼\s?소식|결혼\s?임박|득녀|득남|임신|아이돌|열애설|스캔들/;
+
+// 같은 사건을 여러 언론사가 쓴 기사 묶기: 제목 단어가 많이 겹치면 같은 기사로 보고 1건만 남김
+const STOP = new Set(['위해', '관련', '통해', '대한', '등', '및', '첫', '한', '것', '수', '더', '중', '後', '오늘', '올해']);
+const words = (t) => new Set(t.replace(/[^가-힣A-Za-z0-9~]+/g, ' ').split(' ').filter(w => w.length >= 2 && !STOP.has(w)));
+const keptWordSets = [];
+function isSameStory(title) {
+  const a = words(title);
+  if (a.size === 0) return false;
+  return keptWordSets.some(b => {
+    let common = 0;
+    a.forEach(w => { if (b.has(w)) common++; });
+    return common >= 2 && common / Math.min(a.size, b.size) >= 0.5;
+  });
+}
 
 // 주요 언론사 도메인 → 이름 (없으면 도메인 그대로 표시)
 const SOURCES = {
@@ -107,10 +123,10 @@ for (const cat of CATEGORIES) {
       const time = Date.parse(it.pubDate);
       if (!title || !url || !time || time < cutoff) continue;
       const text = title + ' ' + desc;
-      if (!TITLE_MUST_HAVE.test(title) || EXCLUDE.test(text) || VENUE_ONLY.test(text)) continue;
+      if (!TITLE_MUST_HAVE.test(title) || EXCLUDE.test(text) || VENUE_ONLY.test(text) || GOSSIP.test(title)) continue;
       const key = normTitle(title);
-      if (seenUrl.has(url) || seenTitle.has(key)) continue;
-      seenUrl.add(url); seenTitle.add(key);
+      if (seenUrl.has(url) || seenTitle.has(key) || isSameStory(title)) continue;
+      seenUrl.add(url); seenTitle.add(key); keptWordSets.push(words(title));
       bucket.push({ cat: cat.key, title, desc: desc.slice(0, 160), url, source: sourceOf(url), date: new Date(time).toISOString() });
     }
   }
