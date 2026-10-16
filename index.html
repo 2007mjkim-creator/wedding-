@@ -323,44 +323,49 @@
     .top-nav-link.is-active { color: var(--accent); font-weight: 700; }
     .top-nav-link.is-active::after { transform: scaleX(1); }
 
-    /* 홈 화면(PC): 경계선 없이 — 히어로 사진이 맨 위부터 깔리고, 공지 바·헤더는 투명하게 사진 위에 얹힘.
+    /* 홈 화면(PC·모바일 공통): 경계선 없이 — 히어로 사진이 맨 위부터 깔리고, 공지 바(PC)·헤더는 투명하게 사진 위에 얹힘.
        스크롤을 내리면 헤더만 어두운 배경이 생겨 아래 밝은 영역에서도 글자가 보이게. 글자는 밝게 */
-    @media (min-width: 1024px) {
-      html[data-page="home"] #topPromoBar {
-        position: absolute; top: 0; left: 0; right: 0; z-index: 41;
-        background: transparent; border-bottom-color: transparent;
-      }
-      html[data-page="home"] header.glass-nav {
-        --gold-text: #E3C47F;
-        margin-top: var(--promo-h, 0px);                 /* 공지 바 아래에서 시작, 스크롤하면 맨 위에 붙음 */
-        background: transparent; border-bottom-color: transparent;
-        backdrop-filter: none; -webkit-backdrop-filter: none;
-      }
-      html[data-page="home"].is-scrolled header.glass-nav {
-        background: rgba(18, 17, 16, 0.92);
-        backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
-      }
-      html[data-page="home"] #homeHero {
-        margin-top: calc(0px - var(--hdr-h, 81px) - var(--promo-h, 0px));   /* 공지 바 + 헤더 뒤까지 사진을 끌어올림 */
-        padding-top: calc(var(--hdr-h, 81px) + var(--promo-h, 0px)); padding-bottom: 0;
-        min-height: max(720px, 100vh);
-      }
-      html[data-page="home"] #homeHero::before {          /* 위쪽 메뉴 글자가 잘 보이게 살짝 어둡게 */
-        content: ""; position: absolute; left: 0; right: 0; top: 0; height: 240px; z-index: 1; pointer-events: none;
-        background: linear-gradient(to bottom, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0));
-      }
-      html[data-page="home"] header .brand-logo { color: #fff; }
-      html[data-page="home"] header .brand-logo + span { color: rgba(255, 255, 255, 0.62); }
-      html[data-page="home"] header a.group > div:first-child { background: transparent; }
-      html[data-page="home"] header .top-nav-link { color: rgba(255, 255, 255, 0.9); }
-      html[data-page="home"] header .top-nav-link:hover { color: #E8CF9A; }
-      html[data-page="home"] header .top-nav-link::after { background: #E8CF9A; }
-      html[data-page="home"] header button.text-wedding-charcoal { color: rgba(255, 255, 255, 0.92); }
-      html[data-page="home"] header button.text-wedding-charcoal:hover { color: #E8CF9A; background: rgba(255, 255, 255, 0.1); }
-      html[data-page="home"] header button.bg-wedding-dark { background: #fff; color: #161514; }
-      html[data-page="home"] header button.bg-wedding-dark:hover { background: #E8CF9A; color: #161514; }
-      html[data-page="home"] header button.bg-wedding-dark i { color: #8F6A2B; }
+    html[data-page="home"] #topPromoBar {
+      position: absolute; top: 0; left: 0; right: 0; z-index: 41;
+      background: transparent; border-bottom-color: transparent;
     }
+    html[data-page="home"] header.glass-nav {
+      --gold-text: #E3C47F;
+      margin-top: var(--promo-h, 0px);                 /* 공지 바 아래에서 시작, 스크롤하면 맨 위에 붙음 */
+      background: transparent; border-bottom-color: transparent;
+      backdrop-filter: none; -webkit-backdrop-filter: none;
+    }
+    html[data-page="home"].is-scrolled header.glass-nav,
+    html[data-page="home"] header.glass-nav:has(#mobileMenu:not(.hidden)) {   /* 모바일 메뉴를 펼쳤을 때도 */
+      background: rgba(18, 17, 16, 0.92);
+      backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+    }
+    html[data-page="home"] #homeHero {
+      margin-top: calc(0px - var(--hdr-h, 81px) - var(--promo-h, 0px));   /* 공지 바 + 헤더 뒤까지 사진을 끌어올림 */
+      padding-top: calc(var(--hdr-h, 81px) + var(--promo-h, 0px));
+      min-height: calc(var(--hdr-h, 81px) + 480px);    /* 모바일: 헤더 아래로 보이는 사진 높이는 이전과 같게 */
+    }
+    @media (min-width: 640px) {
+      html[data-page="home"] #homeHero { min-height: calc(var(--hdr-h, 81px) + 560px); }
+    }
+    @media (min-width: 1024px) {
+      html[data-page="home"] #homeHero { padding-bottom: 0; min-height: max(720px, 100vh); }   /* PC: 화면 가득 */
+    }
+    html[data-page="home"] #homeHero::before {          /* 위쪽 메뉴 글자가 잘 보이게 살짝 어둡게 */
+      content: ""; position: absolute; left: 0; right: 0; top: 0; height: 240px; z-index: 1; pointer-events: none;
+      background: linear-gradient(to bottom, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0));
+    }
+    html[data-page="home"] header .brand-logo { color: #fff; }
+    html[data-page="home"] header .brand-logo + span { color: rgba(255, 255, 255, 0.62); }
+    html[data-page="home"] header a.group > div:first-child { background: transparent; }
+    html[data-page="home"] header .top-nav-link { color: rgba(255, 255, 255, 0.9); }
+    html[data-page="home"] header .top-nav-link:hover { color: #E8CF9A; }
+    html[data-page="home"] header .top-nav-link::after { background: #E8CF9A; }
+    html[data-page="home"] header button.text-wedding-charcoal { color: rgba(255, 255, 255, 0.92); }
+    html[data-page="home"] header button.text-wedding-charcoal:hover { color: #E8CF9A; background: rgba(255, 255, 255, 0.1); }
+    html[data-page="home"] header button.bg-wedding-dark { background: #fff; color: #161514; }
+    html[data-page="home"] header button.bg-wedding-dark:hover { background: #E8CF9A; color: #161514; }
+    html[data-page="home"] header button.bg-wedding-dark i { color: #8F6A2B; }
     /* 작은 노트북(1024~1279px): 메뉴 간격·문구를 줄여 한 줄에 맞춤 */
     @media (max-width: 1279px) {
       .top-nav-link { padding: 0 0.45rem; }
@@ -730,8 +735,13 @@
     .home-news-more { flex-shrink: 0; padding-right: 0.25rem; font-size: 11px; color: rgba(255, 255, 255, 0.65); transition: color 0.2s; }
     .home-news-more:hover { color: #E8CF9A; }
     @media (max-width: 639px) {
-      .home-news { margin-bottom: 0; font-size: 12.5px; gap: 0.5rem; }
+      .home-news { margin-bottom: 0; font-size: 12.5px; gap: 0.5rem; border-radius: 16px; }
       .home-news-meta { display: none; }
+      /* 모바일: 제목을 한 줄로 자르지 않고 3줄까지 줄바꿈해서 보여줌 */
+      .home-news-item #homeNewsTitle {
+        white-space: normal; overflow: hidden; text-overflow: clip; line-height: 1.45;
+        display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;
+      }
     }
     @media (prefers-reduced-motion: reduce) { .home-news-dot { animation: none; } .home-news-item { transition: none; } }
 
@@ -978,18 +988,9 @@
   <!-- ====================================================
        1. TOP PROMO BAR & D-DAY COUNTDOWN QUICK PREVIEW
        ==================================================== -->
-  <aside id="topPromoBar" aria-label="프로모션 배너" class="bg-wedding-dark text-wedding-cream text-xs py-2 px-4 border-b border-wedding-darkgold/30">
-    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
-      <div class="flex items-center gap-3">
-        <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-wedding-gold/20 text-wedding-gold border border-wedding-gold/40">
-          시즌 한정
-        </span>
-        <p class="font-normal text-wedding-sand/90 text-center sm:text-left">
-          2026 하반기 & 2027 상반기 골든타임 웨딩홀 조기 마감 임박! 
-          <span class="font-medium text-wedding-gold underline cursor-pointer ml-1" onclick="openConsultingModal()">VIP 무료 홀 섭외 신청 &rarr;</span>
-        </p>
-      </div>
-
+  <!-- PC 전용: 우리의 D-Day만 표시 (모바일은 막대 전체 숨김 — 홈 대시보드에 D-Day 카드가 있음) -->
+  <aside id="topPromoBar" aria-label="우리의 D-Day" class="hidden lg:block bg-wedding-dark text-wedding-cream text-xs py-2 px-4 border-b border-wedding-darkgold/30">
+    <div class="max-w-7xl mx-auto flex items-center justify-end gap-2">
       <div class="flex items-center gap-4 text-[11px] text-wedding-sand/80">
         <!-- Live Wedding D-Day widget -->
         <div class="flex items-center gap-1.5 bg-white/10 px-2.5 py-1 rounded-full border border-white/15">
@@ -5065,7 +5066,8 @@
       const header = document.querySelector('header');
       const setPromo = () => {
         root.style.setProperty('--promo-h', (bar ? bar.offsetHeight : 0) + 'px');
-        if (header) root.style.setProperty('--hdr-h', header.offsetHeight + 'px');
+        // 헤더 막대 높이 (모바일 메뉴 펼침 영역은 제외해야 메뉴를 열어도 사진이 밀리지 않음)
+        if (header) root.style.setProperty('--hdr-h', (header.firstElementChild.offsetHeight + (parseFloat(getComputedStyle(header).borderBottomWidth) || 0)) + 'px');
       };
       setPromo();
       if (bar && 'ResizeObserver' in window) new ResizeObserver(setPromo).observe(bar);
@@ -7547,7 +7549,7 @@
             <span class="font-semibold text-wedding-charcoal truncate">${newsEsc(it.source)}</span>
             <span class="shrink-0">· ${newsAgo(it.date)}</span>
           </div>
-          <h3 class="mt-2 font-bold text-[15px] leading-snug text-wedding-dark group-hover:text-wedding-gold transition line-clamp-2">${newsEsc(it.title)}</h3>
+          <h3 class="mt-2 font-bold text-[15px] leading-snug text-wedding-dark group-hover:text-wedding-gold transition sm:line-clamp-2">${newsEsc(it.title)}</h3>
           <p class="mt-1.5 text-[13px] text-wedding-muted leading-relaxed line-clamp-2">${newsEsc(it.desc)}</p>
           <span class="mt-auto pt-3 text-xs font-semibold text-wedding-gold inline-flex items-center gap-1">원문 보기 <i data-lucide="external-link" class="w-3 h-3"></i></span>
         </a>`).join('');
