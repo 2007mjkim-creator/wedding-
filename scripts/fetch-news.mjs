@@ -9,7 +9,7 @@ import { readFile, writeFile, mkdir } from 'node:fs/promises';
 const ID = process.env.NAVER_CLIENT_ID;
 const SECRET = process.env.NAVER_CLIENT_SECRET;
 if (!ID || !SECRET) {
-  console.error('NAVER_CLIENT_ID / NAVER_CLIENT_SECRET 가 설정되지 않았습니다. (GitHub → Settings → Secrets and variables → Actions)');
+  console.log('::error::NAVER_CLIENT_ID / NAVER_CLIENT_SECRET 가 설정되지 않았습니다. (GitHub → Settings → Secrets and variables → Actions)');
   process.exit(1);
 }
 
@@ -86,7 +86,7 @@ for (const cat of CATEGORIES) {
   for (const q of cat.queries) {
     calls++;
     let found;
-    try { found = await search(q); } catch (err) { failures++; console.warn(err.message); continue; }
+    try { found = await search(q); } catch (err) { failures++; console.log('::warning::' + err.message.replace(/\s+/g, ' ')); continue; }
     for (const it of found) {
       const title = decode(it.title);
       const desc = decode(it.description);
@@ -106,7 +106,7 @@ for (const cat of CATEGORIES) {
 }
 
 if (failures === calls) {
-  console.error('모든 검색이 실패했습니다. 네이버 API 키와 사용 API(검색) 설정을 확인하세요.');
+  console.log('::error::모든 검색이 실패했습니다. 네이버 API 키와 사용 API(검색) 설정을 확인하세요.');
   process.exit(1);
 }
 
