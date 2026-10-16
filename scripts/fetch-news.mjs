@@ -3,6 +3,8 @@
 // - 네이버 뉴스 검색 API로 스드메·웨딩 관련 최신 기사를 모아 data/news.json 생성
 // - 저작권: 제목·요약·원문 링크만 저장하고 기사 본문·사진은 저장하지 않음
 // - 키는 GitHub 저장소 Secrets(NAVER_CLIENT_ID / NAVER_CLIENT_SECRET)에서만 읽음
+//   (네이버 개발자센터 앱의 '사용 API'에 '검색'이 있어야 함)
+// - 수동 실행: GitHub 저장소 → Actions → '실시간 웨딩 소식 업데이트' → Run workflow
 // ====================================================
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
 
