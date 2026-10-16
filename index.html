@@ -665,7 +665,7 @@
     /* 홈 히어로 안 한 줄 소식 티커: 들어오자마자 보이되 검색창보다 가볍게 */
     .home-news {
       display: flex; align-items: center; gap: 0.75rem;
-      max-width: 42rem; margin: -1.5rem auto 2rem; padding: 0.5rem 0.6rem 0.5rem 0.75rem;
+      max-width: 42rem; margin: 0 auto 2rem; padding: 0.5rem 0.6rem 0.5rem 0.75rem;
       border-radius: 9999px; border: 1px solid rgba(255, 255, 255, 0.22);
       background: rgba(255, 255, 255, 0.12); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
       font-size: 13px; color: rgba(255, 255, 255, 0.92); text-align: left;
@@ -685,7 +685,7 @@
     .home-news-more { flex-shrink: 0; padding-right: 0.25rem; font-size: 11px; color: rgba(255, 255, 255, 0.65); transition: color 0.2s; }
     .home-news-more:hover { color: #E8CF9A; }
     @media (max-width: 639px) {
-      .home-news { margin-top: -1.25rem; margin-bottom: 0; font-size: 12.5px; gap: 0.5rem; }
+      .home-news { margin-bottom: 0; font-size: 12.5px; gap: 0.5rem; }
       .home-news-meta { display: none; }
     }
     @media (prefers-reduced-motion: reduce) { .home-news-dot { animation: none; } .home-news-item { transition: none; } }
@@ -1111,23 +1111,7 @@
         <span class="whitespace-nowrap">2026 대한민국 소비자만족도 1위 웨딩 플랫폼</span>
       </div>
 
-      <!-- Main Headline (모든 해상도 및 모바일/PC에서 한 글자 분리 없는 완벽한 줄맞춤) -->
-      <h1 class="font-serif hero-title-responsive font-normal text-white mb-6 text-center leading-[1.3] sm:leading-[1.25]">
-        <span class="block sm:inline-block whitespace-nowrap">인생의 가장 찬란한 서막,</span>
-        <br class="hidden sm:inline">
-        <span class="block sm:inline-block">
-          <span class="inline-block whitespace-nowrap"><span class="gold-text italic font-serif">당신만의 감각적인</span></span>
-          <span class="inline-block whitespace-nowrap"><span class="gold-text italic font-serif">웨딩</span>을 완성합니다</span>
-        </span>
-      </h1>
-
-      <p class="max-w-2xl mx-auto text-sm sm:text-base text-wedding-sand/90 font-light mb-10 leading-relaxed text-center" style="word-break: keep-all;">
-        <span class="inline-block whitespace-nowrap">검증된 프리미엄 웨딩홀부터</span>
-        <span class="inline-block whitespace-nowrap"><span class="text-wedding-gold font-medium">감성 스드메</span>,</span>
-        <span class="inline-block whitespace-nowrap">실시간 정찰제 견적,</span>
-        <span class="inline-block whitespace-nowrap"><strong class="font-normal text-white">D-180 맞춤 플래닝</strong>까지</span>
-        <span class="block sm:inline-block whitespace-nowrap">한 번에 투명하고 편리하게 경험하세요.</span>
-      </p>
+      <h1 class="sr-only">메리스트 웨딩 아카이브</h1>
 
       <!-- 실시간 웨딩 소식 한 줄 티커 (data/news.json이 있을 때만 표시) -->
       <div id="homeNews" class="home-news hidden">
