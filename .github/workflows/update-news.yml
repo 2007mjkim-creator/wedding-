@@ -22,6 +22,7 @@ concurrency:
 jobs:
   update:
     runs-on: ubuntu-latest
+    timeout-minutes: 5   # 네트워크 문제로 멈추면 5분 뒤 자동 종료
     steps:
       - uses: actions/checkout@v5
 
