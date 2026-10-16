@@ -6,8 +6,8 @@
 // ====================================================
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
 
-const ID = process.env.NAVER_CLIENT_ID;
-const SECRET = process.env.NAVER_CLIENT_SECRET;
+const ID = (process.env.NAVER_CLIENT_ID || '').trim();       // 복사할 때 섞인 공백·줄바꿈 제거
+const SECRET = (process.env.NAVER_CLIENT_SECRET || '').trim();
 if (!ID || !SECRET) {
   console.log('::error::NAVER_CLIENT_ID / NAVER_CLIENT_SECRET 가 설정되지 않았습니다. (GitHub → Settings → Secrets and variables → Actions)');
   process.exit(1);
