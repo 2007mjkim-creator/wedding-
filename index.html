@@ -763,11 +763,163 @@
     @media (max-width: 1023px) {
       body { padding-bottom: calc(68px + env(safe-area-inset-bottom)); }
     }
+
+    /* ====================================================
+       PC 첫 접속 인트로: 드레스·본식 사진이 넘어간 뒤 사이트로 진입
+       ==================================================== */
+    #intro { display: none; }
+    html.show-intro #intro { display: block; }
+    html.show-intro body { overflow: hidden; }
+    #intro {
+      position: fixed; inset: 0; z-index: 9999;
+      background: #161514; overflow: hidden; cursor: pointer;
+      transition: opacity 0.5s ease, visibility 0.5s;
+    }
+    #intro.is-leaving { opacity: 0; visibility: hidden; }
+    .intro-slide {
+      position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+      opacity: 0; transform: scale(1.08);
+      transition: opacity 0.4s ease, transform 6s cubic-bezier(0.25, 0.1, 0.25, 1);
+    }
+    .intro-slide.is-on { opacity: 1; transform: scale(1); }
+    .intro-shade {
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse at center, rgba(22, 21, 20, 0.2) 0%, rgba(22, 21, 20, 0.72) 80%),
+        linear-gradient(to top, rgba(22, 21, 20, 0.8), transparent 40%);
+    }
+    .intro-center {
+      position: absolute; inset: 0; pointer-events: none;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      color: #fff; text-align: center;
+    }
+    .intro-eyebrow {
+      font-size: 11px; letter-spacing: 0.5em; padding-left: 0.5em; color: #E8CF9A;
+      opacity: 0; transform: translateY(8px); transition: opacity 0.4s ease, transform 0.4s ease;
+    }
+    .intro-logo {
+      margin-top: 1rem;
+      font-family: "Playfair Display", serif; font-weight: 400; line-height: 1;
+      font-size: clamp(56px, 7vw, 108px);
+      letter-spacing: 0.6em; padding-left: 0.6em; opacity: 0;
+      transition: letter-spacing 1s cubic-bezier(0.2, 0.7, 0.2, 1), padding-left 1s cubic-bezier(0.2, 0.7, 0.2, 1), opacity 0.5s ease;
+    }
+    .intro-line { width: 0; height: 1px; margin: 1.6rem auto; background: #C5A059; transition: width 0.5s ease 0.25s; }
+    .intro-tagline {
+      font-family: "Noto Serif KR", serif; font-size: 18px; letter-spacing: 0.08em;
+      color: rgba(255, 255, 255, 0.86); opacity: 0; transition: opacity 0.5s ease 0.35s;
+    }
+    #intro.is-playing .intro-eyebrow { opacity: 1; transform: none; }
+    #intro.is-playing .intro-logo { opacity: 1; letter-spacing: 0.28em; padding-left: 0.28em; }
+    #intro.is-playing .intro-line { width: 120px; }
+    #intro.is-playing .intro-tagline { opacity: 1; }
+    .intro-caption {
+      position: absolute; left: 48px; bottom: 44px;
+      font-size: 11px; letter-spacing: 0.3em; color: rgba(255, 255, 255, 0.72);
+      transition: opacity 0.4s ease;
+    }
+    .intro-caption.is-swapping { opacity: 0; }
+    .intro-skip {
+      position: absolute; right: 44px; bottom: 36px;
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      padding: 0.55rem 1.1rem; border-radius: 9999px;
+      border: 1px solid rgba(255, 255, 255, 0.35); background: rgba(255, 255, 255, 0.06);
+      color: rgba(255, 255, 255, 0.85); font-size: 12px; letter-spacing: 0.05em;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .intro-skip:hover { background: rgba(255, 255, 255, 0.16); border-color: rgba(255, 255, 255, 0.6); }
+    @media (prefers-reduced-motion: reduce) {
+      .intro-slide { transform: none; transition: opacity 0.6s ease; }
+      .intro-logo { transition: opacity 0.8s ease; }
+    }
   </style>
   <script>document.documentElement.classList.add('js-router');</script>
+  <script>
+    // PC 첫 접속 인트로: 이번 브라우저 세션에서 아직 안 봤을 때만 (주소에 ?intro=1 을 붙이면 항상)
+    (function () {
+      try {
+        var force = /[?&]intro=1(&|$)/.test(location.search);
+        var seen = sessionStorage.getItem('marryst_intro_seen');
+        if (window.matchMedia('(min-width: 1024px)').matches && (force || !seen)) {
+          document.documentElement.classList.add('show-intro');
+        }
+      } catch (e) {}
+    })();
+  </script>
 </head>
 
 <body class="bg-wedding-ivory text-wedding-charcoal font-sans antialiased selection:bg-wedding-gold selection:text-white">
+
+  <!-- ====================================================
+       0. PC 첫 접속 인트로 (드레스 촬영 · 본식 분위기 사진 → 사이트 진입)
+       ==================================================== -->
+  <div id="intro" role="dialog" aria-label="메리스트 인트로">
+    <img class="intro-slide" data-src="https://images.unsplash.com/photo-1537633552985-df8429e8048b?auto=format&fit=crop&w=1920&q=75" data-caption="DRESS SHOOT · 웨딩 촬영" alt="">
+    <div class="intro-shade"></div>
+    <div class="intro-center">
+      <span class="intro-eyebrow">WEDDING ARCHIVE</span>
+      <span class="intro-logo">MARRYST</span>
+      <span class="intro-line"></span>
+      <span class="intro-tagline">인생의 가장 찬란한 서막</span>
+    </div>
+    <span id="introCaption" class="intro-caption"></span>
+    <button type="button" class="intro-skip">건너뛰기 &rarr;</button>
+  </div>
+  <script>
+    (function () {
+      var intro = document.getElementById('intro');
+      var root = document.documentElement;
+      if (!root.classList.contains('show-intro')) { intro.remove(); return; }
+      try { sessionStorage.setItem('marryst_intro_seen', '1'); } catch (e) {}
+
+      var slides = intro.querySelectorAll('.intro-slide');
+      var caption = document.getElementById('introCaption');
+      var STEP = 1300 / slides.length;   // 사진 수와 관계없이 1.3초 + 페이드아웃 0.5초 = 약 1.8초
+      var i = 0, timer = null, started = false, done = false;
+
+      // 인트로를 볼 때만 사진을 불러옴 (모바일·재방문 시엔 다운로드 없음)
+      slides.forEach(function (s, k) { if (k === 0) s.fetchPriority = 'high'; s.src = s.dataset.src; });
+
+      function show(n) {
+        slides.forEach(function (s, k) { s.classList.toggle('is-on', k === n); });
+        caption.classList.add('is-swapping');
+        setTimeout(function () { caption.textContent = slides[n].dataset.caption; caption.classList.remove('is-swapping'); }, 200);
+      }
+      function onKey(e) {
+        if (e.key === 'Escape' || e.key === 'Enter' || e.key === ' ') { e.preventDefault(); finish(); }
+      }
+      function finish() {
+        if (done) return;
+        done = true;
+        clearInterval(timer);
+        document.removeEventListener('keydown', onKey);
+        intro.style.display = 'block';            // show-intro 해제 후에도 페이드아웃이 보이도록
+        root.classList.remove('show-intro');      // 스크롤 잠금 해제
+        intro.classList.add('is-leaving');
+        setTimeout(function () { intro.remove(); }, 550);
+      }
+      function start() {
+        if (started || done) return;
+        started = true;
+        intro.classList.add('is-playing');
+        show(0);
+        timer = setInterval(function () {
+          if (++i >= slides.length) return finish();
+          if (slides[i].complete && slides[i].naturalWidth) show(i);   // 아직 못 불러온 사진은 건너뜀
+        }, STEP);
+      }
+
+      // 첫 사진이 준비되면 시작 (느린 회선이면 0.8초 뒤 그냥 시작)
+      if (slides[0].complete) start();
+      else {
+        slides[0].addEventListener('load', start);
+        slides[0].addEventListener('error', start);
+        setTimeout(start, 800);
+      }
+      intro.addEventListener('click', finish);
+      document.addEventListener('keydown', onKey);
+    })();
+  </script>
 
   <!-- ====================================================
        1. TOP PROMO BAR & D-DAY COUNTDOWN QUICK PREVIEW
