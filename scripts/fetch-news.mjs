@@ -1,9 +1,9 @@
 // ====================================================
 // 실시간 웨딩 소식 수집 스크립트 (GitHub Actions에서 3시간마다 실행)
-// - 네이버 뉴스 검색 API로 스드메·웨딩 관련 최신 기사를 모아 data/news.json 생성
+// - 네이버 뉴스 검색 API(NAVER API HUB)로 스드메·웨딩 관련 최신 기사를 모아 data/news.json 생성
 // - 저작권: 제목·요약·원문 링크만 저장하고 기사 본문·사진은 저장하지 않음
 // - 키는 GitHub 저장소 Secrets(NAVER_CLIENT_ID / NAVER_CLIENT_SECRET)에서만 읽음
-//   (네이버 개발자센터 앱의 '사용 API'에 '검색'이 있어야 함)
+//   (네이버 클라우드 NAVER API HUB에서 '뉴스' API로 등록한 Application의 인증 정보)
 // - 수동 실행: GitHub 저장소 → Actions → '실시간 웨딩 소식 업데이트' → Run workflow
 // ====================================================
 import { readFile, writeFile, mkdir } from 'node:fs/promises';
@@ -67,9 +67,10 @@ function sourceOf(url) {
   } catch { return ''; }
 }
 
+// NAVER API HUB(네이버 클라우드) 뉴스 검색 — 기존 개발자센터 검색 API는 신규 등록이 중단되어 이관
 async function search(query) {
-  const url = `https://openapi.naver.com/v1/search/news.json?query=${encodeURIComponent(query)}&display=${PER_QUERY}&sort=date`;
-  const res = await fetch(url, { headers: { 'X-Naver-Client-Id': ID, 'X-Naver-Client-Secret': SECRET } });
+  const url = `https://naverapihub.apigw.ntruss.com/search/v1/news?query=${encodeURIComponent(query)}&display=${PER_QUERY}&sort=date`;
+  const res = await fetch(url, { headers: { 'X-NCP-APIGW-API-KEY-ID': ID, 'X-NCP-APIGW-API-KEY': SECRET } });
   if (!res.ok) throw new Error(`'${query}' 검색 실패: HTTP ${res.status} ${await res.text()}`);
   return (await res.json()).items || [];
 }
@@ -108,7 +109,7 @@ for (const cat of CATEGORIES) {
 }
 
 if (failures === calls) {
-  console.log('::error::모든 검색이 실패했습니다. 네이버 API 키와 사용 API(검색) 설정을 확인하세요.');
+  console.log('::error::모든 검색이 실패했습니다. NAVER API HUB Application의 Client ID/Secret과 선택한 API(뉴스)를 확인하세요.');
   process.exit(1);
 }
 
