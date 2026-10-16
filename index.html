@@ -662,6 +662,26 @@
     }
     .news-card:hover { border-color: #8F6A2B; box-shadow: 0 16px 30px -22px rgba(143, 106, 43, 0.9); transform: translateY(-2px); }
 
+    /* 홈 한 줄 소식 티커: 카드보다 한 톤 낮게 */
+    .home-news {
+      display: flex; align-items: center; gap: 0.75rem;
+      margin-top: 0.875rem; padding: 0.55rem 0.25rem;
+      border-top: 1px dashed #DDD3C4; border-bottom: 1px dashed #DDD3C4;
+      font-size: 13px; color: #7A7068;
+    }
+    .home-news.hidden { display: none; }
+    .home-news-label { display: inline-flex; align-items: center; gap: 0.35rem; flex-shrink: 0; font-size: 11px; font-weight: 600; letter-spacing: 0.02em; }
+    .home-news-dot { width: 5px; height: 5px; border-radius: 9999px; background: #C9A35A; animation: homeNewsPulse 2.4s ease-in-out infinite; }
+    @keyframes homeNewsPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+    .home-news-item { flex: 1; min-width: 0; display: flex; align-items: baseline; gap: 0.5rem; color: #4A433D; transition: opacity 0.35s, color 0.2s; }
+    .home-news-item:hover { color: #8F6A2B; }
+    .home-news-item.is-fading { opacity: 0; }
+    .home-news-meta { flex-shrink: 0; font-size: 11px; color: #A39889; }
+    .home-news-more { flex-shrink: 0; font-size: 11px; color: #A39889; transition: color 0.2s; }
+    .home-news-more:hover { color: #8F6A2B; }
+    @media (max-width: 639px) { .home-news-meta { display: none; } }
+    @media (prefers-reduced-motion: reduce) { .home-news-dot { animation: none; } .home-news-item { transition: none; } }
+
     /* 전국 웨딩 업체 디렉터리 카드 */
     .dir-card {
       display: flex; flex-direction: column;
@@ -1095,6 +1115,16 @@
             <span class="dash-accent block font-serif text-2xl sm:text-3xl font-bold mt-0.5"><span id="dashWishlist">0</span><span class="text-sm font-sans ml-0.5">곳</span></span>
             <span class="block text-[11px] text-wedding-muted mt-1">찜 목록 보기 &rarr;</span>
           </button>
+        </div>
+
+        <!-- 실시간 웨딩 소식 한 줄 티커 (data/news.json이 있을 때만 표시) -->
+        <div id="homeNews" class="home-news hidden">
+          <span class="home-news-label"><span class="home-news-dot"></span>웨딩 소식</span>
+          <a id="homeNewsLink" href="#news" target="_blank" rel="noopener noreferrer nofollow" class="home-news-item">
+            <span id="homeNewsTitle" class="truncate"></span>
+            <span id="homeNewsMeta" class="home-news-meta"></span>
+          </a>
+          <a href="#news" class="home-news-more">전체<span class="hidden sm:inline">&nbsp;보기</span> &rsaquo;</a>
         </div>
       </div>
 
@@ -7239,6 +7269,7 @@
           const u = new Date(data.updatedAt);
           document.getElementById('newsUpdated').textContent = `업데이트 ${u.getMonth() + 1}.${u.getDate()} ${String(u.getHours()).padStart(2, '0')}:${String(u.getMinutes()).padStart(2, '0')} · 3시간마다 자동 갱신`;
           newsRender();
+          homeNewsStart();
         })
         .catch(() => { news.loading = null; }); // 아직 수집 전이면 섹션을 숨긴 채로 둠
       return news.loading;
@@ -7280,8 +7311,38 @@
     });
     document.getElementById('newsMore').addEventListener('click', () => { news.shown += NEWS_PAGE; newsRender(false); });
 
-    document.addEventListener('viewchange', (e) => { if (e.detail === 'stories') newsLoad(); });
-    if (typeof currentView !== 'undefined' && currentView === 'stories') newsLoad();
+    // 홈 한 줄 티커: 최신 기사 몇 건을 6초마다 조용히 교체 (마우스를 올리면 멈춤)
+    const HOME_NEWS_COUNT = 6;
+    const homeNews = { i: 0, timer: null, paused: false };
+
+    function homeNewsShow() {
+      const it = news.items[homeNews.i % Math.min(HOME_NEWS_COUNT, news.items.length)];
+      document.getElementById('homeNewsLink').href = it.url;
+      document.getElementById('homeNewsTitle').textContent = it.title;
+      document.getElementById('homeNewsMeta').textContent = `${it.source || ''} · ${newsAgo(it.date)}`;
+    }
+
+    function homeNewsStart() {
+      if (homeNews.timer || !news.items || !news.items.length) return;
+      homeNewsShow();
+      document.getElementById('homeNews').classList.remove('hidden');
+      if (news.items.length < 2) return;
+      const link = document.getElementById('homeNewsLink');
+      homeNews.timer = setInterval(() => {
+        if (homeNews.paused || document.hidden || currentView !== 'home') return;
+        link.classList.add('is-fading');
+        setTimeout(() => { homeNews.i++; homeNewsShow(); link.classList.remove('is-fading'); }, 350);
+      }, 6000);
+    }
+
+    const homeNewsBox = document.getElementById('homeNews');
+    homeNewsBox.addEventListener('mouseenter', () => { homeNews.paused = true; });
+    homeNewsBox.addEventListener('mouseleave', () => { homeNews.paused = false; });
+    homeNewsBox.addEventListener('focusin', () => { homeNews.paused = true; });
+    homeNewsBox.addEventListener('focusout', () => { homeNews.paused = false; });
+
+    document.addEventListener('viewchange', (e) => { if (e.detail === 'stories' || e.detail === 'home') newsLoad(); });
+    if (typeof currentView !== 'undefined' && (currentView === 'stories' || currentView === 'home')) newsLoad();
   </script>
 
   <!-- PWA Service Worker Registration -->
