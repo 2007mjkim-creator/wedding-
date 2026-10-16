@@ -29,9 +29,11 @@ const PER_QUERY = 40;     // 검색어당 가져올 기사 수 (최대 100)
 const PER_CATEGORY = 12;  // 분야별로 보여줄 최대 기사 수
 const MAX_AGE_DAYS = 45;  // 너무 오래된 기사는 제외
 
-// 웨딩 관련 단어가 하나도 없거나, 불미스러운 사건·사고 기사는 제외
-const MUST_HAVE = /웨딩|결혼|예식|신부|신랑|드레스|스드메|혼수|예비부부|부케|청첩장|허니문|신혼/;
+// 제목에 결혼 준비 관련 단어가 있어야 통과 (요약에만 '웨딩홀에서 열린 행사' 식으로 나오는 기사, 연예인 혼인 소식 등 제외)
+const TITLE_MUST_HAVE = /웨딩|예식|스드메|드레스|신부|신랑|결혼식|결혼\s?준비|결혼\s?업체|결혼\s?비용|결혼\s?시장|혼수|예비부부|부케|청첩장|허니문|신혼여행|본식|웨딩촬영|메이크업|브라이덜/;
+// 불미스러운 사건·사고 기사, 행사 장소로만 언급된 기사 제외
 const EXCLUDE = /부고|별세|사망|숨져|숨진|화재|살인|폭행|성범죄|마약|음주운전|혐의|구속|기소|사기|피의자/;
+const VENUE_ONLY = /(웨딩홀|예식장|컨벤션)에서\s?(열린|개최|진행된|열려)/;
 
 // 주요 언론사 도메인 → 이름 (없으면 도메인 그대로 표시)
 const SOURCES = {
@@ -48,7 +50,15 @@ const SOURCES = {
   'newsen.com': '뉴스엔', 'starnewskorea.com': '스타뉴스', 'tenasia.co.kr': '텐아시아', 'fashionbiz.co.kr': '패션비즈',
   'fashionn.com': '패션엔', 'beautynury.com': '뷰티누리', 'cosmorning.com': '코스모닝', 'wkorea.com': 'W코리아',
   'vogue.co.kr': '보그', 'elle.co.kr': '엘르', 'marieclairekorea.com': '마리끌레르', 'harpersbazaar.co.kr': '하퍼스바자',
-  'cosmopolitan.co.kr': '코스모폴리탄', 'news.naver.com': '네이버뉴스'
+  'cosmopolitan.co.kr': '코스모폴리탄', 'news.naver.com': '네이버뉴스',
+  'stoo.com': '스포츠투데이', 'cstimes.com': '컨슈머타임스', 'korea.kr': '정책브리핑', 'topstarnews.net': '톱스타뉴스',
+  'wikitree.co.kr': '위키트리', 'insight.co.kr': '인사이트', 'dailian.co.kr': '데일리안', 'newdaily.co.kr': '뉴데일리',
+  'ekn.kr': '에너지경제', 'mediapen.com': '미디어펜', 'breaknews.com': '브레이크뉴스', 'sisajournal.com': '시사저널',
+  'kukinews.com': '쿠키뉴스', 'consumernews.co.kr': '소비자가만드는신문', 'sportsseoul.com': '스포츠서울',
+  'sportsworldi.com': '스포츠월드', 'mydaily.co.kr': '마이데일리', 'joynews24.com': '조이뉴스24', 'dispatch.co.kr': '디스패치',
+  'gukjenews.com': '국제뉴스', 'newsway.co.kr': '뉴스웨이', 'thebell.co.kr': '더벨', 'hankooki.com': '데일리한국',
+  'womaneconomy.co.kr': '여성경제신문', 'ksilbo.co.kr': '경상일보', 'busan.com': '부산일보', 'kookje.co.kr': '국제신문',
+  'imaeil.com': '매일신문', 'yeongnam.com': '영남일보', 'kwnews.co.kr': '강원일보', 'jjan.kr': '전북일보', 'kyeonggi.com': '경기일보'
 };
 
 const decode = (s) => String(s || '')
@@ -97,7 +107,7 @@ for (const cat of CATEGORIES) {
       const time = Date.parse(it.pubDate);
       if (!title || !url || !time || time < cutoff) continue;
       const text = title + ' ' + desc;
-      if (!MUST_HAVE.test(text) || EXCLUDE.test(text)) continue;
+      if (!TITLE_MUST_HAVE.test(title) || EXCLUDE.test(text) || VENUE_ONLY.test(text)) continue;
       const key = normTitle(title);
       if (seenUrl.has(url) || seenTitle.has(key)) continue;
       seenUrl.add(url); seenTitle.add(key);
