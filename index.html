@@ -31,9 +31,10 @@
       theme: {
         extend: {
           fontFamily: {
-            // 영문은 Playfair, 한글은 Noto Serif KR (기존 Cormorant는 한글이 없어 바탕체로 대체되던 문제 해결)
-            serif: ['"Playfair Display"', '"Noto Serif KR"', 'serif'],
-            sans: ['"Pretendard Variable"', 'Pretendard', '"Noto Sans KR"', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+            // 서체는 2개만: 제목·큰 숫자 = Noto Serif KR / 본문·메뉴·버튼·입력 = Pretendard
+            // (Playfair·Cormorant는 청첩장 스튜디오의 '청첩장 글꼴 선택' 기능에서만 사용)
+            serif: ['"Noto Serif KR"', 'serif'],
+            sans: ['"Pretendard Variable"', 'Pretendard', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
           },
           fontSize: {
             // 가독성: 가장 많이 쓰이는 xs(12px)를 13px로
@@ -41,23 +42,25 @@
           },
           colors: {
             wedding: {
-              ivory: '#FDFBF7',
-              cream: '#F7F3EB',
-              sand: '#EFE8DC',
-              champagne: '#E5D6C3',
-              gold: '#C5A059',
-              darkgold: '#7A5A22',   // 대비 강화 (기존 #9A783A)
-              blush: '#FBEFED',
-              rose: '#D89C94',
-              charcoal: '#22201E',
+              // 색: 주색 = 금박 갈색(gold 계열 한 가지), 강조색 = 인주 주홍(rose 자리), 나머지는 종이·먹 무채색
+              ivory: '#FAF7F1',      // 종이
+              cream: '#F4EFE6',
+              sand: '#ECE6DA',
+              champagne: '#E2D8C8',
+              gold: '#C5A059',       // 주색 (밝은 바탕 글자는 --gold-text로 진하게)
+              darkgold: '#7A5A22',
+              blush: '#F6E7E2',
+              rose: '#B4432C',       // 강조색: 인주 주홍 (NEW·LIVE·D-Day 등 한두 군데만)
+              charcoal: '#1C1A17',   // 먹
               dark: '#161514',
-              muted: '#5F5953',      // 대비 강화 (기존 #7A7570)
-              border: '#DDD3C4',     // 카드·입력창 테두리 선명하게 (기존 #E8E1D5)
+              muted: '#5F5953',
+              border: '#DCD3C5',     // 괘선
             }
           },
           boxShadow: {
-            'luxury': '0 20px 45px -15px rgba(34, 32, 30, 0.08), 0 0 1px 1px rgba(197, 160, 89, 0.15)',
-            'card-hover': '0 25px 50px -12px rgba(154, 120, 58, 0.18)',
+            // 그림자는 쓰지 않음 (떠 있는 버튼·모달만 별도 지정)
+            'luxury': 'none',
+            'card-hover': 'none',
           },
           animation: {
             'float-slow': 'floatSlow 6s ease-in-out infinite',
@@ -337,8 +340,7 @@
     }
     html[data-page="home"].is-scrolled header.glass-nav,
     html[data-page="home"] header.glass-nav:has(#mobileMenu:not(.hidden)) {   /* 모바일 메뉴를 펼쳤을 때도 */
-      background: rgba(18, 17, 16, 0.92);
-      backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+      background: #161514;                               /* 반투명 유리 대신 단색 먹 */
     }
     html[data-page="home"] #homeHero {
       margin-top: calc(0px - var(--hdr-h, 81px) - var(--promo-h, 0px));   /* 공지 바 + 헤더 뒤까지 사진을 끌어올림 */
@@ -902,6 +904,129 @@
       .intro-logo { transition: opacity 0.8s ease; }
     }
   </style>
+
+  <!-- ====================================================
+       디자인 레이어 — 방향: "청첩장 인쇄소의 교정쇄: 아이보리 종이 위 먹색 활자, 금박은 한 군데만"
+       · 서체 2개: Noto Serif KR(제목·큰 숫자) / Pretendard(본문·메뉴·버튼·입력)
+       · 색: 주색 금박 갈색 #8A6A2F · 강조색 인주 주홍 #B4432C · 나머지 종이·괘선·먹 무채색
+       · 간격 8px 단위, 내용은 왼쪽 기준선에 정렬
+       · 쓰지 않는 것: 그림자(떠 있는 버튼·모달 제외), 유리 효과, 그라데이션 글자, 반짝이 아이콘, 둥근 아이콘 카드
+       기능 코드는 건드리지 않고 겉모양만 덮어씀 (이 블록을 지우면 이전 모습으로 돌아감)
+       ==================================================== -->
+  <style id="aura-design">
+    :root {
+      --paper: #FAF7F1; --paper-2: #F4EFE6; --rule: #DCD3C5; --ink: #1C1A17; --mute: #5F5953;
+      --main: #8A6A2F; --main-on-dark: #D9BE85; --stamp: #B4432C;
+    }
+
+    /* 1. 페이지마다 다르던 강조색 8가지 → 주색 하나 */
+    html [data-view] { --accent: #8A6A2F; --accent-soft: #F1EADB; }
+
+    /* 2. 유리 효과·흐림 제거 → 단색 종이 */
+    html .glass-card { background: var(--paper); -webkit-backdrop-filter: none; backdrop-filter: none; }
+    html .glass-nav { background: var(--paper); -webkit-backdrop-filter: none; backdrop-filter: none; }
+    html [class*="backdrop-blur"] { -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
+
+    /* 3. 그림자 제거 — 화면 위에 떠 있는 것(고정 버튼·모달·서랍)만 남김 */
+    html body [class*="shadow"]:not(.fixed):not(.fixed *) { box-shadow: none !important; }
+    html .dash-card:hover, html .news-card:hover, html .dir-card:hover { box-shadow: none; transform: none; }
+
+    /* 4. 그라데이션 글자 → 단색 */
+    html .gold-text { background: none; -webkit-background-clip: border-box; background-clip: border-box; -webkit-text-fill-color: currentColor; color: var(--gold-text); }
+
+    /* 5. 모서리: 종이처럼 거의 직각 (떠 있는 원형 버튼·점·아바타는 그대로) */
+    html .rounded-3xl, html .rounded-2xl, html .rounded-xl, html .rounded-lg { border-radius: 4px; }
+    html button.rounded-full:not(.fixed *), html a.rounded-full:not(.fixed *) { border-radius: 2px; }
+
+    /* 6. 서체 2개 안에서: 로고도 본문 서체 계열 대신 제목 서체로 */
+    html .brand-logo { font-family: "Noto Serif KR", serif; font-weight: 700; letter-spacing: 0.14em; }
+
+    /* 7. 색 정리: 노랑·초록·파랑·보라 → 주색/무채색, 빨강 → 강조색 */
+    html .text-amber-500, html .text-amber-800, html .text-emerald-700, html .text-emerald-800,
+    html .text-blue-600, html .text-purple-600 { color: var(--main); }
+    html .text-amber-200 { color: var(--main-on-dark); }
+    html .fill-amber-500 { fill: var(--main); }
+    html .text-red-600, html .text-red-700, html .hover\:text-red-500:hover { color: var(--stamp); }
+    html .bg-amber-50, html .bg-emerald-50, html .bg-purple-50, html .bg-red-50 { background-color: var(--paper-2); }
+    html .border-amber-200, html .border-amber-300, html .border-emerald-200, html .border-purple-200, html .border-red-200 { border-color: var(--rule); }
+    html .border-amber-500 { border-color: var(--main); }
+    html .bg-amber-400, html .bg-amber-600, html .bg-emerald-400, html .bg-blue-400 { background-color: var(--main); }
+    html .bg-red-600 { background-color: var(--stamp); }
+    html .bg-emerald-900, html .bg-red-900 { background-color: var(--ink); }
+    html .border-emerald-800, html .border-red-800, html .border-blue-900 { border-color: #3A352F; }
+
+    /* 8. 반짝이 아이콘 제거 (로고 원형 마크 포함 — 로고는 글자만) */
+    html [data-lucide="sparkles"], html svg.lucide-sparkles { display: none !important; }
+    html header a.group > div:first-child { display: none; }
+
+    /* 9. 섹션 제목: 가운데 → 왼쪽 기준선 */
+    html section .text-center.max-w-3xl.mx-auto, html section .text-center.max-w-2xl.mx-auto { text-align: left; margin-left: 0; }
+
+    /* 10. 오른쪽 아래 상담 버튼: 노란 알약 → 먹색 (떠 있는 요소라 그림자 하나만 유지) */
+    html .fixed .bg-amber-400 { background-color: var(--ink); color: var(--paper); }
+    html .fixed .bg-amber-400 i, html .fixed .bg-amber-400 svg { fill: none; color: var(--main-on-dark); }
+    html .fixed .hover\:bg-amber-300:hover { background-color: var(--main); }
+
+    /* ==================== 홈 ==================== */
+    /* 히어로: 가운데 → 왼쪽 기준선. 가장 눈에 띄는 것 = 검색 패널, 그다음 = 소식 한 줄, 나머지는 조용히 */
+    html #homeHero > .relative.z-10 { width: 100%; max-width: 80rem; text-align: left; }
+    html #homeHero #search-box { margin-left: 0; max-width: 56rem; background: var(--paper); border: 0; border-top: 3px solid var(--main); border-radius: 0; padding: 24px; }
+    html #homeHero #search-box label { text-transform: none; letter-spacing: 0; color: var(--mute); }
+    html #homeHero #search-box select { background: #fff; border-color: var(--rule); border-radius: 2px; }
+    html #homeHero #search-box button[type="submit"] { border-radius: 2px; background: var(--ink); }
+    html #homeHero #search-box button[type="submit"]:hover { background: var(--main); }
+    /* 수상 문구 배지: 알약 테두리 없이 작은 글자 한 줄로 */
+    html #homeHero .relative.z-10 > .inline-flex:first-child {
+      background: none; border: 0; padding: 0; margin-bottom: 16px; border-radius: 0;
+      font-size: 13px; letter-spacing: 0.02em; color: rgba(255, 255, 255, 0.78);
+    }
+    /* 소식 한 줄: 반투명 알약 → 위아래 괘선만 */
+    html .home-news {
+      margin: 0 0 32px; max-width: 56rem; padding: 16px 0; border-radius: 0;
+      background: none; border: 0; border-top: 1px solid rgba(255, 255, 255, 0.4); border-bottom: 1px solid rgba(255, 255, 255, 0.4);
+    }
+    html .home-news-label { background: var(--stamp); border-radius: 2px; }
+    html .home-news-dot { background: #fff; }
+
+    /* 신뢰 지표: 둥근 흰 카드 → 위아래 괘선 사이의 숫자 한 줄 (왼쪽 정렬) */
+    html #homeMetrics { background: none; border: 0; border-top: 1px solid var(--ink); border-bottom: 1px solid var(--rule); border-radius: 0; padding: 32px 0; }
+    html #homeMetrics > div { padding-left: 0; padding-right: 0; }
+    @media (min-width: 1024px) {   /* 아래 섹션들(max-w-7xl + 좌우 32px)과 같은 왼쪽 기준선에 맞춤 */
+      html #homeMetrics { max-width: none; margin-left: max(32px, calc((100% - 1216px) / 2)); margin-right: max(32px, calc((100% - 1216px) / 2)); }
+    }
+    html #homeMetrics .grid { text-align: left; }
+    html #homeMetrics .grid > div { align-items: flex-start; }
+    @media (min-width: 768px) {
+      html #homeMetrics .grid > div + div { padding-left: 32px; }
+    }
+    html #homeMetrics .grid > div > span:first-child { font-weight: 600; letter-spacing: -0.02em; }
+
+    /* 나의 웨딩 준비 현황·바로가기: 아이콘 둥근 카드 → 아이콘 없이 위 괘선 + 글자 */
+    html .dash-icon { display: none !important; }
+    html .dash-card {
+      background: none; border: 0; border-top: 1px solid var(--ink); border-radius: 0;
+      padding: 16px 0 24px; transition: color 0.2s;
+    }
+    html .dash-card:hover .font-bold, html .dash-card:hover .dash-accent { color: var(--main); }
+    html .dash-accent { color: var(--ink); }
+    html #homeServices { column-gap: 32px; row-gap: 8px; }
+    html #homeServices .dash-card { gap: 0; }
+    html #homeServices .dash-card .font-bold { font-size: 17px; }
+    /* 전국 업체 찾기: 바로가기 중 하나만 굵은 괘선으로 한 단계 위에 */
+    html #homeFeatured { border-top-width: 3px; padding: 24px 0 32px; margin-bottom: 16px; }
+    html #homeFeatured .dash-accent:first-child { color: var(--stamp); }
+    html #homeFeatured .text-lg { font-family: "Noto Serif KR", serif; font-size: 24px; font-weight: 600; }
+    html #homeFeatured > span:last-child { border-radius: 2px; background: var(--ink) !important; }
+    html #homeFeatured:hover > span:last-child { background: var(--main) !important; }
+    @media (max-width: 639px) {
+      html #homeServices { column-gap: 16px; }
+      html #homeServices .dash-card { padding: 16px 0; }
+      html #homeServices .dash-card .font-bold { font-size: 15px; }
+      html #homeFeatured { padding: 16px 0 24px; }
+      html #homeFeatured .text-lg { font-size: 20px; }
+      html #homeFeatured > span:last-child { top: 16px; right: 0; }
+    }
+  </style>
   <script>document.documentElement.classList.add('js-router');</script>
   <script>
     // PC 첫 접속 인트로: 이번 브라우저 세션에서 아직 안 봤을 때만 (주소에 ?intro=1 을 붙이면 항상)
@@ -1040,7 +1165,7 @@
             <span>청첩장<span class="xl-only"> 스튜디오</span></span>
             <span class="xl-only px-1.5 py-0.5 rounded bg-wedding-rose/15 text-wedding-rose text-[9px] font-bold leading-none">NEW</span>
           </a>
-          <a href="#calculator" data-view="budget" class="js-nav top-nav-link"><span class="xl-only">스마트&nbsp;</span>견적기</a>
+          <a href="#calculator" data-view="budget" class="js-nav top-nav-link">견적기</a>
           <a href="#checklist" data-view="checklist" class="js-nav top-nav-link"><span class="xl-only">D-180&nbsp;</span>체크리스트</a>
           <a href="#reviews" data-view="stories" class="js-nav top-nav-link">후기·매거진</a>
           <a href="#benefits" data-view="benefits" class="js-nav top-nav-link">박람회·FAQ</a>
@@ -1103,7 +1228,7 @@
           <i data-lucide="chevron-right" class="w-4 h-4 text-wedding-muted"></i>
         </a>
         <a href="#calculator" onclick="toggleMobileMenu()" class="py-2 hover:text-wedding-gold border-b border-wedding-border/40 flex items-center justify-between">
-          <span>스마트 견적 계산기</span>
+          <span>견적 계산기</span>
           <i data-lucide="chevron-right" class="w-4 h-4 text-wedding-muted"></i>
         </a>
         <a href="#checklist" onclick="toggleMobileMenu()" class="py-2 hover:text-wedding-gold border-b border-wedding-border/40 flex items-center justify-between">
@@ -1371,7 +1496,7 @@
           <a href="#calculator" data-view="budget" class="dash-card group flex items-start gap-4 bg-white rounded-2xl p-5 border border-wedding-border shadow-sm">
             <span class="dash-icon w-12 h-12 rounded-2xl flex items-center justify-center shrink-0"><i data-lucide="calculator" class="w-6 h-6"></i></span>
             <span class="flex-1 min-w-0">
-              <span class="block font-bold text-wedding-dark">스마트 견적 계산기</span>
+              <span class="block font-bold text-wedding-dark">견적 계산기</span>
               <span class="block text-xs text-wedding-muted mt-1 leading-relaxed">하객 수·식대·홀·스드메 등급으로 총 예산과 실 부담액 즉시 산출</span>
             </span>
           </a>
@@ -1484,7 +1609,6 @@
             웨딩홀
           </button>
           <button data-cat="sdm" onclick="filterCategory('sdm', this)" class="px-4 py-2 rounded-full text-xs sm:text-sm font-semibold transition-all bg-white text-wedding-charcoal border border-wedding-border hover:border-wedding-gold flex items-center gap-1.5">
-            <span class="text-wedding-gold font-bold">✨</span>
             <span>스·드·메 종합</span>
           </button>
           <button data-cat="studio" onclick="filterCategory('studio', this)" class="px-4 py-2 rounded-full text-xs sm:text-sm font-semibold transition-all bg-white text-wedding-charcoal border border-wedding-border hover:border-wedding-gold">
@@ -2475,11 +2599,11 @@
         <div class="inline-flex p-1.5 rounded-2xl bg-wedding-sand/70 border border-wedding-border mt-8 shadow-inner">
           <button id="tabBtnDiy" onclick="switchInvitationMode('diy', this)" class="px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all shadow-sm bg-wedding-dark text-white flex items-center gap-2">
             <i data-lucide="palette" class="w-4 h-4"></i>
-            <span>🎨 캔바형 AI & DIY 디자인 스튜디오</span>
+            <span>캔바형 AI & DIY 디자인 스튜디오</span>
           </button>
           <button id="tabBtnPartner" onclick="switchInvitationMode('partner', this)" class="px-5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all text-wedding-charcoal hover:text-wedding-dark flex items-center gap-2">
             <i data-lucide="mail-check" class="w-4 h-4"></i>
-            <span>✉️ 외부 전문업체 주문 & 무료 샘플 신청</span>
+            <span>외부 전문업체 주문 & 무료 샘플 신청</span>
           </button>
         </div>
       </div>
@@ -2783,7 +2907,7 @@
             </div>
 
             <p class="text-[11px] text-wedding-muted mt-3 text-center">
-              💡 캔바(Canva) 및 인쇄 전문 제휴 규격(105x148mm 표준 엽서형)으로 제작되었습니다.
+              캔바(Canva) 및 인쇄 전문 제휴 규격(105x148mm 표준 엽서형)으로 제작되었습니다.
             </p>
 
           </div>
@@ -2988,7 +3112,7 @@
       
       <div class="text-center max-w-3xl mx-auto mb-14">
         <h2 class="font-serif text-2xl sm:text-3xl lg:text-4xl font-normal text-wedding-dark mt-2">
-          <span class="inline-block whitespace-nowrap">스마트 웨딩 견적 &</span> <span class="inline-block whitespace-nowrap">예산 계산기</span>
+          <span class="inline-block whitespace-nowrap">웨딩 견적 &</span> <span class="inline-block whitespace-nowrap">예산 계산기</span>
         </h2>
         <p class="text-sm text-wedding-muted mt-2">
           예상 하객 수와 원하시는 스드메 등급을 선택하시면 현실적인 실시간 예상 비용과 항목별 비율을 즉시 산출해 드립니다.
@@ -3406,7 +3530,7 @@
       <!-- Modal Header -->
       <div class="pr-8 mb-5">
         <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-wedding-gold/15 text-wedding-darkgold text-[11px] font-bold mb-2">
-          <span>🍽️ 실 결제 영수증 리뷰 4.9+ 보증</span>
+          <span>실 결제 영수증 리뷰 4.9+ 보증</span>
         </div>
         <h3 class="font-serif text-xl sm:text-2xl font-bold text-wedding-dark">
           <span class="gold-text italic font-serif">다른 분들은 이런 식당에서</span> 대접했어요!
@@ -3627,7 +3751,7 @@
         <div class="bg-white rounded-2xl border border-wedding-border p-5 sm:p-6">
           <h3 class="font-bold text-lg text-wedding-dark mb-4 flex items-center gap-2"><i data-lucide="lightbulb" class="w-5 h-5 text-wedding-gold"></i> 박람회 200% 활용 팁</h3>
           <ol class="space-y-3 text-sm text-wedding-charcoal">
-            <li class="flex gap-3"><span class="fair-tip-num">1</span><span><b>예산부터 정하고 가기</b> — <a href="#calculator" class="text-wedding-gold font-semibold underline">스마트 견적 계산기</a>로 총예산과 항목별 상한을 미리 정해 두세요.</span></li>
+            <li class="flex gap-3"><span class="fair-tip-num">1</span><span><b>예산부터 정하고 가기</b> — <a href="#calculator" class="text-wedding-gold font-semibold underline">견적 계산기</a>로 총예산과 항목별 상한을 미리 정해 두세요.</span></li>
             <li class="flex gap-3"><span class="fair-tip-num">2</span><span><b>현장 계약은 서두르지 않기</b> — '오늘만 할인'이라도 견적서를 받아 비교한 뒤 결정하고, 계약금 환불 조건을 꼭 확인하세요.</span></li>
             <li class="flex gap-3"><span class="fair-tip-num">3</span><span><b>스드메 추가금 목록 요청</b> — 헬퍼비, 원본 데이터비, 드레스 업그레이드비 등 추가금 항목표를 서면으로 받아 두세요.</span></li>
             <li class="flex gap-3"><span class="fair-tip-num">4</span><span><b>사은품 조건 확인</b> — 방문만으로 받는 사은품인지, 계약 시 지급되는 혜택인지 구분해서 확인하세요.</span></li>
@@ -3932,7 +4056,7 @@
 
         <!-- 견적·계약 -->
         <div class="faq-item" data-faq="contract">
-          <button onclick="toggleFaq(this)" class="faq-q"><span><em>견적·계약</em>스마트 견적 계산기 금액은 실제 계약 금액과 같나요?</span><i data-lucide="chevron-down" class="w-4 h-4 text-wedding-gold transition-transform shrink-0"></i></button>
+          <button onclick="toggleFaq(this)" class="faq-q"><span><em>견적·계약</em>견적 계산기 금액은 실제 계약 금액과 같나요?</span><i data-lucide="chevron-down" class="w-4 h-4 text-wedding-gold transition-transform shrink-0"></i></button>
           <div class="faq-a hidden">계산기는 평균 시세를 바탕으로 한 참고용 예상 금액입니다. 실제 금액은 예식 날짜·시간대, 보증 인원, 업체별 프로모션에 따라 달라지므로, 계산 결과를 가지고 1:1 상담을 신청하시면 조건에 맞는 실제 견적으로 다시 안내해 드립니다.</div>
         </div>
         <div class="faq-item" data-faq="contract">
@@ -4012,7 +4136,7 @@
             <li><a href="#sdm-section" onclick="navigateToCuration('sdm', event)" class="hover:text-wedding-gold transition">스드메 브랜드 화보 & 견적</a></li>
             <li><a href="#directory" class="hover:text-wedding-gold transition">전국 웨딩 업체 찾기</a></li>
             <li><a href="#invitation-studio" class="hover:text-wedding-gold transition">청첩장 스튜디오 (DIY & 주문)</a></li>
-            <li><a href="#calculator" class="hover:text-wedding-gold transition">스마트 결혼 예산 계산기</a></li>
+            <li><a href="#calculator" class="hover:text-wedding-gold transition">결혼 예산 계산기</a></li>
             <li><a href="#checklist" class="hover:text-wedding-gold transition">D-180 웨딩 체크리스트</a></li>
             <li><a href="#reviews" class="hover:text-wedding-gold transition">본식 후기 & 웨딩 매거진</a></li>
             <li><a href="#faq" class="hover:text-wedding-gold transition">자주 묻는 질문</a></li>
@@ -4358,7 +4482,7 @@
           href="https://www.canva.com/ko_kr/wedding-invitations/templates/" 
           target="_blank" 
           rel="noopener noreferrer"
-          class="w-full py-3 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white text-xs sm:text-sm font-bold transition flex items-center justify-center gap-2 shadow-md"
+          class="w-full py-3 rounded-xl bg-wedding-charcoal hover:bg-wedding-darkgold text-white text-xs sm:text-sm font-bold transition flex items-center justify-center gap-2"
         >
           <i data-lucide="external-link" class="w-4 h-4"></i>
           <span>Canva 웨딩 템플릿 에디터 열기</span>
@@ -4648,11 +4772,11 @@
       if (type === 'sdm') {
         tabBtn = document.querySelector("#categoryFilterTabs button[data-cat='sdm']");
         filterCategory('sdm', tabBtn);
-        showToast("✨ 감성 스·드·메(스튜디오·드레스·메이크업) 큐레이션 아카이브입니다.");
+        showToast("감성 스·드·메(스튜디오·드레스·메이크업) 큐레이션 아카이브입니다.");
       } else if (type === 'hall') {
         tabBtn = document.querySelector("#categoryFilterTabs button[data-cat='hall']");
         filterCategory('hall', tabBtn);
-        showToast("🏰 전국 프리미엄 웨딩홀 큐레이션 아카이브입니다.");
+        showToast("전국 프리미엄 웨딩홀 큐레이션 아카이브입니다.");
       } else {
         tabBtn = document.querySelector("#categoryFilterTabs button[data-cat='all']");
         filterCategory('all', tabBtn);
@@ -4750,7 +4874,7 @@
           lucide.createIcons();
         }
 
-        showToast("✨ 탑티어 웨딩홀 3곳과 감성 스드메 6곳의 아카이브가 성공적으로 추가되었습니다!");
+        showToast("탑티어 웨딩홀 3곳과 감성 스드메 6곳의 아카이브가 성공적으로 추가되었습니다!");
       }, 400);
     }
 
@@ -5244,7 +5368,7 @@
         renderChecklistItems();
       }
       updateChecklistProgress();
-      showToast("✨ 나만의 체크 항목이 추가되었습니다!");
+      showToast("나만의 체크 항목이 추가되었습니다!");
     }
 
     function deleteCustomChecklistItem(id) {
@@ -6587,7 +6711,7 @@
       },
       budget: {
         num: '05', hash: 'calculator', crumb: 'BUDGET', icon: 'calculator',
-        title: '스마트 견적 계산기', short: '견적',
+        title: '견적 계산기', short: '견적',
         desc: '하객 수와 등급을 고르면 총 예산과 항목별 비중을 실시간으로 계산합니다.',
         chips: [
           { icon: 'file-text', label: '견적서 받기', action: 'downloadEstimateModal()' },
@@ -6960,7 +7084,7 @@
                 <a class="vf-action" href="${vfEsc(p.place_url)}" target="_blank" rel="noopener noreferrer"><i data-lucide="info" class="w-3 h-3"></i>상세정보</a>
                 <a class="vf-action" href="${dirUrl}" target="_blank" rel="noopener noreferrer"><i data-lucide="navigation" class="w-3 h-3"></i>길찾기</a>
                 <button type="button" class="vf-action" onclick="openConsultingModal()"><i data-lucide="message-circle" class="w-3 h-3"></i>상담</button>
-                ${pickAdmin ? `<button type="button" class="vf-action pick-toggle ${isPicked(p.id) ? 'is-picked' : ''}" data-pick="${idx}">${isPicked(p.id) ? '📌 고정됨' : '📌 추천 고정'}</button>` : ''}
+                ${pickAdmin ? `<button type="button" class="vf-action pick-toggle ${isPicked(p.id) ? 'is-picked' : ''}" data-pick="${idx}">${isPicked(p.id) ? '고정됨' : '추천 고정'}</button>` : ''}
               </div>
             </div>
           </div>
@@ -7185,7 +7309,7 @@
       if (!picks.length) {
         document.getElementById('pickGrid').innerHTML = '';
         document.getElementById('pickTabs').innerHTML = '';
-        if (pickAdmin) showPickEmpty('아직 고정한 업체가 없어요. 아래 ‘업체 실시간 찾기’ 결과에서 📌 추천 고정을 눌러 추가하세요.');
+        if (pickAdmin) showPickEmpty('아직 고정한 업체가 없어요. 아래 ‘업체 실시간 찾기’ 결과에서 추천 고정을 눌러 추가하세요.');
         else section.classList.add('hidden');
         return;
       }
@@ -7215,7 +7339,7 @@
         const p = vf.places[Number(btn.dataset.pick)];
         const on = p && isPicked(p.id);
         btn.classList.toggle('is-picked', on);
-        btn.textContent = on ? '📌 고정됨' : '📌 추천 고정';
+        btn.textContent = on ? '고정됨' : '추천 고정';
       });
     }
 
@@ -7249,7 +7373,7 @@
       document.body.insertAdjacentHTML('beforeend', `
         <div id="pickAdminBar" class="fixed left-4 bottom-24 lg:bottom-6 z-50 bg-wedding-dark text-white rounded-2xl shadow-2xl border border-wedding-darkgold/40 p-3 w-[min(92vw,330px)]">
           <div class="flex items-center justify-between gap-2">
-            <span class="text-xs font-bold">🛠 관리자 모드 · 추천 <span id="pickAdminCount">${picks.length}</span>곳</span>
+            <span class="text-xs font-bold">관리자 모드 · 추천 <span id="pickAdminCount">${picks.length}</span>곳</span>
             <button type="button" onclick="goToHash('vendor-finder')" class="text-[11px] underline text-wedding-sand">업체 찾기로</button>
           </div>
           <div class="grid grid-cols-2 gap-1.5 mt-2.5">
