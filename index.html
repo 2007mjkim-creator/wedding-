@@ -1026,6 +1026,92 @@
       html #homeFeatured .text-lg { font-size: 20px; }
       html #homeFeatured > span:last-child { top: 16px; right: 0; }
     }
+
+    /* ==================== 다른 페이지: 칸 배치 ====================
+       원칙: 흰 둥근 상자 목록 → 상자 없이 '위 괘선 + 글자' 칸 / 사진은 모서리 없이 사진+아래 글 /
+             아이콘 타일·별 장식 대신 글자 / 가운데 정렬 → 왼쪽 기준선 */
+
+    /* 큐레이션 — 업체 카드: 상자 없이 사진 + 아래 글 */
+    html #wedding-hall .card-item { background: none; border: 0; border-radius: 0; overflow: visible; }
+    html #wedding-hall .card-item .img-zoom-wrapper { border-radius: 0; }
+    html #wedding-hall .card-item .img-zoom-wrapper > span.absolute,
+    html #wedding-hall .card-item .img-zoom-wrapper > div.absolute { background: var(--ink); color: var(--paper); border: 0; border-radius: 2px; }
+    html .wish-btn { background: var(--paper); }
+    @media (min-width: 640px) {
+      html #wedding-hall .card-item > div:last-child { padding: 16px 0 0; }
+    }
+    @media (max-width: 639px) {
+      html #wedding-hall .card-item { border-bottom: 1px solid var(--rule); padding-bottom: 16px; }
+    }
+    html #wedding-hall .mt-14.text-center { text-align: left; }
+
+    /* 큐레이션 — 추천 고정 업체·실시간 찾기 결과 */
+    html .pick-card { background: none; border: 0; border-top: 3px solid var(--main); border-radius: 0; padding: 16px 0 24px; }
+    html .pick-card:hover { box-shadow: none; transform: none; }
+    html .pick-badge { border-radius: 2px; }
+    html .vf-item { background: none; border: 0; border-top: 1px solid var(--rule); border-radius: 0; padding: 16px 0; }
+    html .vf-item:hover { border-top-color: var(--main); }
+    html .vf-item.is-focus { box-shadow: none; border-top-color: var(--main); background: var(--paper-2); }
+    html .vf-num, html .vf-action { border-radius: 2px; }
+
+    /* 전국 업체 — 칸 = 위 괘선 + 글자, 분류 배지는 색 대신 한 가지 톤 */
+    html .dir-card { background: none; border: 0; border-top: 1px solid var(--ink); border-radius: 0; padding: 16px 0 24px; }
+    html .dir-card:hover { border-top-color: var(--main); }
+    html .dir-badge[data-c] { background: var(--paper-2); color: var(--ink); border-radius: 2px; }
+
+    /* 청첩장 스튜디오 — 제휴 인쇄 브랜드 4칸 */
+    html #invitation-studio .grid.gap-6 > .bg-white.rounded-3xl { background: none; border: 0; border-top: 1px solid var(--ink); border-radius: 0; padding: 16px 0 24px; }
+
+    /* 견적 계산기 — 결과 금액도 왼쪽 기준선 */
+    html #calculator .py-6.text-center, html #calculator p.text-center { text-align: left; }
+    html .calc-tier, html .calc-extra { border-radius: 2px; }
+
+    /* 박람회 — 숫자 3칸·혜택 6칸·회차·분야: 상자와 아이콘 대신 괘선 */
+    html #fair .bg-gradient-to-r { background-image: none; background-color: var(--ink); }
+    html #fair .grid.grid-cols-3 > div { background: none; border: 0; border-top: 1px solid rgba(255, 255, 255, 0.35); border-radius: 0; padding: 16px 0 0; text-align: left; }
+    html .fair-benefit { background: none; border: 0; border-top: 1px solid rgba(255, 255, 255, 0.18); border-radius: 0; padding: 16px 0; }
+    html .fair-benefit > svg, html .fair-cat > svg { display: none; }
+    html .fair-session { background: none; border: 0; border-top: 1px solid var(--ink); border-radius: 0; padding: 16px 0 24px; }
+    html .fair-session:hover { box-shadow: none; border-top-color: var(--main); }
+    html .fair-cat { align-items: flex-start; text-align: left; background: none; border: 0; border-top: 1px solid var(--rule); border-radius: 0; padding: 16px 0; }
+    html .fair-chip span, html .fair-tip-num { border-radius: 2px; }
+    html .fair-ticket { background: var(--ink); border-radius: 4px; }
+    html .fair-ticket::before { display: none; }
+
+    /* 분류 탭(업체 찾기·FAQ 공통): 알약 → 거의 직각 */
+    html .vf-cat, html .dir-cat { border-radius: 2px; }
+
+    /* 자주 묻는 질문 — 다른 섹션과 같은 폭·왼쪽 기준선, 둥근 상자 목록 → 괘선으로 나뉜 목록 */
+    html #faq > div { max-width: 80rem; }
+    @media (min-width: 1024px) { html #faq > div { padding-left: 32px; padding-right: 32px; } }
+    html #faqTabs { justify-content: flex-start; }
+    html #faqTabs, html #faqList { max-width: 56rem; }
+    html #faq .text-center.mb-6 { text-align: left; }
+    html #faq .space-y-3 > :not([hidden]) ~ :not([hidden]) { margin-top: 0; }
+    html .faq-item { background: none; border: 0; border-top: 1px solid var(--rule); border-radius: 0; }
+    html .faq-item:last-child { border-bottom: 1px solid var(--rule); }
+    html .faq-q { padding: 16px 0; }
+    html .faq-q:hover { background: none; color: var(--main); }
+    html .faq-q em { border-radius: 2px; }
+    html .faq-a { padding: 0 0 24px; border-top: 0; }
+
+    /* 후기 — 상자 → 위 괘선 + 인용문, 이니셜 동그라미 장식 제거 */
+    html #reviews .grid > .bg-white { background: none; border: 0; border-top: 1px solid var(--ink); border-radius: 0; padding: 24px 0 0; }
+    html #reviews .grid > .bg-white h4 { font-family: "Noto Serif KR", serif; font-size: 18px; font-weight: 600; line-height: 1.5; }
+    html #reviews .grid > .bg-white .w-9.h-9.rounded-full { display: none; }
+
+    /* 매거진 — 상자 없이 사진 + 아래 글 */
+    html #magazine article { background: none; border: 0; border-radius: 0; overflow: visible; }
+    html #magazine article .img-zoom-wrapper { border-radius: 0; }
+    html #magazine article > div.p-6 { padding: 16px 0 0; }
+    html #magazine article [class*="uppercase"] { text-transform: none; letter-spacing: 0; }
+
+    /* 실시간 웨딩 소식 — 카드 → 괘선 목록 */
+    html .news-card { background: none; border: 0; border-top: 1px solid var(--rule); border-radius: 0; padding: 16px 0 24px; }
+    html .news-card:hover { border-top-color: var(--main); transform: none; }
+
+    /* 체크리스트 — 달성률 상자 */
+    html #checklist .bg-white.rounded-2xl.border { background: none; border: 0; border-top: 1px solid var(--ink); border-radius: 0; padding-left: 0; padding-right: 0; }
   </style>
   <script>document.documentElement.classList.add('js-router');</script>
   <script>
